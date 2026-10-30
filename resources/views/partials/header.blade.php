@@ -8,7 +8,9 @@
     </div>
 </div>
 <header class="site-header"><div class="container nav-wrap">
-<a aria-label="DigitalBhudev home" class="brand" href="{{ route('home') }}"><span class="brand-mark"><img src="{{ asset('assets/img/logo-mark.svg') }}" alt="DigitalBhudev"></span><span><strong>{{ __('messages.app_name') }}</strong><small>{{ __('messages.app_tagline') }}</small></span></a>
+<a aria-label="{{ __('messages.app_name') }} home" class="brand" href="{{ route('home') }}">
+    <img src="{{ asset('assets/img/logo.svg') }}" alt="{{ __('messages.app_name') }}" class="site-logo">
+</a>
 <button aria-expanded="false" aria-label="Open navigation" class="menu-toggle"><span></span><span></span><span></span></button>
 <nav class="main-nav">
     <a class="{{ request()->routeIs('home')?'active':'' }}" href="{{ route('home') }}">{{ __('messages.nav.home') }}</a>
