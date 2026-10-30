@@ -1,0 +1,9 @@
+The package supplies app/Models/User.php using Laravel's default User base class, password hashing cast, Notifiable, and MustVerifyEmail.
+If your generated project already customized User.php, merge the following required features instead of blindly overwriting it:
+- implements Illuminate\Contracts\Auth\MustVerifyEmail
+- protected fillable fields include name, email, phone, password, role, is_active
+- casts include email_verified_at => datetime, password => hashed, is_active => boolean
+- isAdmin(): bool and isBhudev(): bool helpers
+- bhudevProfile() hasOne(BhudevProfile::class)
+
+Ensure the default users migration has email_verified_at, remember_token, password, name, and email fields.

@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 140" width="100%" height="100%">
+  <defs>
+    <!-- Liquid Pure Gold -->
+    <linearGradient id="goldPure" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb"/>
+      <stop offset="15%" stop-color="#fef08a"/>
+      <stop offset="45%" stop-color="#f59e0b"/>
+      <stop offset="80%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+
+    <!-- Sacred Kalava / Mauli Thread Gradient -->
+    <linearGradient id="mauliThread" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b91c1c"/>
+      <stop offset="30%" stop-color="#f59e0b"/>
+      <stop offset="70%" stop-color="#b91c1c"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+
+    <!-- Amra Pallav (Mango Leaf) Gradient -->
+    <linearGradient id="leafGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#14532d"/>
+      <stop offset="60%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#4ade80"/>
+    </linearGradient>
+
+    <!-- Divine Lotus Petal Gradient -->
+    <linearGradient id="lotusGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#be185d"/>
+      <stop offset="50%" stop-color="#f43f5e"/>
+      <stop offset="100%" stop-color="#fecdd3"/>
+    </linearGradient>
+
+    <!-- Jyoti Core Flame -->
+    <linearGradient id="jyotiGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#e11d48"/>
+      <stop offset="50%" stop-color="#ea580c"/>
+      <stop offset="85%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+
+    <radialGradient id="haloGlow" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.6"/>
+      <stop offset="60%" stop-color="#f59e0b" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#ea580c" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="kalashDrop" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#b45309" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- ================= MASTER EMBLEM (SWARNA KALASH & LOTUS) ================= -->
+  <g transform="translate(22, 10)" filter="url(#kalashDrop)">
+    <!-- Divine Aura -->
+    <circle cx="58" cy="58" r="54" fill="url(#haloGlow)"/>
+
+    <!-- Sacred 7-Petaled Lotus Base (Kamalasana) -->
+    <g transform="translate(58, 86)">
+      <!-- Left Outer Petal -->
+      <path d="M 0 10 C -24 6, -38 -6, -42 -14 C -36 -18, -20 -10, 0 10 Z" fill="url(#lotusGrad)" opacity="0.85"/>
+      <!-- Right Outer Petal -->
+      <path d="M 0 10 C 24 6, 38 -6, 42 -14 C 36 -18, 20 -10, 0 10 Z" fill="url(#lotusGrad)" opacity="0.85"/>
+      <!-- Left Inner Petal -->
+      <path d="M 0 10 C -18 2, -28 -12, -28 -20 C -20 -22, -8 -14, 0 10 Z" fill="url(#lotusGrad)" opacity="0.95"/>
+      <!-- Right Inner Petal -->
+      <path d="M 0 10 C 18 2, 28 -12, 28 -20 C 20 -22, 8 -14, 0 10 Z" fill="url(#lotusGrad)" opacity="0.95"/>
+      <!-- Center Lotus Petal -->
+      <path d="M 0 10 C -12 -6, -10 -24, 0 -28 C 10 -24, 12 -6, 0 10 Z" fill="url(#lotusGrad)"/>
+      <circle cx="0" cy="5" r="2.5" fill="#fde047"/>
+    </g>
+
+    <!-- Golden Kalash Pot (Swarna Kumbha) -->
+    <g transform="translate(58, 64)">
+      <!-- Pot Belly -->
+      <path d="M -26 4 C -28 20, 28 20, 26 4 C 24 -10, 16 -16, 12 -18 L -12 -18 C -16 -16, -24 -10, -26 4 Z" fill="url(#goldPure)"/>
+      
+      <!-- Kalava / Mauli Sacred Ribbon Around Neck -->
+      <rect x="-15" y="-18" width="30" height="5" rx="2.5" fill="url(#mauliThread)"/>
+      <!-- Rim of Kalash -->
+      <path d="M -18 -18 C -18 -22, 18 -22, 18 -18 Z" fill="url(#goldPure)"/>
+
+      <!-- Sacred Swastik Engraving on Kalash -->
+      <g stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.9">
+        <line x1="0" y1="-8" x2="0" y2="8"/>
+        <line x1="-8" y1="0" x2="8" y2="0"/>
+        <line x1="0" y1="-8" x2="5" y2="-8"/>
+        <line x1="0" y1="8" x2="-5" y2="8"/>
+        <line x1="-8" y1="0" x2="-8" y2="-5"/>
+        <line x1="8" y1="0" x2="8" y2="5"/>
+        <circle cx="-4" cy="-4" r="1" fill="#ffffff" stroke="none"/>
+        <circle cx="4" cy="-4" r="1" fill="#ffffff" stroke="none"/>
+        <circle cx="-4" cy="4" r="1" fill="#ffffff" stroke="none"/>
+        <circle cx="4" cy="4" r="1" fill="#ffffff" stroke="none"/>
+      </g>
+    </g>
+
+    <!-- Amra Pallav (5 Mango Leaves) -->
+    <g transform="translate(58, 44)">
+      <!-- Far Left Leaf -->
+      <path d="M -8 -2 C -24 -12, -32 -2, -34 6 C -26 8, -14 4, -8 -2 Z" fill="url(#leafGrad)"/>
+      <path d="M -8 -2 Q -22 0 -34 6" stroke="#86efac" stroke-width="0.8" fill="none"/>
+
+      <!-- Far Right Leaf -->
+      <path d="M 8 -2 C 24 -12, 32 -2, 34 6 C 26 8, 14 4, 8 -2 Z" fill="url(#leafGrad)"/>
+      <path d="M 8 -2 Q 22 0 34 6" stroke="#86efac" stroke-width="0.8" fill="none"/>
+
+      <!-- Mid Left Leaf -->
+      <path d="M -6 -4 C -18 -20, -12 -30, -6 -32 C -2 -24, -2 -12, -6 -4 Z" fill="url(#leafGrad)"/>
+      <path d="M -6 -4 Q -10 -18 -6 -32" stroke="#86efac" stroke-width="0.8" fill="none"/>
+
+      <!-- Mid Right Leaf -->
+      <path d="M 6 -4 C 18 -20, 12 -30, 6 -32 C 2 -24, 2 -12, 6 -4 Z" fill="url(#leafGrad)"/>
+      <path d="M 6 -4 Q 10 -18 6 -32" stroke="#86efac" stroke-width="0.8" fill="none"/>
+
+      <!-- Central Sacred Coconut (Shriphal) with Tilak -->
+      <path d="M 0 -8 C -11 -8, -12 -24, 0 -27 C 12 -24, 11 -8, 0 -8 Z" fill="url(#goldPure)" stroke="#92400e" stroke-width="1"/>
+      <ellipse cx="0" cy="-18" rx="2" ry="4" fill="#b91c1c"/>
+      <circle cx="0" cy="-18" r="1" fill="#fde047"/>
+
+      <!-- Crown Divine Jyoti (Akhand Flame) -->
+      <path d="M 0 -27 C -6 -35, -4 -44, 0 -48 C 4 -44, 6 -35, 0 -27 Z" fill="url(#jyotiGrad)"/>
+      <circle cx="0" cy="-36" r="2" fill="#ffffff"/>
+    </g>
+  </g>
+
+  <!-- ================= TYPOGRAPHY & BRAND LOCKUP ================= -->
+  <g transform="translate(152, 38)">
+    <text x="0" y="38" font-family="'Cinzel', 'Playfair Display', Georgia, serif" font-size="39" font-weight="900" letter-spacing="-0.5">
+      <tspan fill="#0f172a">Digital</tspan><tspan fill="#b91c1c" dx="3">Bhudev</tspan>
+    </text>
+
+    <!-- Tagline Bar -->
+    <g transform="translate(2, 62)">
+      <!-- Golden Diamond Marker -->
+      <path d="M 0 -8 L 5 -13 L 10 -8 L 5 -3 Z" fill="url(#goldPure)"/>
+
+      <text x="20" y="-5" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="800" letter-spacing="4" fill="#b45309" text-transform="uppercase">
+        VISHWAS NO SETU
+      </text>
+
+      <text x="186" y="-5" font-family="'Plus Jakarta Sans', sans-serif" font-size="11.5" font-weight="700" fill="#047857" letter-spacing="0.5">
+        • પવિત્ર વૈદિક પરંપરા
+      </text>
+
+      <path d="M 330 -8 L 335 -13 L 340 -8 L 335 -3 Z" fill="url(#goldPure)"/>
+    </g>
+
+    <text x="3" y="78" font-family="'Plus Jakarta Sans', sans-serif" font-size="10.5" font-weight="600" fill="#64748b" letter-spacing="1.5">
+      VERIFIED BRAHMIN PRIESTS • SACRED SAMAGRI • SHUBH MUHURAT
+    </text>
+  </g>
+</svg>

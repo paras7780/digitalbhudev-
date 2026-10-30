@@ -1,0 +1,9 @@
+// Merge this alias into the existing withMiddleware callback in bootstrap/app.php.
+// Do not replace your full bootstrap/app.php with this snippet.
+use Illuminate\Foundation\Configuration\Middleware;
+
+->withMiddleware(function (Middleware $middleware): void {
+    $middleware->alias([
+        'role' => \App\Http\Middleware\EnsureUserRole::class,
+    ]);
+})

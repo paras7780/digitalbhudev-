@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 130" width="100%" height="100%">
+  <defs>
+    <!-- Royal Blue Gradient -->
+    <linearGradient id="refRoyalBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#004d99"/>
+      <stop offset="50%" stop-color="#0062cc"/>
+      <stop offset="100%" stop-color="#0077e6"/>
+    </linearGradient>
+
+    <!-- Saffron Orange Flame Gradient -->
+    <linearGradient id="refSaffron" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d9480f"/>
+      <stop offset="40%" stop-color="#ea580c"/>
+      <stop offset="80%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#fb923c"/>
+    </linearGradient>
+
+    <!-- Golden Center Petal Gradient -->
+    <linearGradient id="refGoldCenter" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#fde047"/>
+    </linearGradient>
+
+    <!-- Soft Drop Shadow -->
+    <filter id="refShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#003366" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- ================= EMBLEM ICON (TEMPLE + OM + LOTUS) ================= -->
+  <g id="emblem-group" transform="translate(10, 2)">
+    <!-- 1. TEMPLE DHWAJA (FLAG) -->
+    <!-- Flagpole finial tip -->
+    <path d="M 60 7 L 60 21" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="60" cy="7" r="2" fill="#ea580c"/>
+    <!-- Fluttering triangular flag with curve -->
+    <path d="M 60 8 Q 72 6 82 12 Q 72 17 60 19 Z" fill="url(#refSaffron)"/>
+
+    <!-- 2. TEMPLE ARCH (MANDIR SHIKHAR) -->
+    <!-- Outer Arch & Inner Cutout -->
+    <path d="M 60 17 
+             C 54 24, 48 29, 44 38 
+             C 41 45, 41 53, 41 64 
+             L 41 82 
+             L 49 82 
+             L 49 64 
+             C 49 55, 50 48, 52 44 
+             C 55 37, 57 32, 60 27 
+             C 63 32, 65 37, 68 44 
+             C 70 48, 71 55, 71 64 
+             L 71 82 
+             L 79 82 
+             L 79 64 
+             C 79 53, 79 45, 76 38 
+             C 72 29, 66 24, 60 17 Z" 
+          fill="url(#refRoyalBlue)" 
+          filter="url(#refShadow)"/>
+
+    <!-- 3. SACRED OM (ॐ) -->
+    <g transform="translate(60, 54) scale(0.68)">
+      <!-- Master Om Glyph -->
+      <path d="M -1 -17 C -4 -17 -6.5 -15 -8 -13 C -10 -15.5 -13 -17 -16.5 -17 C -22.5 -17 -27 -12.3 -27 -6 C -27 -3 -25.5 0 -23 2 C -27.5 4.5 -30 9.5 -30 15 C -30 24 -22 31 -12 31 C -4 31 2.5 25.5 4.5 18 C 6 22.5 10.5 25.5 15.5 25.5 C 11.5 30.5 5.5 34 -2 34 C -3.5 34 -4.5 35 -4.5 36.5 C -4.5 38 -3.5 39 -2 39 C 7 39 15 34.5 20 27 C 21.5 24.5 22.5 21.5 22.5 18 C 22.5 11 17 5.5 10 5.5 C 8 5.5 6 6 4.5 7 C 3.5 3 0.5 -0.5 -3 -2.5 C -0.5 -4.5 1 -7.5 1 -11 C 1 -14.5 -0.2 -15.8 -1 -17 Z M -12 25 C -17.5 25 -22 20.5 -22 15 C -22 9.5 -17.5 5 -12 5 C -8 5 -5 7.5 -4 11 C -4.5 18 -8.5 25 -12 25 Z M -16.5 -11.5 C -13.8 -11.5 -11.5 -9.2 -11.5 -6.5 C -11.5 -3.8 -13.8 -1.5 -16.5 -1.5 C -19.2 -1.5 -21.5 -3.8 -21.5 -6.5 C -21.5 -9.2 -19.2 -11.5 -16.5 -11.5 Z M 10 11.5 C 13.5 11.5 16.5 14.5 16.5 18 C 16.5 21.5 13.5 24.5 10 24.5 C 6.5 24.5 3.5 21.5 3.5 18 C 3.5 14.5 6.5 11.5 10 11.5 Z" 
+            fill="url(#refSaffron)"/>
+      <!-- Chandrabindu -->
+      <path d="M 12 -21 C 6.5 -21 2 -17 0.5 -13 C 3.5 -14.8 7.5 -16 11.5 -16 C 15.5 -16 19.5 -14.8 22.5 -13 C 21 -17 16.5 -21 12 -21 Z" fill="url(#refSaffron)"/>
+      <circle cx="11.5" cy="-26" r="3.8" fill="url(#refSaffron)"/>
+    </g>
+
+    <!-- 4. BLOOMING LOTUS BASE (ORANGE PETALS & BLUE BASE) -->
+    <!-- (a) Blue Base Petals (Layer 1 - Bottom) -->
+    <path d="M 60 97 
+             C 48 97, 32 99, 18 106 
+             C 24 109, 36 110, 48 107 
+             C 53 105, 57 101, 60 97 Z" 
+          fill="url(#refRoyalBlue)"/>
+    <path d="M 60 97 
+             C 72 97, 88 99, 102 106 
+             C 96 109, 84 110, 72 107 
+             C 67 105, 63 101, 60 97 Z" 
+          fill="url(#refRoyalBlue)"/>
+
+    <!-- (b) Outer Saffron Petals (Layer 2) -->
+    <path d="M 60 95 
+             C 45 92, 28 88, 14 78 
+             C 17 88, 28 97, 44 100 
+             C 50 101, 56 99, 60 95 Z" 
+          fill="url(#refSaffron)"/>
+    <path d="M 60 95 
+             C 75 92, 92 88, 106 78 
+             C 103 88, 92 97, 76 100 
+             C 70 101, 64 99, 60 95 Z" 
+          fill="url(#refSaffron)"/>
+
+    <!-- (c) Mid Saffron Petals (Layer 3) -->
+    <path d="M 60 94 
+             C 48 88, 36 78, 26 64 
+             C 32 74, 42 85, 54 89 
+             C 56 91, 58 93, 60 94 Z" 
+          fill="#f97316"/>
+    <path d="M 60 94 
+             C 72 88, 84 78, 94 64 
+             C 88 74, 78 85, 66 89 
+             C 64 91, 62 93, 60 94 Z" 
+          fill="#f97316"/>
+
+    <!-- (d) Upper Inner Petals (Layer 4) -->
+    <path d="M 60 92 
+             C 52 82, 44 72, 38 56 
+             C 45 66, 52 76, 58 83 
+             Z" 
+          fill="#fb923c"/>
+    <path d="M 60 92 
+             C 68 82, 76 72, 82 56 
+             C 75 66, 68 76, 62 83 
+             Z" 
+          fill="#fb923c"/>
+
+    <!-- (e) Center Flame Petal (Layer 5 - Core) -->
+    <path d="M 60 52 
+             C 54 64, 52 76, 60 91 
+             C 68 76, 66 64, 60 52 Z" 
+          fill="url(#refGoldCenter)"/>
+    <!-- Glowing Golden Core Dot -->
+    <circle cx="60" cy="85" r="4.5" fill="#fde047" stroke="#ea580c" stroke-width="1.2"/>
+  </g>
+
+  <!-- ================= VERTICAL DIVIDER ================= -->
+  <line x1="134" y1="22" x2="134" y2="108" stroke="#f97316" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- ================= WORDMARK: BhudevSetu ================= -->
+  <g transform="translate(150, 24)">
+    <!-- Main Title -->
+    <text x="0" y="58" font-family="'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="56" font-weight="900" letter-spacing="-0.5">
+      <tspan fill="#005bb5">Bhudev</tspan><tspan fill="url(#refSaffron)" dx="2">Setu</tspan>
+    </text>
+
+    <!-- Diya / Flame on the letter 't' in Setu -->
+    <g transform="translate(262, 10)">
+      <!-- Diya Base -->
+      <path d="M -9 12 Q 0 17 9 12 Q 7 8 0 8 Q -7 8 -9 12 Z" fill="#e65100"/>
+      <!-- Small Diya Stem -->
+      <rect x="-1.5" y="12" width="3" height="4" fill="#e65100"/>
+      <!-- Diya Flame -->
+      <path d="M 0 0 C -3 4, -4 7, 0 10 C 4 7, 3 4, 0 0 Z" fill="#f59e0b"/>
+      <circle cx="0" cy="7" r="1.5" fill="#fef08a"/>
+    </g>
+
+    <!-- Tagline Group -->
+    <g transform="translate(4, 76)">
+      <!-- Left Orange Line -->
+      <line x1="0" y1="-5" x2="65" y2="-5" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+      
+      <!-- Gujarati Tagline -->
+      <text x="76" y="0" font-family="'Shruti', 'Gujarati Sangam MN', 'Noto Sans Gujarati', 'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="800" fill="#004d99" letter-spacing="1">
+        વિશ્વાસ નો સેતુ
+      </text>
+
+      <!-- Right Orange Line -->
+      <line x1="184" y1="-5" x2="250" y2="-5" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 140" width="100%" height="100%">
+  <defs>
+    <!-- 24K Imperial Gold Gradient -->
+    <linearGradient id="gold24k" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb"/>
+      <stop offset="20%" stop-color="#fde047"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="85%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+
+    <!-- Divine Sunset Flame Gradient -->
+    <linearGradient id="divineFlame" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#db2777"/>
+      <stop offset="35%" stop-color="#ea580c"/>
+      <stop offset="70%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#fef08a"/>
+    </linearGradient>
+
+    <!-- Deep Royal Jewel Gradient -->
+    <linearGradient id="royalBadge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+
+    <!-- Luminous Radial Glow -->
+    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#f59e0b" stop-opacity="0.5"/>
+      <stop offset="75%" stop-color="#ea580c" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#db2777" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Soft Drop Shadow -->
+    <filter id="luxuryShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#ea580c" flood-opacity="0.28"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+
+    <filter id="goldGleam" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- ================= MASTER EMBLEM (SURYA SETU) ================= -->
+  <g transform="translate(18, 10)">
+    <!-- Ambient Aura -->
+    <circle cx="60" cy="60" r="58" fill="url(#sunGlow)"/>
+
+    <!-- Royal Hexagonal Shield Base with Curved Corners -->
+    <path d="M 60 6 L 104 31 L 104 89 L 60 114 L 16 89 L 16 31 Z" 
+          fill="url(#royalBadge)" 
+          stroke="url(#gold24k)" 
+          stroke-width="2.5" 
+          stroke-linejoin="round"
+          filter="url(#luxuryShadow)"/>
+
+    <!-- Inner Sacred Circle Inscription -->
+    <circle cx="60" cy="60" r="43" fill="none" stroke="#fde047" stroke-width="1" stroke-dasharray="2 3" opacity="0.6"/>
+
+    <!-- Surya Radiance: 12 Sacred Sunburst Rays -->
+    <g transform="translate(60, 60)" stroke="url(#gold24k)" stroke-linecap="round">
+      <line x1="0" y1="-43" x2="0" y2="-49" stroke-width="2.5"/>
+      <line x1="21.5" y1="-37.2" x2="25" y2="-43.3" stroke-width="1.8"/>
+      <line x1="37.2" y1="-21.5" x2="43.3" y2="-25" stroke-width="1.8"/>
+      <line x1="43" y1="0" x2="49" y2="0" stroke-width="2.5"/>
+      <line x1="37.2" y1="21.5" x2="43.3" y2="25" stroke-width="1.8"/>
+      <line x1="21.5" y1="37.2" x2="25" y2="43.3" stroke-width="1.8"/>
+      <line x1="0" y1="43" x2="0" y2="49" stroke-width="2.5"/>
+      <line x1="-21.5" y1="37.2" x2="-25" y2="43.3" stroke-width="1.8"/>
+      <line x1="-37.2" y1="21.5" x2="-43.3" y2="25" stroke-width="1.8"/>
+      <line x1="-43" y1="0" x2="-49" y2="0" stroke-width="2.5"/>
+      <line x1="-37.2" y1="-21.5" x2="-43.3" y2="-25" stroke-width="1.8"/>
+      <line x1="-21.5" y1="-37.2" x2="-25" y2="-43.3" stroke-width="1.8"/>
+    </g>
+
+    <!-- The "Setu" (Bridge of Light & Digital Network) -->
+    <!-- Sweeping Golden Arch connecting East to West -->
+    <path d="M 28 78 Q 60 38 92 78" fill="none" stroke="url(#divineFlame)" stroke-width="3" stroke-linecap="round"/>
+    <path d="M 34 83 Q 60 52 86 83" fill="none" stroke="#fde047" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+
+    <!-- Network Node Stars on Bridge -->
+    <circle cx="28" cy="78" r="3.5" fill="#fde047" stroke="#ea580c" stroke-width="1"/>
+    <circle cx="44" cy="57" r="2.5" fill="#ffffff"/>
+    <circle cx="60" cy="48" r="3" fill="#fde047"/>
+    <circle cx="76" cy="57" r="2.5" fill="#ffffff"/>
+    <circle cx="92" cy="78" r="3.5" fill="#fde047" stroke="#ea580c" stroke-width="1"/>
+
+    <!-- Akhand Diya Base (Pedestal of Knowledge) -->
+    <path d="M 44 94 Q 60 102 76 94 Q 68 89 60 89 Q 52 89 44 94 Z" fill="url(#gold24k)"/>
+    <circle cx="60" cy="91" r="1.5" fill="#ffffff"/>
+
+    <!-- Sacred Centerpiece: The Divine Om (ॐ) -->
+    <g transform="translate(60, 59) scale(0.95)" filter="url(#goldGleam)">
+      <!-- Master Om Glyph -->
+      <path d="M -1 -17 C -4 -17 -6.5 -15 -8 -13 C -10 -15.5 -13 -17 -16.5 -17 C -22.5 -17 -27 -12.3 -27 -6 C -27 -3 -25.5 0 -23 2 C -27.5 4.5 -30 9.5 -30 15 C -30 24 -22 31 -12 31 C -4 31 2.5 25.5 4.5 18 C 6 22.5 10.5 25.5 15.5 25.5 C 11.5 30.5 5.5 34 -2 34 C -3.5 34 -4.5 35 -4.5 36.5 C -4.5 38 -3.5 39 -2 39 C 7 39 15 34.5 20 27 C 21.5 24.5 22.5 21.5 22.5 18 C 22.5 11 17 5.5 10 5.5 C 8 5.5 6 6 4.5 7 C 3.5 3 0.5 -0.5 -3 -2.5 C -0.5 -4.5 1 -7.5 1 -11 C 1 -14.5 -0.2 -15.8 -1 -17 Z M -12 25 C -17.5 25 -22 20.5 -22 15 C -22 9.5 -17.5 5 -12 5 C -8 5 -5 7.5 -4 11 C -4.5 18 -8.5 25 -12 25 Z M -16.5 -11.5 C -13.8 -11.5 -11.5 -9.2 -11.5 -6.5 C -11.5 -3.8 -13.8 -1.5 -16.5 -1.5 C -19.2 -1.5 -21.5 -3.8 -21.5 -6.5 C -21.5 -9.2 -19.2 -11.5 -16.5 -11.5 Z M 10 11.5 C 13.5 11.5 16.5 14.5 16.5 18 C 16.5 21.5 13.5 24.5 10 24.5 C 6.5 24.5 3.5 21.5 3.5 18 C 3.5 14.5 6.5 11.5 10 11.5 Z" 
+            fill="url(#gold24k)"/>
+      <!-- Chandrabindu (Moon Arc & Sacred Point) -->
+      <path d="M 12 -21 C 6.5 -21 2 -17 0.5 -13 C 3.5 -14.8 7.5 -16 11.5 -16 C 15.5 -16 19.5 -14.8 22.5 -13 C 21 -17 16.5 -21 12 -21 Z" fill="url(#gold24k)"/>
+      <circle cx="11.5" cy="-26" r="3.8" fill="url(#gold24k)"/>
+      <circle cx="11.5" cy="-26" r="1.5" fill="#ffffff"/>
+    </g>
+  </g>
+
+  <!-- ================= TYPOGRAPHY & BRAND LOCKUP ================= -->
+  <g transform="translate(152, 38)">
+    <!-- Wordmark -->
+    <text x="0" y="38" font-family="'Cinzel', 'Playfair Display', Georgia, serif" font-size="40" font-weight="900" letter-spacing="-0.5">
+      <tspan fill="#0f172a">Digital</tspan><tspan fill="#db2777" dx="3">Bhudev</tspan>
+    </text>
+
+    <!-- Divine Accent Sparkle on the letter 'B' -->
+    <path d="M 238 6 L 241 12 L 247 15 L 241 18 L 238 24 L 235 18 L 229 15 L 235 12 Z" fill="url(#gold24k)"/>
+
+    <!-- Gujarati & English Tagline Ribbon -->
+    <g transform="translate(2, 62)">
+      <!-- Golden Line Left -->
+      <line x1="0" y1="-8" x2="28" y2="-8" stroke="url(#gold24k)" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="33" cy="-8" r="2" fill="#d97706"/>
+
+      <!-- Tagline -->
+      <text x="44" y="-5" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="800" letter-spacing="4" fill="#b45309" text-transform="uppercase">
+        VISHWAS NO SETU
+      </text>
+
+      <!-- Sacred Gujarati Subtext -->
+      <text x="210" y="-5" font-family="'Shruti', 'Gujarati Sangam MN', 'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" fill="#be185d" letter-spacing="0.5">
+        • વિશ્વાસ નો સેતુ
+      </text>
+
+      <!-- Golden Line Right -->
+      <circle cx="332" cy="-8" r="2" fill="#db2777"/>
+      <line x1="338" y1="-8" x2="366" y2="-8" stroke="url(#divineFlame)" stroke-width="2" stroke-linecap="round"/>
+    </g>
+
+    <!-- Sub-label: Vedic Authority -->
+    <text x="3" y="78" font-family="'Plus Jakarta Sans', sans-serif" font-size="10.5" font-weight="600" fill="#64748b" letter-spacing="1.5">
+      GUJARAT'S PREMIER VEDIC BRAHMIN NETWORK
+    </text>
+  </g>
+</svg>

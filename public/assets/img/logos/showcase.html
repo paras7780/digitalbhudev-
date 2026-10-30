@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DigitalBhudev / BhudevSetu — Brand Logo Suite & Reference Match</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111726;
+      --card-border: #1e293b;
+      --ink: #f8fafc;
+      --heading: #ffffff;
+      --muted: #94a3b8;
+      --primary: #db2777;
+      --royal-blue: #0062cc;
+      --saffron: #f97316;
+      --gold: #f59e0b;
+      --gold-bright: #fde047;
+      --radius: 20px;
+    }
+    .light-theme {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --ink: #0f172a;
+      --heading: #0f172a;
+      --muted: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      padding: 40px 24px 100px;
+      transition: background 0.25s, color 0.25s;
+    }
+    .container { max-width: 1280px; margin: 0 auto; }
+    
+    /* Top Bar */
+    .top-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 36px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 98, 204, 0.15);
+      border: 1px solid rgba(0, 98, 204, 0.35);
+      padding: 6px 16px;
+      border-radius: 9999px;
+      color: #60a5fa;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .theme-toggle {
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
+      color: var(--heading);
+      padding: 9px 18px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .theme-toggle:hover {
+      border-color: var(--primary);
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      max-width: 860px;
+      margin: 0 auto 48px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 44px;
+      font-weight: 900;
+      line-height: 1.2;
+      color: var(--heading);
+      margin-bottom: 14px;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .saffron-gradient-text {
+      background: linear-gradient(135deg, #0062cc, #f97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Reference Banner Highlight */
+    .reference-section {
+      background: linear-gradient(135deg, rgba(0,98,204,0.08), rgba(249,115,22,0.08));
+      border: 2px solid rgba(0,98,204,0.25);
+      border-radius: var(--radius);
+      padding: 36px;
+      margin-bottom: 50px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .reference-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(0,98,204,0.15);
+    }
+    .reference-tag {
+      display: inline-block;
+      background: #f97316;
+      color: #ffffff;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .reference-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    /* Grid Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 28px;
+      margin-bottom: 60px;
+    }
+
+    /* Logo Cards */
+    .logo-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .logo-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(0, 98, 204, 0.5);
+      box-shadow: 0 20px 40px -10px rgba(0, 98, 204, 0.2);
+    }
+    .badge-corner {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      color: #ffffff;
+      border: 1px solid rgba(255,255,255,0.15);
+      z-index: 2;
+    }
+    .badge-matched {
+      background: linear-gradient(135deg, #0062cc, #f97316);
+      border: none;
+      color: #fff;
+    }
+
+    .card-preview {
+      padding: 40px 24px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 190px;
+      border-bottom: 1px solid var(--card-border);
+      position: relative;
+    }
+    .card-preview.warm-bg {
+      background: #fffdf9;
+    }
+    .card-preview img {
+      max-width: 100%;
+      height: auto;
+      max-height: 110px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.06));
+    }
+
+    .card-body {
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .concept-category {
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #f97316;
+      margin-bottom: 6px;
+    }
+    .concept-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--heading);
+      margin-bottom: 8px;
+      font-family: 'Playfair Display', serif;
+    }
+    .concept-desc {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 18px;
+      flex: 1;
+    }
+    .features-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 20px;
+    }
+    .features-list li {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-border);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .light-theme .features-list li {
+      background: #f1f5f9;
+    }
+
+    .card-footer {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.18s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #0062cc, #004d99);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 14px rgba(0, 98, 204, 0.3);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(0, 98, 204, 0.5);
+      transform: translateY(-1px);
+    }
+    .btn-saffron {
+      background: linear-gradient(135deg, #ea580c, #f97316);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
+    }
+    .btn-saffron:hover {
+      box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--heading);
+      border: 1.5px solid var(--card-border);
+    }
+    .btn-outline:hover {
+      border-color: var(--primary);
+    }
+
+    /* Live Simulator */
+    .simulator-box {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: 0 20px 50px -10px rgba(0,0,0,0.3);
+      margin-top: 40px;
+    }
+    .simulator-header {
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    .simulator-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--heading);
+      margin-bottom: 6px;
+    }
+    .sim-navbar {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.07);
+      margin-bottom: 24px;
+      transition: background 0.2s;
+    }
+    .sim-navbar.dark-nav {
+      background: #0f172a;
+      border-color: #1e293b;
+    }
+    .sim-navbar.dark-nav .sim-links {
+      color: #cbd5e1;
+    }
+    .sim-logo img {
+      height: 48px;
+      display: block;
+      transition: transform 0.2s;
+    }
+    .sim-links {
+      display: flex;
+      gap: 22px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #334155;
+    }
+    .sim-cta {
+      background: linear-gradient(135deg, #0062cc, #004d99);
+      color: #ffffff;
+      padding: 9px 20px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0, 98, 204, 0.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-toolbar">
+      <div class="brand-pill">
+        <span>🚩</span> Reference-Matched Vedic Logo Suite
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="themeIcon">☀️</span> <span id="themeLabel">Light Showcase</span>
+      </button>
+    </div>
+
+    <header class="hero">
+      <span class="concept-category">Exact Re-Creation of Your Uploaded Reference</span>
+      <h1>Matched <span class="saffron-gradient-text">To Your Exact Style</span></h1>
+      <p>Precision vector SVG recreation based on your uploaded image: featuring the Temple Shikhar with orange Dhwaja, sacred ॐ inside the royal blue arch, blooming multi-layer lotus base, Diya flame accent, and Gujarati tagline.</p>
+    </header>
+
+    <!-- ================= REFERENCE COMPARISON SECTION ================= -->
+    <div class="reference-section">
+      <div class="reference-header">
+        <div>
+          <span class="reference-tag">Direct Match</span>
+          <h2 style="font-size:24px;color:var(--heading);margin-top:6px;font-family:'Playfair Display',serif">Your Uploaded Reference &amp; Vector SVGs</h2>
+        </div>
+        <p style="color:var(--muted);font-size:13.5px;max-width:540px">
+          Notice how every curve, petal, the arch, Dhwaja flag, Diya on the 't', and Gujarati typography has been faithfully transformed into crisp, infinite-resolution vector art.
+        </p>
+      </div>
+
+      <div class="reference-grid">
+        <!-- 1. The Reference Image Uploaded by User -->
+        <div class="logo-card" style="border: 2px dashed rgba(249,115,22,0.4)">
+          <div class="badge-corner" style="background:#ea580c">📸 Your Uploaded Image</div>
+          <div class="card-preview warm-bg">
+            <img src="reference-uploaded.png" alt="Uploaded Reference Screenshot">
+          </div>
+          <div class="card-body">
+            <div class="concept-category">Reference Screenshot</div>
+            <h3 class="concept-title" style="font-size:18px">Original Reference Artwork</h3>
+            <p class="concept-desc">The original bitmap graphic you shared showing the blue temple arch, orange flag, lotus, BhudevSetu wordmark, and Gujarati tagline.</p>
+            <div style="font-size:12px;color:var(--muted)">Target design source</div>
+          </div>
+        </div>
+
+        <!-- 2. Exact Vector SVG: BhudevSetu -->
+        <div class="logo-card" style="border: 2px solid #0062cc">
+          <div class="badge-corner badge-matched">⭐ 100% Vector Match</div>
+          <div class="card-preview">
+            <img src="bhudevsetu-exact-reference.svg" alt="Exact Vector Match: BhudevSetu">
+          </div>
+          <div class="card-body">
+            <div class="concept-category">SVG Version A • Exact Original Name</div>
+            <h3 class="concept-title" style="font-size:18px">BhudevSetu (Exact Match)</h3>
+            <p class="concept-desc">Razor-sharp vector SVG. Saffron Dhwaja flag, royal blue temple arch, sacred ॐ, layered orange &amp; blue lotus base, Diya lamp atop the 't', and 'વિશ્વાસ નો સેતુ' with orange rule lines.</p>
+            <ul class="features-list">
+              <li>🚩 Saffron Dhwaja Flag</li>
+              <li>🛕 Blue Temple Shikhar</li>
+              <li>🪷 Multi-layered Lotus Base</li>
+              <li>🪔 Diya Flame atop 't'</li>
+            </ul>
+            <div class="card-footer">
+              <a href="bhudevsetu-exact-reference.svg" download="bhudevsetu-exact-logo.svg" class="btn btn-outline">⬇ Download</a>
+              <button onclick="setSimLogo('bhudevsetu-exact-reference.svg', 'BhudevSetu (Exact Reference Match)')" class="btn btn-primary">👁 Topbar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Adapted for DigitalBhudev -->
+        <div class="logo-card" style="border: 2px solid #f97316">
+          <div class="badge-corner" style="background:#f97316">🌐 DigitalBhudev Edition</div>
+          <div class="card-preview">
+            <img src="digitalbhudev-reference-style.svg" alt="DigitalBhudev in Reference Style">
+          </div>
+          <div class="card-body">
+            <div class="concept-category">SVG Version B • Updated Website Name</div>
+            <h3 class="concept-title" style="font-size:18px">DigitalBhudev (Reference Style)</h3>
+            <p class="concept-desc">The exact same sacred emblem &amp; color balance, seamlessly adapted for the name "DigitalBhudev" ("Digital" in Royal Blue, "Bhudev" in Saffron with Diya accent).</p>
+            <ul class="features-list">
+              <li>💎 Same Sacred Emblem</li>
+              <li>🔵 "Digital" in Royal Blue</li>
+              <li>🟠 "Bhudev" in Saffron</li>
+              <li>📜 "વિશ્વાસ નો સેતુ" Tagline</li>
+            </ul>
+            <div class="card-footer">
+              <a href="digitalbhudev-reference-style.svg" download="digitalbhudev-reference-style.svg" class="btn btn-outline">⬇ Download</a>
+              <button onclick="setSimLogo('digitalbhudev-reference-style.svg', 'DigitalBhudev (Reference Style)')" class="btn btn-saffron">👁 Topbar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Standalone Mark Only (Icon / Favicon) -->
+        <div class="logo-card">
+          <div class="badge-corner">📱 App Icon / Favicon</div>
+          <div class="card-preview" style="background: radial-gradient(circle, #ffffff 60%, #f1f5f9 100%)">
+            <img src="reference-mark-only.svg" alt="Standalone Emblem" style="max-height:90px">
+          </div>
+          <div class="card-body">
+            <div class="concept-category">SVG Version C • Standalone Mark</div>
+            <h3 class="concept-title" style="font-size:18px">Sacred Temple &amp; Lotus Emblem</h3>
+            <p class="concept-desc">Square 1:1 icon for circular navbar brand marks, mobile header drawer, admin sidebar, devotee portal, and browser favicons.</p>
+            <ul class="features-list">
+              <li>⚡ 1:1 Square Ratio</li>
+              <li>🎯 High-Contrast Icon</li>
+              <li>✨ Lossless at 16px to 4K</li>
+            </ul>
+            <div class="card-footer">
+              <a href="reference-mark-only.svg" download="reference-mark-only.svg" class="btn btn-outline">⬇ Download</a>
+              <button onclick="setSimLogo('reference-mark-only.svg', 'Sacred Mark Icon')" class="btn btn-primary">👁 Topbar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= LIVE HEADER SIMULATOR ================= -->
+    <div class="simulator-box" id="simulatorSection">
+      <div class="simulator-header">
+        <span class="concept-category">Interactive Topbar Simulator</span>
+        <h2>Preview In Real Header Context</h2>
+        <p style="color:var(--muted);font-size:14.5px">Click any "👁 Topbar" button above to immediately preview that logo in this live navbar simulator:</p>
+        <div style="margin-top:14px;display:flex;justify-content:center;gap:10px">
+          <button onclick="toggleNavTheme(false)" class="btn btn-outline" style="max-width:180px;padding:7px 14px;font-size:12px">☀️ Light Topbar</button>
+          <button onclick="toggleNavTheme(true)" class="btn btn-outline" style="max-width:180px;padding:7px 14px;font-size:12px">🌙 Midnight Dark Topbar</button>
+        </div>
+      </div>
+
+      <div class="sim-navbar" id="simNav">
+        <div class="sim-logo">
+          <img id="simNavLogo" src="bhudevsetu-exact-reference.svg" alt="Live Header Preview" style="height:52px">
+        </div>
+        <div class="sim-links">
+          <span>Home</span>
+          <span>Find a Bhudev</span>
+          <span>Services</span>
+          <span>Pooja Samagri</span>
+          <span>Panchang</span>
+          <span>About</span>
+        </div>
+        <div>
+          <span class="sim-cta">Join DigitalBhudev ↗</span>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:16px">
+        <span style="font-size:13.5px;color:var(--muted)">Currently Selected: <strong id="currentSelectedLabel" style="color:#f97316">BhudevSetu (Exact Reference Match)</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const b = document.body;
+      const isLight = b.classList.toggle('light-theme');
+      document.getElementById('themeIcon').textContent = isLight ? '🌙' : '☀️';
+      document.getElementById('themeLabel').textContent = isLight ? 'Dark Showcase' : 'Light Showcase';
+    }
+
+    function toggleNavTheme(isDark) {
+      const nav = document.getElementById('simNav');
+      if (isDark) {
+        nav.classList.add('dark-nav');
+      } else {
+        nav.classList.remove('dark-nav');
+      }
+    }
+
+    function setSimLogo(src, label) {
+      document.getElementById('simNavLogo').src = src;
+      document.getElementById('currentSelectedLabel').textContent = label;
+      document.getElementById('simulatorSection').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

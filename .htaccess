@@ -1,0 +1,41 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Directly serve assets, storage and static files from public/
+    RewriteRule ^assets/(.*)$ public/assets/$1 [L]
+    RewriteRule ^storage/(.*)$ public/storage/$1 [L]
+    RewriteRule ^build/(.*)$ public/build/$1 [L]
+    RewriteRule ^favicon\.ico$ public/favicon.ico [L]
+    RewriteRule ^robots\.txt$ public/robots.txt [L]
+
+    # Intercept physical Laravel code directories so Apache never treats them as web folders
+    RewriteRule ^lang(/.*)?$ index.php [L,QSA]
+    RewriteRule ^app(/.*)?$ index.php [L,QSA]
+    RewriteRule ^bootstrap(/.*)?$ index.php [L,QSA]
+    RewriteRule ^config(/.*)?$ index.php [L,QSA]
+    RewriteRule ^database(/.*)?$ index.php [L,QSA]
+    RewriteRule ^routes(/.*)?$ index.php [L,QSA]
+    RewriteRule ^vendor(/.*)?$ index.php [L,QSA]
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Handle X-XSRF-Token Header
+    RewriteCond %{HTTP:x-xsrf-token} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
