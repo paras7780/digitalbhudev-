@@ -1,25 +1,48 @@
 <!doctype html>
-<html lang="gu-IN">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', ($domain->hero_title ?? $pandit->display_name) . ' | Vedic Priest & Astrologer')</title>
     <meta name="description" content="@yield('meta_description', ($domain->hero_tagline ?? 'Authentic Vedic Ceremonies, Pujas & Muhurat consultations by ' . $pandit->display_name))">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 
     <!-- Fonts & Base CSS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ @filemtime(public_path('assets/css/style.css')) ?: 1 }}">
+
+    @php
+        $rawColor = $domain->theme_color ?: '#be185d';
+        $themeColorHex = match(strtolower(trim($rawColor))) {
+            'saffron', 'kesari' => '#ea580c',
+            'plum', 'purple'   => '#4a1633',
+            'gold', 'yellow'   => '#d97706',
+            'magenta', 'pink'  => '#be185d',
+            'maroon', 'red'    => '#991b1b',
+            'green'            => '#059669',
+            default            => (str_starts_with($rawColor, '#') ? $rawColor : '#be185d'),
+        };
+    @endphp
 
     <style>
         :root {
-            --pandit-primary: {{ $domain->theme_color ?: '#be185d' }};
+            --pandit-primary: {{ $themeColorHex }};
             --pandit-gold: #f472b6;
             --pandit-dark: #4a1633;
             --pandit-bg: #fdfafc;
             --pandit-card-border: #f3e5ee;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
         }
 
         body {
@@ -28,6 +51,7 @@
             font-family: 'DM Sans', sans-serif;
             margin: 0;
             padding: 0;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* White-labeled Pandit Navbar - NO LOGIN / NO REGISTER */
@@ -35,75 +59,109 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(8px);
+            background: #ffffff;
             border-bottom: 2px solid var(--pandit-gold);
-            box-shadow: 0 4px 20px rgba(41, 36, 31, 0.06);
-            padding: 14px 0;
+            box-shadow: 0 4px 20px rgba(74, 22, 51, 0.06);
+            padding: 10px 0;
         }
 
         .pandit-nav-container {
-            max-width: 1200px;
+            width: min(1440px, calc(100% - 32px));
+            max-width: 1440px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 8px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 16px;
         }
 
         .pandit-brand {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 12px;
             text-decoration: none;
             color: var(--pandit-dark);
+            flex-shrink: 0;
+        }
+
+        .pandit-brand-photo {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--pandit-primary);
+            box-shadow: 0 4px 12px rgba(190, 24, 93, 0.22);
+            display: block;
+            flex-shrink: 0;
+            background: #fdf2f8;
         }
 
         .pandit-brand-om {
-            width: 44px;
-            height: 44px;
+            width: 46px;
+            height: 46px;
             background: linear-gradient(135deg, var(--pandit-primary), #9d174d);
-            color: #fff;
+            color: #ffffff !important;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             box-shadow: 0 4px 12px rgba(190, 24, 93, 0.25);
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .pandit-brand-text {
+            display: flex;
+            flex-direction: column;
         }
 
         .pandit-brand-title {
             font-family: 'Playfair Display', serif;
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 700;
             line-height: 1.2;
             color: var(--pandit-dark);
+            white-space: nowrap;
         }
 
         .pandit-brand-subtitle {
-            font-size: 11px;
+            font-size: 10.5px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.9px;
             color: var(--pandit-primary);
-            font-weight: 600;
+            font-weight: 700;
+            white-space: nowrap;
+            margin-top: 2px;
         }
 
         .pandit-menu {
             display: flex;
             align-items: center;
-            gap: 28px;
+            gap: 18px;
             list-style: none;
             margin: 0;
             padding: 0;
+            flex-wrap: nowrap;
+        }
+
+        .pandit-menu li {
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
         }
 
         .pandit-menu a {
             text-decoration: none;
-            color: #554a40;
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.2s;
+            color: #4a3b32;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: color 0.18s ease;
+            padding: 6px 2px;
+            line-height: 1.2;
         }
 
         .pandit-menu a:hover {
@@ -113,16 +171,20 @@
         .btn-whatsapp-header {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 7px;
             background: #25d366;
-            color: #fff !important;
-            padding: 10px 20px;
+            color: #ffffff !important;
+            padding: 9px 18px;
             border-radius: 999px;
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 13.5px;
+            white-space: nowrap;
             box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
             text-decoration: none;
-            transition: transform 0.2s, background 0.2s;
+            flex-shrink: 0;
+            line-height: 1;
+            transition: transform 0.18s ease, background 0.18s ease;
         }
 
         .btn-whatsapp-header:hover {
@@ -130,31 +192,47 @@
             transform: translateY(-1px);
         }
 
-        /* Mobile Hamburger & Responsive Navigation */
+        /* Intermediate widths: tighten menu spacing cleanly */
+        @media (min-width: 1101px) and (max-width: 1300px) {
+            .pandit-menu {
+                gap: 12px;
+            }
+            .pandit-menu a {
+                font-size: 13px;
+            }
+            .btn-whatsapp-header {
+                padding: 8px 14px;
+                font-size: 12.5px;
+            }
+        }
+
+        /* Mobile Hamburger & Responsive Navigation Drawer */
         .mobile-toggle {
             display: none;
-            background: #fdfaf6;
-            border: 1px solid var(--pandit-gold);
-            border-radius: 6px;
-            width: 44px;
-            height: 44px;
-            font-size: 24px;
+            background: #ffffff;
+            border: 1px solid var(--pandit-card-border);
+            border-radius: 8px;
+            width: 42px;
+            height: 42px;
+            font-size: 22px;
             color: var(--pandit-dark);
             cursor: pointer;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+            padding: 0;
         }
 
         .pandit-menu-backdrop {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(30, 24, 18, 0.5);
+            background: rgba(30, 24, 18, 0.55);
             backdrop-filter: blur(4px);
-            z-index: 998;
+            z-index: 9998;
         }
 
-        @media (max-width: 860px) {
+        @media (max-width: 1100px) {
             .mobile-toggle {
                 display: inline-flex;
             }
@@ -162,7 +240,7 @@
             .pandit-menu {
                 display: none;
                 position: fixed;
-                top: 74px;
+                top: 68px;
                 left: 0;
                 right: 0;
                 bottom: 0;
@@ -174,7 +252,7 @@
                 gap: 0;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
-                z-index: 999;
+                z-index: 9999;
                 box-shadow: 0 16px 36px rgba(41, 36, 31, 0.15);
             }
 
@@ -189,20 +267,24 @@
             .pandit-menu li {
                 border-bottom: 1px solid #f2e8dc;
                 padding: 12px 0;
+                display: block;
             }
 
             .pandit-menu a {
-                font-size: 16px;
+                font-size: 15px;
                 font-weight: 600;
                 display: block;
                 padding: 4px 0;
+                white-space: normal;
             }
 
             .pandit-menu .btn-whatsapp-header {
                 justify-content: center;
-                margin-top: 12px;
+                margin-top: 14px;
                 width: 100%;
                 box-sizing: border-box;
+                padding: 12px 18px;
+                font-size: 14px;
             }
 
             .pandit-hero-grid {
@@ -218,6 +300,18 @@
         }
 
         @media (max-width: 600px) {
+            .pandit-brand-title {
+                font-size: 16px;
+            }
+            .pandit-brand-subtitle {
+                font-size: 9.5px;
+            }
+            .pandit-brand-photo,
+            .pandit-brand-om {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
             .pandit-form-grid {
                 grid-template-columns: 1fr !important;
                 gap: 12px !important;
@@ -256,10 +350,14 @@
     <header class="pandit-header">
         <div class="pandit-nav-container">
             <a href="#hero" class="pandit-brand">
-                <div class="pandit-brand-om">ॐ</div>
-                <div>
+                @if($pandit->photo_path)
+                    <img src="{{ asset('storage/' . $pandit->photo_path) }}" alt="{{ $domain->hero_title ?? $pandit->display_name }}" class="pandit-brand-photo">
+                @else
+                    <div class="pandit-brand-om">ॐ</div>
+                @endif
+                <div class="pandit-brand-text">
                     <div class="pandit-brand-title">{{ $domain->hero_title ?? $pandit->display_name }}</div>
-                    <div class="pandit-brand-subtitle">Vedic Pandit & Astrologer</div>
+                    <div class="pandit-brand-subtitle">Vedic Pandit &amp; Astrologer</div>
                 </div>
             </a>
 

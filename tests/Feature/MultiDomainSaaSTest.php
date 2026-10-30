@@ -362,4 +362,22 @@ class MultiDomainSaaSTest extends TestCase
         $bhudevDashboard->assertSee('WEBSITE TEMPORARILY SUSPENDED');
         $bhudevDashboard->assertSee($suspensionReason);
     }
+
+    public function test_preview_domain_parameter_renders_pandit_site_with_clean_header(): void
+    {
+        $domain = BhudevDomain::create([
+            'bhudev_profile_id' => $this->bhudevProfile->id,
+            'domain_name'       => 'parasrajyaguru.in',
+            'status'            => 'active',
+            'hero_title'        => 'Paras Rajyaguru',
+            'theme_color'       => 'saffron',
+        ]);
+
+        $response = $this->get('/?preview_domain=parasrajyaguru.in');
+        $response->assertOk();
+        $response->assertSee('Paras Rajyaguru');
+        $response->assertSee('Vedic Pandit &amp; Astrologer', false);
+        $response->assertSee('--pandit-primary: #ea580c', false);
+        $response->assertSee('pandit-nav-container', false);
+    }
 }
