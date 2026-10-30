@@ -43,6 +43,13 @@
                         <span class="badge-counter" style="background:#2e6930;color:#fff">LIVE</span>
                     @endif
                 </a>
+                <a href="{{ route('bhudev.instagram') }}" class="sidebar-link {{ request()->routeIs('bhudev.instagram*') ? 'active' : '' }}">
+                    <span class="nav-icon">📸</span>
+                    <span>Instagram & Reels</span>
+                    @if(auth()->user()->bhudevProfile && auth()->user()->bhudevProfile->instagramSetting && auth()->user()->bhudevProfile->instagramSetting->is_enabled)
+                        <span class="badge-counter" style="background:#be185d;color:#fff">ON</span>
+                    @endif
+                </a>
                 <a href="{{ route('bhudev.samagri-studio') }}" class="sidebar-link {{ request()->routeIs('bhudev.samagri-studio*') ? 'active' : '' }}">
                     <span class="nav-icon">📜</span>
                     <span>{{ __('messages.nav.samagri_studio') }}</span>

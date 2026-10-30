@@ -418,4 +418,75 @@ class InstagramIntegrationTest extends TestCase
             'phone'             => '9876543210',
         ]);
     }
+
+    /**
+     * Test 10: Bhudev self-service Instagram portal.
+     */
+    public function test_bhudev_can_access_own_instagram_management_panel(): void
+    {
+        $response = $this->actingAs($this->bhudevUser)
+            ->get(route('bhudev.instagram'));
+
+        $response->assertOk();
+        $response->assertSee('Instagram &amp; Reels Integration', false);
+        $response->assertSee(InstagramIntegrationService::NOTICE_TEXT);
+    }
+
+    /**
+     * Test 11: Bhudev can add and delete own Instagram URL.
+     */
+    public function test_bhudev_can_add_and_delete_own_instagram_url(): void
+    {
+        // Add URL
+        $response = $this->actingAs($this->bhudevUser)
+            ->post(route('bhudev.instagram.urls.store'), [
+                'url'     => 'https://www.instagram.com/reel/C7xYzA_vX12/',
+                'caption' => 'Rudra Abhishek Live',
+            ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('status');
+
+        $post = BhudevInstagramPost::where('bhudev_profile_id', $this->bhudevProfile->id)->first();
+        $this->assertNotNull($post);
+        $this->assertSame('C7xYzA_vX12', $post->shortcode);
+        $this->assertSame('reel', $post->media_type);
+
+        // Delete URL
+        $deleteResponse = $this->actingAs($this->bhudevUser)
+            ->delete(route('bhudev.instagram.urls.destroy', $post));
+
+        $deleteResponse->assertRedirect();
+        $this->assertDatabaseMissing('bhudev_instagram_posts', ['id' => $post->id]);
+    }
+
+    /**
+     * Test 12: Bhudev cannot delete another Bhudev's Instagram post.
+     */
+    public function test_bhudev_cannot_delete_another_bhudevs_instagram_post(): void
+    {
+        $otherUser = User::factory()->create([
+            'role'              => 'bhudev',
+            'is_active'         => true,
+            'email_verified_at' => now(),
+        ]);
+        $otherProfile = BhudevProfile::create([
+            'user_id'      => $otherUser->id,
+            'display_name' => 'Other Pandit',
+            'slug'         => 'other-pandit',
+            'status'       => 'approved',
+        ]);
+        $foreignPost = BhudevInstagramPost::create([
+            'bhudev_profile_id' => $otherProfile->id,
+            'url'               => 'https://www.instagram.com/reel/Cz998877/',
+            'shortcode'         => 'Cz998877',
+            'media_type'        => 'reel',
+        ]);
+
+        $this->actingAs($this->bhudevUser)
+            ->delete(route('bhudev.instagram.urls.destroy', $foreignPost))
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('bhudev_instagram_posts', ['id' => $foreignPost->id]);
+    }
 }

@@ -242,7 +242,7 @@
 @endif
 
 {{-- VALUE PROP CARD & REQUEST FORM --}}
-<div style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:28px">
+<div class="bhudev-two-col" style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:28px">
     {{-- Form Column --}}
     <div style="background:#fff;border:1px solid #ede4d5;border-radius:12px;padding:30px;box-shadow:0 4px 18px rgba(41,36,31,0.04)">
         <h2 style="font-family:'Playfair Display',serif;font-size:20px;color:#29241f;margin:0 0 8px">

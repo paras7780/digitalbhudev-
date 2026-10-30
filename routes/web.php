@@ -116,6 +116,13 @@ Route::prefix('bhudev')->name('bhudev.')->middleware(['auth','verified','role:bh
  Route::get('/website',[BhudevDashboardController::class,'websiteSettings'])->name('website');
  Route::post('/website/request',[BhudevDashboardController::class,'submitDomainRequest'])->name('website.request');
  Route::post('/website/content',[BhudevDashboardController::class,'updateWebsiteContent'])->name('website.content');
+ Route::get('/instagram',[BhudevDashboardController::class,'instagram'])->name('instagram');
+ Route::post('/instagram/toggle',[BhudevDashboardController::class,'toggleInstagram'])->name('instagram.toggle');
+ Route::post('/instagram/urls',[BhudevDashboardController::class,'storeInstagramUrl'])->name('instagram.urls.store');
+ Route::delete('/instagram/urls/{post}',[BhudevDashboardController::class,'destroyInstagramUrl'])->name('instagram.urls.destroy');
+ Route::post('/instagram/connect-api',[BhudevDashboardController::class,'connectInstagramApi'])->name('instagram.connect-api');
+ Route::post('/instagram/disconnect',[BhudevDashboardController::class,'disconnectInstagram'])->name('instagram.disconnect');
+ Route::post('/instagram/request-website',[BhudevDashboardController::class,'requestInstagramWebsite'])->name('instagram.request-website');
  Route::get('/profile/edit',[BhudevDashboardController::class,'edit'])->name('profile.edit');
  Route::put('/profile',[BhudevDashboardController::class,'update'])->name('profile.update');
  Route::get('/gallery',[BhudevDashboardController::class,'gallery'])->name('gallery');

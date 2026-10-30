@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\BhudevDomain;
 use App\Models\BhudevImage;
+use App\Models\BhudevInstagramPost;
+use App\Models\BhudevInstagramSetting;
 use App\Models\BhudevProfile;
 use App\Models\BhudevSamagriCard;
 use App\Models\BhudevStatusHistory;
+use App\Models\Inquiry;
 use App\Models\ProfileRevision;
 use App\Models\Service;
+use App\Services\InstagramIntegrationService;
 use App\Support\Audit;
 use App\Support\ImageOptimizer;
 use Illuminate\Http\Request;
@@ -18,6 +22,13 @@ use Illuminate\Support\Str;
 
 class BhudevDashboardController extends Controller
 {
+    protected InstagramIntegrationService $instagramService;
+
+    public function __construct(InstagramIntegrationService $instagramService)
+    {
+        $this->instagramService = $instagramService;
+    }
+
     private function guard(Request $request): BhudevProfile
     {
         abort_unless($request->user()?->isBhudev(), 403, 'Unauthorized. Bhudev account required.');
@@ -488,5 +499,202 @@ class BhudevDashboardController extends Controller
 
         return redirect()->route('bhudev.samagri-studio')
             ->with('status', __('messages.samagri_studio.card_deleted_success'));
+    }
+
+    /**
+     * Bhudev Portal: Instagram & Reels Management View
+     */
+    public function instagram(Request $request)
+    {
+        $profile = $this->guard($request);
+        $profile->load(['domains', 'activeDomain', 'instagramSetting', 'instagramPosts']);
+
+        $eligibility = $this->instagramService->getDomainEligibilityDetails($profile);
+
+        $settings = $profile->instagramSetting ?? new BhudevInstagramSetting([
+            'bhudev_profile_id' => $profile->id,
+            'is_enabled'        => false,
+            'connection_status' => 'disconnected',
+        ]);
+
+        $posts = $profile->instagramPosts()->orderBy('sort_order')->orderByDesc('id')->get();
+
+        return view('bhudev.instagram', compact('profile', 'eligibility', 'settings', 'posts'));
+    }
+
+    /**
+     * Toggle Instagram display on active website
+     */
+    public function toggleInstagram(Request $request)
+    {
+        $profile = $this->guard($request);
+
+        $request->validate([
+            'is_enabled' => 'required|boolean',
+        ]);
+
+        $enable = $request->boolean('is_enabled');
+        $result = $this->instagramService->toggleIntegration($profile, $enable);
+
+        if (!$result['success']) {
+            return back()
+                ->withErrors(['toggle' => $result['error']])
+                ->with('error', $result['error']);
+        }
+
+        Audit::record($request, 'bhudev.instagram.toggled', $profile, [
+            'is_enabled' => $enable,
+        ]);
+
+        return back()->with('status', $result['message']);
+    }
+
+    /**
+     * Store and validate an Instagram Post or Reel URL
+     */
+    public function storeInstagramUrl(Request $request)
+    {
+        $profile = $this->guard($request);
+
+        $validated = $request->validate([
+            'url'     => 'required|string|max:1000',
+            'caption' => 'nullable|string|max:1000',
+        ]);
+
+        $result = $this->instagramService->addPostUrl($profile, $validated['url'], $validated['caption'] ?? null);
+
+        if (!$result['valid']) {
+            return back()
+                ->withErrors(['url' => $result['error']])
+                ->withInput();
+        }
+
+        Audit::record($request, 'bhudev.instagram.url_added', $profile, [
+            'url'        => $result['post']->url,
+            'shortcode'  => $result['post']->shortcode,
+            'media_type' => $result['post']->media_type,
+        ]);
+
+        return back()->with('status', $result['message']);
+    }
+
+    /**
+     * Delete an Instagram post/reel
+     */
+    public function destroyInstagramUrl(Request $request, BhudevInstagramPost $post)
+    {
+        $profile = $this->guard($request);
+
+        abort_unless((int) $post->bhudev_profile_id === (int) $profile->id, 403, 'Post does not belong to your account.');
+
+        $deletedUrl = $post->url;
+        $this->instagramService->removePost($profile, $post->id);
+
+        Audit::record($request, 'bhudev.instagram.url_deleted', $profile, [
+            'url' => $deletedUrl,
+        ]);
+
+        return back()->with('status', 'Instagram post removed successfully.');
+    }
+
+    /**
+     * Connect official Meta Instagram API access token
+     */
+    public function connectInstagramApi(Request $request)
+    {
+        $profile = $this->guard($request);
+
+        $validated = $request->validate([
+            'access_token' => 'required|string|max:2000',
+            'app_id'       => 'nullable|string|max:100',
+            'app_secret'   => 'nullable|string|max:100',
+        ]);
+
+        $result = $this->instagramService->saveApiConnection(
+            $profile,
+            $validated['access_token'],
+            $validated['app_id'] ?? null,
+            $validated['app_secret'] ?? null
+        );
+
+        if (!$result['success']) {
+            return back()
+                ->withErrors(['access_token' => $result['error']])
+                ->with('error', 'Meta API validation failed: ' . $result['error']);
+        }
+
+        Audit::record($request, 'bhudev.instagram.api_connected', $profile, [
+            'account_username' => $result['settings']->account_username,
+        ]);
+
+        return back()->with('status', $result['message']);
+    }
+
+    /**
+     * Disconnect official Meta Instagram API
+     */
+    public function disconnectInstagram(Request $request)
+    {
+        $profile = $this->guard($request);
+
+        $this->instagramService->disconnect($profile);
+
+        Audit::record($request, 'bhudev.instagram.api_disconnected', $profile);
+
+        return back()->with('status', 'Instagram account disconnected successfully.');
+    }
+
+    /**
+     * Submit website request from Bhudev Instagram page if without website
+     */
+    public function requestInstagramWebsite(Request $request)
+    {
+        $profile = $this->guard($request);
+
+        $validated = $request->validate([
+            'requested_domain' => 'nullable|string|max:191',
+            'whatsapp_number'  => 'nullable|string|max:25',
+            'notes'            => 'nullable|string|max:2000',
+        ]);
+
+        $rawDomain = trim($validated['requested_domain'] ?? '');
+        if (empty($rawDomain)) {
+            $rawDomain = Str::slug($profile->display_name) . '.digitalbhudev.in';
+        }
+
+        $cleanDomain = strtolower($rawDomain);
+        $cleanDomain = preg_replace('#^https?://#i', '', $cleanDomain);
+        $cleanDomain = preg_replace('#^www\.#i', '', $cleanDomain);
+        $cleanDomain = rtrim($cleanDomain, '/');
+
+        $phone = $validated['whatsapp_number'] ?? $request->user()->phone ?? '919876543210';
+
+        $domain = BhudevDomain::firstOrNew([
+            'bhudev_profile_id' => $profile->id,
+            'status'            => 'inquiry_submitted',
+        ]);
+
+        $domain->domain_name     = $cleanDomain;
+        $domain->whatsapp_number = $phone;
+        $domain->bhudev_notes    = 'Website request initiated via Bhudev Portal Instagram page. ' . ($validated['notes'] ?? '');
+        $domain->save();
+
+        Inquiry::create([
+            'name'              => $profile->display_name,
+            'email'             => $request->user()->email,
+            'phone'             => $phone,
+            'subject'           => 'Website/Domain Request for Instagram Integration: ' . $cleanDomain,
+            'type'              => 'domain_request',
+            'city'              => $profile->city,
+            'bhudev_profile_id' => $profile->id,
+            'message'           => 'Bhudev website requested to enable Instagram Reels and Posts display. Domain: ' . $cleanDomain . '. Notes: ' . ($validated['notes'] ?? 'None'),
+            'status'            => 'new',
+        ]);
+
+        Audit::record($request, 'bhudev.instagram.website_requested', $profile, [
+            'domain_name' => $cleanDomain,
+        ]);
+
+        return back()->with('status', "Website inquiry submitted successfully ({$cleanDomain}). Our team will activate your website shortly so your Instagram content can be displayed.");
     }
 }

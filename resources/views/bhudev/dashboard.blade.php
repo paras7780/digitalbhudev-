@@ -129,10 +129,22 @@
         <span class="stat-value">{{ $profile->images->count() }}</span>
         <span class="stat-desc">Uploaded to your gallery</span>
     </div>
+
+    <a href="{{ route('bhudev.instagram') }}" class="admin-stat-card {{ ($profile->instagramSetting && $profile->instagramSetting->is_enabled) ? 'stat-approved' : 'stat-total' }}" style="text-decoration:none;color:inherit">
+        <span class="stat-label">Instagram & Reels</span>
+        <span class="stat-value">{{ $profile->instagramPosts()->count() }}</span>
+        <span class="stat-desc">
+            @if($profile->instagramSetting && $profile->instagramSetting->is_enabled)
+                ✓ Active on Website
+            @else
+                Manage Reels &rarr;
+            @endif
+        </span>
+    </a>
 </div>
 
 {{-- Two-Column Layout --}}
-<div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:24px;margin-bottom:28px">
+<div class="bhudev-two-col" style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:24px;margin-bottom:28px">
     {{-- Profile Snapshot --}}
     <div class="admin-card">
         <div class="admin-card-header">
@@ -221,6 +233,30 @@
                 <h3>Quick Management</h3>
             </div>
             <div class="admin-card-body" style="display:flex;flex-direction:column;gap:10px">
+                <a href="{{ route('bhudev.instagram') }}" class="sidebar-link" style="color:var(--admin-ink);background:#fdf2f8;border:1px solid #fbcfe8">
+                    <span class="nav-icon" style="color:#be185d">📸</span>
+                    <div>
+                        <strong style="display:block;font-size:13px">Instagram & Reels Integration</strong>
+                        <small style="color:var(--admin-muted)">Add video reels and ceremony posts</small>
+                    </div>
+                </a>
+
+                <a href="{{ route('bhudev.website') }}" class="sidebar-link" style="color:var(--admin-ink);background:#f0faf2;border:1px solid #bce1c5">
+                    <span class="nav-icon" style="color:#2e6930">🌐</span>
+                    <div>
+                        <strong style="display:block;font-size:13px">My Personal Website</strong>
+                        <small style="color:var(--admin-muted)">Custom domain, bio, and dakshina QR</small>
+                    </div>
+                </a>
+
+                <a href="{{ route('bhudev.samagri-studio') }}" class="sidebar-link" style="color:var(--admin-ink);background:#fff1f2;border:1px solid #fecdd3">
+                    <span class="nav-icon" style="color:#be123c">📜</span>
+                    <div>
+                        <strong style="display:block;font-size:13px">Samagri Studio</strong>
+                        <small style="color:var(--admin-muted)">Generate WhatsApp Pooja Patrika Cards</small>
+                    </div>
+                </a>
+
                 <a href="{{ route('bhudev.profile.edit') }}" class="sidebar-link" style="color:var(--admin-ink);background:#fbf7ef;border:1px solid var(--admin-border)">
                     <span class="nav-icon" style="color:var(--admin-saffron)">✎</span>
                     <div>
