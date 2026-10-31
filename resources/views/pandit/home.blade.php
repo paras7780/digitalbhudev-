@@ -274,36 +274,51 @@
                             @endif
                         </div>
 
-                        {{-- Native HTML5 Video Player with Autoplay & Sound Toggle --}}
-                        <div class="bhudev-video-container" style="background:#0a0806;min-height:440px;max-height:560px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
-                            <video 
-                                class="bhudev-reel-video" 
-                                src="{{ $post->getVideoUrl() }}" 
-                                {{ $siteAutoplayDefault && $post->is_autoplay ? 'autoplay' : '' }}
-                                muted 
-                                loop 
-                                playsinline 
-                                webkit-playsinline
-                                controls 
-                                controlsList="nodownload"
-                                preload="auto"
-                                data-autoplay="{{ $siteAutoplayDefault && $post->is_autoplay ? '1' : '0' }}"
-                                onclick="if(this.paused){this.play();}else{this.pause();}"
-                                style="width:100%;height:100%;max-height:560px;object-fit:contain;background:#000;display:block;cursor:pointer"
-                            ></video>
+                        @if($post->isVideoUpload())
+                            {{-- Native HTML5 Video Player with Autoplay & Sound Toggle --}}
+                            <div class="bhudev-video-container" style="background:#0a0806;min-height:440px;max-height:560px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+                                <video 
+                                    class="bhudev-reel-video" 
+                                    src="{{ $post->getVideoUrl() }}" 
+                                    {{ $siteAutoplayDefault && $post->is_autoplay ? 'autoplay' : '' }}
+                                    muted 
+                                    loop 
+                                    playsinline 
+                                    webkit-playsinline
+                                    controls 
+                                    controlsList="nodownload"
+                                    preload="auto"
+                                    data-autoplay="{{ $siteAutoplayDefault && $post->is_autoplay ? '1' : '0' }}"
+                                    onclick="if(this.paused){this.play();}else{this.pause();}"
+                                    style="width:100%;height:100%;max-height:560px;object-fit:contain;background:#000;display:block;cursor:pointer"
+                                ></video>
 
-                            {{-- Floating Unmute / Sound Toggle Overlay Button --}}
-                            <button type="button" class="reel-sound-toggle-btn" onclick="toggleReelAudio(this)" style="position:absolute;bottom:14px;right:14px;background:rgba(20,16,14,0.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.35);transition:transform 0.15s, background 0.15s">
-                                <span class="sound-icon">🔇</span>
-                                <span class="sound-label">Tap for Sound</span>
-                            </button>
+                                {{-- Floating Unmute / Sound Toggle Overlay Button --}}
+                                <button type="button" class="reel-sound-toggle-btn" onclick="toggleReelAudio(this)" style="position:absolute;bottom:14px;right:14px;background:rgba(20,16,14,0.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.35);transition:transform 0.15s, background 0.15s">
+                                    <span class="sound-icon">🔇</span>
+                                    <span class="sound-label">Tap for Sound</span>
+                                </button>
 
-                            {{-- Autoplay Indicator Badge --}}
-                            <div class="reel-autoplay-badge" style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#34d399;border:1px solid rgba(52,211,153,0.35);border-radius:6px;padding:4px 9px;font-size:10.5px;font-weight:700;display:flex;align-items:center;gap:5px;z-index:10;letter-spacing:0.5px;text-transform:uppercase">
-                                <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399"></span>
-                                <span>Auto-Playing</span>
+                                {{-- Autoplay Indicator Badge --}}
+                                <div class="reel-autoplay-badge" style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#34d399;border:1px solid rgba(52,211,153,0.35);border-radius:6px;padding:4px 9px;font-size:10.5px;font-weight:700;display:flex;align-items:center;gap:5px;z-index:10;letter-spacing:0.5px;text-transform:uppercase">
+                                    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399"></span>
+                                    <span>Auto-Playing</span>
+                                </div>
                             </div>
-                        </div>
+                        @else
+                            {{-- Embedded Official Instagram Reel Card/Frame --}}
+                            <div style="background:#faf7f2;min-height:380px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+                                <iframe 
+                                    src="{{ $post->getEmbedUrl() }}" 
+                                    style="width:100%;min-height:440px;border:none;overflow:hidden" 
+                                    scrolling="no" 
+                                    frameborder="0" 
+                                    allowtransparency="true" 
+                                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                                    title="Instagram {{ $post->media_type }}">
+                                </iframe>
+                            </div>
+                        @endif
 
                         {{-- Caption & Action Footer --}}
                         <div style="padding:16px 18px;display:flex;flex-direction:column;gap:12px;flex:1;justify-content:space-between;background:#fff">

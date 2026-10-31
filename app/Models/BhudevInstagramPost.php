@@ -44,12 +44,9 @@ class BhudevInstagramPost extends Model
         return !empty($this->video_path);
     }
 
-    public function getVideoUrl(): string
+    public function getVideoUrl(): ?string
     {
-        if ($this->video_path) {
-            return asset('storage/' . $this->video_path);
-        }
-        return asset('storage/reels/reel_ceremony_demo.mp4');
+        return $this->video_path ? asset('storage/' . $this->video_path) : null;
     }
 
     public function getEmbedUrl(): string
