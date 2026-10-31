@@ -241,34 +241,58 @@
 
         @media (max-width: 1100px) {
             .mobile-toggle {
-                display: inline-flex;
+                display: inline-flex !important;
+                background: #ffffff !important;
+                border: 1.5px solid var(--pandit-card-border, #f3e5ee) !important;
+                border-radius: 8px !important;
+                width: 42px !important;
+                height: 42px !important;
+                font-size: 22px !important;
+                color: var(--pandit-dark, #4a1633) !important;
+                cursor: pointer !important;
+                align-items: center !important;
+                justify-content: center !important;
+                flex-shrink: 0 !important;
+                padding: 0 !important;
+                line-height: 1 !important;
+                z-index: 1001 !important;
             }
 
             .pandit-menu {
-                display: none;
-                position: fixed;
-                top: 68px;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: #ffffff;
-                border-top: 1px solid var(--pandit-gold);
-                padding: 20px 24px 40px;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 0;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                z-index: 9999;
-                box-shadow: 0 16px 36px rgba(41, 36, 31, 0.15);
+                display: none !important;
+                position: fixed !important;
+                top: 66px !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background: #ffffff !important;
+                border-top: 2px solid var(--pandit-gold, #f472b6) !important;
+                padding: 16px 20px 40px !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 0 !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                z-index: 9999 !important;
+                box-shadow: 0 16px 36px rgba(41, 36, 31, 0.25) !important;
             }
 
             .pandit-menu.open {
-                display: flex;
+                display: flex !important;
+            }
+
+            .pandit-menu-backdrop {
+                display: none;
+                position: fixed !important;
+                inset: 0 !important;
+                background: rgba(30, 24, 18, 0.55) !important;
+                backdrop-filter: blur(4px) !important;
+                -webkit-backdrop-filter: blur(4px) !important;
+                z-index: 9998 !important;
             }
 
             .pandit-menu-backdrop.open {
-                display: block;
+                display: block !important;
             }
 
             .pandit-menu li {
@@ -452,27 +476,33 @@
             var toggle = document.getElementById('panditMobileToggle');
             var menu = document.getElementById('panditMenu');
             var backdrop = document.getElementById('panditBackdrop');
+
+            function setMenu(open) {
+                if (menu) menu.classList.toggle('open', open);
+                if (backdrop) backdrop.classList.toggle('open', open);
+                if (toggle) toggle.textContent = open ? '✕' : '☰';
+                document.body.classList.toggle('pandit-nav-open', open);
+            }
+
             if (toggle && menu) {
-                toggle.addEventListener('click', function() {
+                toggle.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     var open = !menu.classList.contains('open');
-                    menu.classList.toggle('open', open);
-                    if (backdrop) backdrop.classList.toggle('open', open);
-                    toggle.textContent = open ? '✕' : '☰';
-                });
+                    setMenu(open);
+                };
             }
             if (backdrop) {
-                backdrop.addEventListener('click', function() {
-                    if (menu) menu.classList.remove('open');
-                    backdrop.classList.remove('open');
-                    if (toggle) toggle.textContent = '☰';
-                });
+                backdrop.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setMenu(false);
+                };
             }
             if (menu) {
                 menu.querySelectorAll('a').forEach(function(a) {
                     a.addEventListener('click', function() {
-                        menu.classList.remove('open');
-                        if (backdrop) backdrop.classList.remove('open');
-                        if (toggle) toggle.textContent = '☰';
+                        setMenu(false);
                     });
                 });
             }

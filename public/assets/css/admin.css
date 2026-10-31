@@ -1046,6 +1046,8 @@ body.admin-body {
     min-width: 0 !important;
   }
   /* Crucial: Hide the wide desktop language pill & live link from the topbar on mobile so the menu button is NEVER squished */
+  .topbar-desktop-lang,
+  .topbar-right .topbar-desktop-lang,
   .topbar-right .lang-switcher-wrap,
   .topbar-right .lang-switcher,
   .topbar-right .topbar-link {

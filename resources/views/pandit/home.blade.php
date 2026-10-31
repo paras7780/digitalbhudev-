@@ -274,50 +274,36 @@
                             @endif
                         </div>
 
-                        {{-- Embedded Player Area --}}
-                        @if($post->isVideoUpload())
-                            {{-- Native HTML5 Video Player with Autoplay & Sound Toggle --}}
-                            <div class="bhudev-video-container" style="background:#0a0806;min-height:440px;max-height:560px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
-                                <video 
-                                    class="bhudev-reel-video" 
-                                    src="{{ $post->getVideoUrl() }}" 
-                                    {{ $siteAutoplayDefault && $post->is_autoplay ? 'autoplay' : '' }}
-                                    muted 
-                                    loop 
-                                    playsinline 
-                                    controls 
-                                    controlsList="nodownload"
-                                    preload="metadata"
-                                    data-autoplay="{{ $siteAutoplayDefault && $post->is_autoplay ? '1' : '0' }}"
-                                    style="width:100%;height:100%;max-height:560px;object-fit:contain;background:#000;display:block"
-                                ></video>
+                        {{-- Native HTML5 Video Player with Autoplay & Sound Toggle --}}
+                        <div class="bhudev-video-container" style="background:#0a0806;min-height:440px;max-height:560px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+                            <video 
+                                class="bhudev-reel-video" 
+                                src="{{ $post->getVideoUrl() }}" 
+                                {{ $siteAutoplayDefault && $post->is_autoplay ? 'autoplay' : '' }}
+                                muted 
+                                loop 
+                                playsinline 
+                                webkit-playsinline
+                                controls 
+                                controlsList="nodownload"
+                                preload="auto"
+                                data-autoplay="{{ $siteAutoplayDefault && $post->is_autoplay ? '1' : '0' }}"
+                                onclick="if(this.paused){this.play();}else{this.pause();}"
+                                style="width:100%;height:100%;max-height:560px;object-fit:contain;background:#000;display:block;cursor:pointer"
+                            ></video>
 
-                                {{-- Floating Unmute / Sound Toggle Overlay Button --}}
-                                <button type="button" class="reel-sound-toggle-btn" onclick="toggleReelAudio(this)" style="position:absolute;bottom:14px;right:14px;background:rgba(20,16,14,0.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.35);transition:transform 0.15s, background 0.15s">
-                                    <span class="sound-icon">🔇</span>
-                                    <span class="sound-label">Tap for Sound</span>
-                                </button>
+                            {{-- Floating Unmute / Sound Toggle Overlay Button --}}
+                            <button type="button" class="reel-sound-toggle-btn" onclick="toggleReelAudio(this)" style="position:absolute;bottom:14px;right:14px;background:rgba(20,16,14,0.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.35);transition:transform 0.15s, background 0.15s">
+                                <span class="sound-icon">🔇</span>
+                                <span class="sound-label">Tap for Sound</span>
+                            </button>
 
-                                {{-- Autoplay Indicator Badge --}}
-                                <div class="reel-autoplay-badge" style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#34d399;border:1px solid rgba(52,211,153,0.35);border-radius:6px;padding:4px 9px;font-size:10.5px;font-weight:700;display:flex;align-items:center;gap:5px;z-index:10;letter-spacing:0.5px;text-transform:uppercase">
-                                    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399"></span>
-                                    <span>Auto-Playing</span>
-                                </div>
+                            {{-- Autoplay Indicator Badge --}}
+                            <div class="reel-autoplay-badge" style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#34d399;border:1px solid rgba(52,211,153,0.35);border-radius:6px;padding:4px 9px;font-size:10.5px;font-weight:700;display:flex;align-items:center;gap:5px;z-index:10;letter-spacing:0.5px;text-transform:uppercase">
+                                <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399"></span>
+                                <span>Auto-Playing</span>
                             </div>
-                        @else
-                            {{-- Embedded Instagram Card/Frame --}}
-                            <div style="background:#faf7f2;min-height:380px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
-                                <iframe 
-                                    src="{{ $post->getEmbedUrl() }}" 
-                                    style="width:100%;min-height:440px;border:none;overflow:hidden" 
-                                    scrolling="no" 
-                                    frameborder="0" 
-                                    allowtransparency="true" 
-                                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                                    title="Instagram {{ $post->media_type }}">
-                                </iframe>
-                            </div>
-                        @endif
+                        </div>
 
                         {{-- Caption & Action Footer --}}
                         <div style="padding:16px 18px;display:flex;flex-direction:column;gap:12px;flex:1;justify-content:space-between;background:#fff">
@@ -446,6 +432,28 @@
             };
 
             // IntersectionObserver for smart smooth Auto-Play on scroll
+            function attemptPlay(video) {
+                if (!siteAutoplayActive) return;
+                video.muted = true;
+                var playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(function(err) {
+                        // User gesture needed on mobile browsers: start playing on first interaction
+                        var onFirstInteract = function() {
+                            if (siteAutoplayActive) {
+                                video.play().catch(function() {});
+                            }
+                            window.removeEventListener('touchstart', onFirstInteract);
+                            window.removeEventListener('click', onFirstInteract);
+                            window.removeEventListener('scroll', onFirstInteract);
+                        };
+                        window.addEventListener('touchstart', onFirstInteract, { once: true, passive: true });
+                        window.addEventListener('click', onFirstInteract, { once: true, passive: true });
+                        window.addEventListener('scroll', onFirstInteract, { once: true, passive: true });
+                    });
+                }
+            }
+
             function initVideoObserver() {
                 var videos = document.querySelectorAll('.bhudev-reel-video');
                 if (!videos.length) return;
@@ -455,19 +463,12 @@
                         entries.forEach(function(entry) {
                             var video = entry.target;
                             if (entry.isIntersecting && siteAutoplayActive) {
-                                var playPromise = video.play();
-                                if (playPromise !== undefined) {
-                                    playPromise.catch(function(err) {
-                                        // Autoplay policy prevented playback, video muted handles this
-                                        video.muted = true;
-                                        video.play().catch(function() {});
-                                    });
-                                }
+                                attemptPlay(video);
                             } else {
                                 video.pause();
                             }
                         });
-                    }, { threshold: 0.4 });
+                    }, { threshold: 0.25 });
 
                     videos.forEach(function(video) {
                         observer.observe(video);
@@ -479,18 +480,21 @@
                 var videos = document.querySelectorAll('.bhudev-reel-video');
                 videos.forEach(function(video) {
                     var rect = video.getBoundingClientRect();
-                    var inView = (rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)) ||
-                                 (rect.top < window.innerHeight && rect.bottom >= 0);
+                    var inView = (rect.top < window.innerHeight && rect.bottom >= 0);
                     if (inView && siteAutoplayActive) {
-                        video.play().catch(function() {});
+                        attemptPlay(video);
                     }
                 });
             }
 
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initVideoObserver);
+                document.addEventListener('DOMContentLoaded', function() {
+                    initVideoObserver();
+                    checkVideosInView();
+                });
             } else {
                 initVideoObserver();
+                checkVideosInView();
             }
         })();
     </script>
