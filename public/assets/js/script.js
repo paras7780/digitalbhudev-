@@ -32,6 +32,23 @@
     });
   });
 
+  // Close when tapping close button inside drawer
+  document.querySelectorAll(".mobile-nav-close").forEach(function (closeBtn) {
+    closeBtn.addEventListener("click", function () {
+      var menu = document.querySelector(".main-nav");
+      var button = document.querySelector(".menu-toggle");
+      var backdrop = document.querySelector(".nav-backdrop");
+      if (menu) menu.classList.remove("open");
+      if (button) {
+        button.classList.remove("active");
+        button.setAttribute("aria-expanded", "false");
+        button.setAttribute("aria-label", "Open navigation");
+      }
+      if (backdrop) backdrop.classList.remove("open");
+      document.body.classList.remove("nav-open");
+    });
+  });
+
   document.querySelectorAll(".main-nav a:not(.dropdown-toggle)").forEach(function (link) {
     link.addEventListener("click", function () {
       var menu = document.querySelector(".main-nav");

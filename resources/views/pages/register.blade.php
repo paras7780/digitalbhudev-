@@ -64,7 +64,7 @@
                         <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="email" required placeholder="you@example.com" style="width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:var(--radius-sm);font-size:14px">
                     </div>
 
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+                    <div class="form-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
                         <div class="form-row" style="margin:0">
                             <label for="password" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--heading)">
                                 Password <span style="color:var(--primary)">*</span>

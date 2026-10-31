@@ -106,6 +106,7 @@ class ExhaustiveUrlCrawlerTest extends TestCase
             '/admin/bhudevs/' . $this->bhudevProfile->id,
             '/admin/bhudevs/' . $this->bhudevProfile->id . '/edit',
             '/admin/domains',
+            '/admin/instagram',
             '/admin/inquiries',
             '/admin/panchang',
             '/admin/rashifal',
@@ -127,6 +128,7 @@ class ExhaustiveUrlCrawlerTest extends TestCase
         $bhudevPages = [
             '/bhudev',
             '/bhudev/website',
+            '/bhudev/instagram',
             '/bhudev/profile/edit',
             '/bhudev/gallery',
             '/bhudev/password',

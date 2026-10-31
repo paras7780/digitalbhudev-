@@ -21,10 +21,18 @@ class ResponsiveLayoutTest extends TestCase
         $response->assertSee('class="menu-toggle"', false);
         $response->assertSee('class="nav-backdrop"', false);
 
+        // Mobile drawer header with brand & close button
+        $response->assertSee('class="mobile-nav-header"', false);
+        $response->assertSee('class="mobile-nav-close"', false);
+
         // Mobile drawer footer with auth & language
         $response->assertSee('class="mobile-nav-footer"', false);
         $response->assertSee('class="mobile-auth-buttons"', false);
         $response->assertSee('class="mobile-lang-row"', false);
+
+        // Responsive grid sections on home page
+        $response->assertSee('home-booking-card', false);
+        $response->assertSee('cta-saas-card', false);
     }
 
     public function test_admin_layout_contains_mobile_responsive_navigation(): void

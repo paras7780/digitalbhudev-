@@ -52,7 +52,7 @@
         </div>
     @endif
 
-    <div style="background:#ffffff;border:1.5px solid var(--primary-border);border-radius:var(--radius-lg);padding:36px;box-shadow:var(--shadow);display:grid;grid-template-columns:1.2fr 1.8fr;gap:36px;align-items:center">
+    <div class="home-booking-card" style="background:#ffffff;border:1.5px solid var(--primary-border);border-radius:var(--radius-lg);padding:36px;box-shadow:var(--shadow);display:grid;grid-template-columns:1.2fr 1.8fr;gap:36px;align-items:center">
         <div>
             <span style="font-size:11.5px;font-weight:700;letter-spacing:0.12em;color:var(--primary);text-transform:uppercase;display:block;margin-bottom:6px">INSTANT DEVOTEE BOOKING</span>
             <h2 style="font-family:'Playfair Display',serif;font-size:28px;color:var(--heading);margin:0 0 10px;line-height:1.2">
@@ -70,7 +70,7 @@
         </div>
 
         <div>
-            <form method="POST" action="{{ route('booking.store') }}" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <form class="home-booking-form" method="POST" action="{{ route('booking.store') }}" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
                 @csrf
                 <div>
                     <label style="display:block;font-size:12px;font-weight:700;margin-bottom:5px;color:var(--heading)">Your Name <span style="color:#e11d48">*</span></label>
@@ -154,7 +154,7 @@
 
 <section class="section cta-section" style="background:linear-gradient(135deg, #2c1226 0%, #1a0a16 100%);padding:70px 0;border-top:3px solid var(--primary)">
     <div class="container">
-        <div style="background:#3b1935;border:1.5px solid #54274c;border-radius:var(--radius-lg);padding:48px 40px;display:grid;grid-template-columns:1.3fr 0.7fr;gap:40px;align-items:center;box-shadow:var(--shadow)">
+        <div class="cta-saas-card" style="background:#3b1935;border:1.5px solid #54274c;border-radius:var(--radius-lg);padding:48px 40px;display:grid;grid-template-columns:1.3fr 0.7fr;gap:40px;align-items:center;box-shadow:var(--shadow)">
             <div>
                 <div style="display:inline-flex;align-items:center;gap:8px;background:#4d2146;border:1px solid #70335e;color:#f472b6;padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:16px">
                     <span>🕉️</span>

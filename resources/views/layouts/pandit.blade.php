@@ -79,10 +79,11 @@
         .pandit-brand {
             display: inline-flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             text-decoration: none;
             color: var(--pandit-dark);
-            flex-shrink: 0;
+            min-width: 0;
+            max-width: calc(100% - 54px);
         }
 
         .pandit-brand-photo {
@@ -116,6 +117,8 @@
         .pandit-brand-text {
             display: flex;
             flex-direction: column;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .pandit-brand-title {
@@ -125,6 +128,8 @@
             line-height: 1.2;
             color: var(--pandit-dark);
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .pandit-brand-subtitle {
@@ -135,6 +140,8 @@
             font-weight: 700;
             white-space: nowrap;
             margin-top: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .pandit-menu {
@@ -289,7 +296,7 @@
 
             .pandit-hero-grid {
                 grid-template-columns: 1fr !important;
-                gap: 32px !important;
+                gap: 28px !important;
                 text-align: center;
             }
 
@@ -297,9 +304,34 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            div[style*="minmax(340px"],
+            div[style*="minmax(320px"],
+            div[style*="minmax(300px"],
+            div[style*="minmax(280px"],
+            div[style*="minmax(260px"],
+            div[style*="minmax(220px"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .pandit-footer-container {
+                grid-template-columns: 1fr !important;
+                gap: 28px !important;
+            }
+            .pandit-hero-grid a[href="#ceremonies"] {
+                width: 100% !important;
+                box-sizing: border-box !important;
+                text-align: center;
+                display: block;
+            }
         }
 
         @media (max-width: 600px) {
+            .pandit-nav-container {
+                width: calc(100% - 20px) !important;
+            }
             .pandit-brand-title {
                 font-size: 16px;
             }
@@ -308,38 +340,19 @@
             }
             .pandit-brand-photo,
             .pandit-brand-om {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
             }
             .pandit-form-grid {
                 grid-template-columns: 1fr !important;
                 gap: 12px !important;
             }
-        }
-
-        /* Footer */
-        .pandit-footer {
-            background: #240f21;
-            color: #fdf2f8;
-            padding: 50px 0 30px;
-            margin-top: 60px;
-            border-top: 3px solid var(--pandit-primary);
-        }
-
-        .pandit-footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 40px;
-        }
-
-        @media (max-width: 768px) {
-            .pandit-footer-container {
-                grid-template-columns: 1fr;
-                gap: 28px;
+            input:not([type="checkbox"]):not([type="radio"]),
+            select,
+            textarea {
+                font-size: 16px !important;
+                min-height: 44px !important;
             }
         }
     </style>

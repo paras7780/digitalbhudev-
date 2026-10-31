@@ -13,6 +13,18 @@
 </a>
 <button aria-expanded="false" aria-label="Open navigation" class="menu-toggle"><span></span><span></span><span></span></button>
 <nav class="main-nav">
+    {{-- Mobile Drawer Header (Only visible on mobile screens) --}}
+    <div class="mobile-nav-header">
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="brand-mark" style="width:34px;height:34px;flex-shrink:0"><img src="{{ asset('assets/img/logo-mark.svg') }}" alt="DigitalBhudev"></span>
+            <div style="line-height:1.2">
+                <strong style="font-size:15px;color:var(--heading);display:block">{{ __('messages.app_name') }}</strong>
+                <small style="font-size:9.5px;color:var(--primary);font-weight:700;letter-spacing:0.08em;text-transform:uppercase">{{ __('messages.app_tagline') }}</small>
+            </div>
+        </div>
+        <button type="button" class="mobile-nav-close" aria-label="Close navigation">✕</button>
+    </div>
+
     <a class="{{ request()->routeIs('home')?'active':'' }}" href="{{ route('home') }}">{{ __('messages.nav.home') }}</a>
     <a class="{{ request()->routeIs('bhudevs.*')?'active':'' }}" href="{{ route('bhudevs.index') }}">{{ __('messages.nav.find_bhudev') }}</a>
     <a class="{{ request()->routeIs('services.*')?'active':'' }}" href="{{ route('services.index') }}">{{ __('messages.nav.services') }}</a>

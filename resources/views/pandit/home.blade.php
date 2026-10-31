@@ -51,13 +51,13 @@
 
         {{-- Profile Portrait Card --}}
         <div style="text-align:center">
-            <div style="position:relative;display:inline-block">
+            <div style="position:relative;display:inline-block;max-width:100%">
                 <div style="position:absolute;inset:-10px;background:linear-gradient(135deg, #f472b6, var(--pandit-primary));border-radius:24px;filter:blur(12px);opacity:0.25"></div>
-                <div style="position:relative;background:#fff;border:4px solid #fff;border-radius:20px;overflow:hidden;box-shadow:0 12px 36px rgba(74,22,51,0.12);max-width:360px">
+                <div style="position:relative;background:#fff;border:4px solid #fff;border-radius:20px;overflow:hidden;box-shadow:0 12px 36px rgba(74,22,51,0.12);width:100%;max-width:360px;margin:0 auto">
                     @if($pandit->photo_path)
                         <img src="{{ asset('storage/' . $pandit->photo_path) }}" alt="{{ $pandit->display_name }}" style="width:100%;height:380px;object-fit:cover;display:block">
                     @else
-                        <div style="width:340px;height:380px;background:linear-gradient(135deg, #f7ebe1, #edd1ba);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#b94e20">
+                        <div style="width:100%;max-width:340px;height:380px;background:linear-gradient(135deg, #f7ebe1, #edd1ba);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#b94e20">
                             <span style="font-size:72px">ॐ</span>
                             <span style="font-family:'Playfair Display',serif;font-size:20px;font-weight:bold;margin-top:12px;color:#29241f">{{ $domain->hero_title ?? $pandit->display_name }}</span>
                         </div>
