@@ -7,8 +7,11 @@ use App\Models\BhudevInstagramPost;
 use App\Models\BhudevInstagramSetting;
 use App\Models\BhudevProfile;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class InstagramIntegrationService
 {
@@ -146,6 +149,95 @@ class InstagramIntegrationService
     }
 
     /**
+     * Upload a direct video file for a Bhudev Reel (native HTML5 autoplay video).
+     * Can also attach/update video on an existing post if $postId is provided.
+     */
+    public function uploadReelVideo(BhudevProfile $profile, UploadedFile $file, ?string $caption = null, bool $isAutoplay = true, ?int $postId = null): array
+    {
+        $allowedExtensions = ['mp4', 'mov', 'webm', 'm4v', 'quicktime'];
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (!in_array($extension, $allowedExtensions, true) && !str_starts_with($file->getMimeType(), 'video/')) {
+            return [
+                'valid' => false,
+                'error' => 'Please upload a valid video file (MP4, MOV, or WebM format).',
+            ];
+        }
+
+        // Store video securely on public disk under reels/
+        $filename = 'reel_' . $profile->id . '_' . time() . '_' . Str::lower(Str::random(8)) . '.' . ($extension ?: 'mp4');
+        $path = $file->storeAs('reels', $filename, 'public');
+
+        // If attaching to existing post
+        if ($postId) {
+            $existingPost = BhudevInstagramPost::where('bhudev_profile_id', $profile->id)
+                ->where('id', $postId)
+                ->first();
+
+            if ($existingPost) {
+                if ($existingPost->video_path) {
+                    Storage::disk('public')->delete($existingPost->video_path);
+                }
+                $existingPost->video_path = $path;
+                $existingPost->is_autoplay = $isAutoplay;
+                if ($caption) {
+                    $existingPost->caption = trim($caption);
+                }
+                $existingPost->save();
+
+                return [
+                    'valid'   => true,
+                    'post'    => $existingPost,
+                    'message' => 'Ceremony Reel video attached successfully to post with Auto-Play enabled.',
+                ];
+            }
+        }
+
+        $shortcode = 'video_' . Str::lower(Str::random(10));
+        $canonicalUrl = asset('storage/' . $path);
+
+        $post = BhudevInstagramPost::create([
+            'bhudev_profile_id' => $profile->id,
+            'url'               => $canonicalUrl,
+            'video_path'        => $path,
+            'shortcode'         => $shortcode,
+            'media_type'        => 'reel',
+            'caption'           => $caption ? trim($caption) : null,
+            'is_active'         => true,
+            'is_autoplay'       => $isAutoplay,
+            'sort_order'        => (int) BhudevInstagramPost::where('bhudev_profile_id', $profile->id)->max('sort_order') + 1,
+        ]);
+
+        return [
+            'valid'   => true,
+            'post'    => $post,
+            'message' => 'Ceremony Reel video uploaded successfully with Auto-Play enabled.',
+        ];
+    }
+
+    /**
+     * Toggle or update the site-wide Auto-Play setting for Reels.
+     */
+    public function updateAutoplaySetting(BhudevProfile $profile, bool $autoPlay): array
+    {
+        $settings = BhudevInstagramSetting::firstOrCreate([
+            'bhudev_profile_id' => $profile->id,
+        ], [
+            'is_enabled'        => false,
+            'auto_play'         => true,
+            'connection_status' => 'disconnected',
+        ]);
+
+        $settings->auto_play = $autoPlay;
+        $settings->save();
+
+        return [
+            'success'   => true,
+            'auto_play' => $autoPlay,
+            'message'   => 'Reels Auto-Play setting updated to ' . ($autoPlay ? 'ENABLED (Muted Auto-Play)' : 'DISABLED (Click to Play)') . '.',
+        ];
+    }
+
+    /**
      * Remove a post URL for a Bhudev profile.
      */
     public function removePost(BhudevProfile $profile, int $postId): bool
@@ -155,6 +247,9 @@ class InstagramIntegrationService
             ->first();
 
         if ($post) {
+            if ($post->video_path) {
+                Storage::disk('public')->delete($post->video_path);
+            }
             $post->delete();
             return true;
         }

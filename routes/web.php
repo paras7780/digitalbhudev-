@@ -110,6 +110,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','verified','role:admi
  Route::post('/bhudevs/{profile}/instagram/connect-api', [AdminInstagramController::class, 'connectApi'])->name('instagram.connect-api');
  Route::post('/bhudevs/{profile}/instagram/disconnect', [AdminInstagramController::class, 'disconnect'])->name('instagram.disconnect');
  Route::post('/bhudevs/{profile}/instagram/request-website', [AdminInstagramController::class, 'requestWebsite'])->name('instagram.request-website');
+ Route::post('/bhudevs/{profile}/instagram/upload-video', [AdminInstagramController::class, 'uploadVideo'])->name('instagram.upload-video');
+ Route::post('/bhudevs/{profile}/instagram/autoplay', [AdminInstagramController::class, 'toggleAutoplay'])->name('instagram.autoplay');
 });
 Route::prefix('bhudev')->name('bhudev.')->middleware(['auth','verified','role:bhudev'])->group(function(){
  Route::get('/',[BhudevDashboardController::class,'dashboard'])->name('dashboard');
@@ -118,6 +120,8 @@ Route::prefix('bhudev')->name('bhudev.')->middleware(['auth','verified','role:bh
  Route::post('/website/content',[BhudevDashboardController::class,'updateWebsiteContent'])->name('website.content');
  Route::get('/instagram',[BhudevDashboardController::class,'instagram'])->name('instagram');
  Route::post('/instagram/toggle',[BhudevDashboardController::class,'toggleInstagram'])->name('instagram.toggle');
+ Route::post('/instagram/autoplay',[BhudevDashboardController::class,'toggleAutoplay'])->name('instagram.autoplay');
+ Route::post('/instagram/upload-video',[BhudevDashboardController::class,'uploadInstagramVideo'])->name('instagram.upload-video');
  Route::post('/instagram/urls',[BhudevDashboardController::class,'storeInstagramUrl'])->name('instagram.urls.store');
  Route::delete('/instagram/urls/{post}',[BhudevDashboardController::class,'destroyInstagramUrl'])->name('instagram.urls.destroy');
  Route::post('/instagram/connect-api',[BhudevDashboardController::class,'connectInstagramApi'])->name('instagram.connect-api');

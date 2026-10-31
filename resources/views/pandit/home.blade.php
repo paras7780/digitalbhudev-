@@ -218,6 +218,9 @@
 
 {{-- INSTAGRAM REELS & POSTS SECTION (DISPLAYED STRICTLY ON ACTIVE PERSONAL DOMAIN WHEN ELIGIBLE) --}}
 @if(!empty($instagramEligible) && !empty($instagramPosts) && $instagramPosts->isNotEmpty())
+    @php
+        $siteAutoplayDefault = ($instagramSetting->auto_play ?? true);
+    @endphp
     <section id="instagram" style="padding:60px 0 70px;background:#fdf9f4;border-top:1px solid #ebd9c4">
         <div style="max-width:1200px;margin:0 auto;padding:0 24px">
             <div style="text-align:center;margin-bottom:36px">
@@ -228,58 +231,115 @@
                 <h2 style="font-family:'Playfair Display',serif;font-size:32px;color:#221a14;margin:0 0 10px">
                     Glimpses of Sacred Ceremonies &amp; Mantras
                 </h2>
-                <p style="color:#6d5f53;font-size:15px;margin:0 auto;max-width:600px">
-                    Watch official Instagram Reels and ceremony posts conducted by {{ $domain->hero_title ?? $pandit->display_name }}.
+                <p style="color:#6d5f53;font-size:15px;margin:0 auto 16px;max-width:600px">
+                    Watch official Reels and ceremony recordings conducted by {{ $domain->hero_title ?? $pandit->display_name }}.
                 </p>
+
+                {{-- Interactive Auto-Play Control Pill --}}
+                <div style="display:inline-flex;align-items:center;gap:12px;background:#fff;border:1.5px solid #ebd9c4;padding:6px 18px;border-radius:999px;box-shadow:0 2px 10px rgba(41,36,31,0.05)">
+                    <span style="font-size:13px;font-weight:600;color:#453a30;display:inline-flex;align-items:center;gap:6px">
+                        <span id="autoplayStatusDot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;animation:pulseDot 2s infinite"></span>
+                        Reels Auto-Play:
+                    </span>
+                    <button type="button" id="autoplayToggleBtn" onclick="toggleSiteAutoplay()" style="background:#fce8f3;color:#be185d;border:1px solid #fbcfe8;border-radius:999px;padding:4px 14px;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s">
+                        <span id="autoplayToggleIcon">⚡</span>
+                        <span id="autoplayToggleLabel">Auto-Play ON</span>
+                    </button>
+                    <span style="font-size:11.5px;color:#786b60">Plays smoothly on scroll</span>
+                </div>
             </div>
 
             <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:24px">
                 @foreach($instagramPosts as $post)
-                    <div style="background:#fff;border:1px solid #ebd9c4;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(41,36,31,0.06);display:flex;flex-direction:column;transition:transform 0.2s">
-                        {{-- Instagram Header --}}
+                    <div class="bhudev-reel-card" style="background:#fff;border:1px solid #ebd9c4;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(41,36,31,0.06);display:flex;flex-direction:column;transition:transform 0.2s">
+                        {{-- Instagram / Video Header --}}
                         <div style="padding:14px 18px;border-bottom:1px solid #f2e9df;display:flex;align-items:center;justify-content:space-between;background:#fff">
                             <div style="display:flex;align-items:center;gap:10px">
-                                <span style="background:linear-gradient(135deg, #f58529, #dd2a7b, #8134af);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold">
-                                    📸
+                                <span style="background:linear-gradient(135deg, #f58529, #dd2a7b, #8134af);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;box-shadow:0 2px 6px rgba(221,42,123,0.3)">
+                                    {{ $post->isVideoUpload() ? '🎬' : '📸' }}
                                 </span>
                                 <div>
                                     <div style="font-size:13px;font-weight:700;color:#221a14">{{ $domain->hero_title ?? $pandit->display_name }}</div>
-                                    <div style="font-size:11px;color:#875200">Official Instagram</div>
+                                    <div style="font-size:11px;color:#875200">{{ $post->isVideoUpload() ? 'Sacred Ceremony Recording' : 'Official Instagram' }}</div>
                                 </div>
                             </div>
-                            <span style="background:{{ $post->media_type === 'reel' ? '#fce8f3' : '#e0f2fe' }};color:{{ $post->media_type === 'reel' ? '#be185d' : '#0369a1' }};font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase">
-                                {{ $post->media_type === 'reel' ? '▶ Reel' : '📷 Post' }}
-                            </span>
+                            @if($post->isVideoUpload())
+                                <span style="background:linear-gradient(135deg, #fce8f3, #fdf2f8);color:#be185d;border:1px solid #fbcfe8;font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-flex;align-items:center;gap:4px">
+                                    <span>🎬 Direct Video</span>
+                                </span>
+                            @else
+                                <span style="background:{{ $post->media_type === 'reel' ? '#fce8f3' : '#e0f2fe' }};color:{{ $post->media_type === 'reel' ? '#be185d' : '#0369a1' }};font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase">
+                                    {{ $post->media_type === 'reel' ? '▶ Reel' : '📷 Post' }}
+                                </span>
+                            @endif
                         </div>
 
-                        {{-- Embedded Instagram Card/Frame --}}
-                        <div style="background:#faf7f2;min-height:380px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
-                            <iframe 
-                                src="{{ $post->getEmbedUrl() }}" 
-                                style="width:100%;min-height:420px;border:none;overflow:hidden" 
-                                scrolling="no" 
-                                frameborder="0" 
-                                allowtransparency="true" 
-                                allow="encrypted-media"
-                                title="Instagram {{ $post->media_type }}">
-                            </iframe>
-                        </div>
+                        {{-- Embedded Player Area --}}
+                        @if($post->isVideoUpload())
+                            {{-- Native HTML5 Video Player with Autoplay & Sound Toggle --}}
+                            <div class="bhudev-video-container" style="background:#0a0806;min-height:440px;max-height:560px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+                                <video 
+                                    class="bhudev-reel-video" 
+                                    src="{{ $post->getVideoUrl() }}" 
+                                    {{ $siteAutoplayDefault && $post->is_autoplay ? 'autoplay' : '' }}
+                                    muted 
+                                    loop 
+                                    playsinline 
+                                    controls 
+                                    controlsList="nodownload"
+                                    preload="metadata"
+                                    data-autoplay="{{ $siteAutoplayDefault && $post->is_autoplay ? '1' : '0' }}"
+                                    style="width:100%;height:100%;max-height:560px;object-fit:contain;background:#000;display:block"
+                                ></video>
+
+                                {{-- Floating Unmute / Sound Toggle Overlay Button --}}
+                                <button type="button" class="reel-sound-toggle-btn" onclick="toggleReelAudio(this)" style="position:absolute;bottom:14px;right:14px;background:rgba(20,16,14,0.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.35);transition:transform 0.15s, background 0.15s">
+                                    <span class="sound-icon">🔇</span>
+                                    <span class="sound-label">Tap for Sound</span>
+                                </button>
+
+                                {{-- Autoplay Indicator Badge --}}
+                                <div class="reel-autoplay-badge" style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#34d399;border:1px solid rgba(52,211,153,0.35);border-radius:6px;padding:4px 9px;font-size:10.5px;font-weight:700;display:flex;align-items:center;gap:5px;z-index:10;letter-spacing:0.5px;text-transform:uppercase">
+                                    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399"></span>
+                                    <span>Auto-Playing</span>
+                                </div>
+                            </div>
+                        @else
+                            {{-- Embedded Instagram Card/Frame --}}
+                            <div style="background:#faf7f2;min-height:380px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+                                <iframe 
+                                    src="{{ $post->getEmbedUrl() }}" 
+                                    style="width:100%;min-height:440px;border:none;overflow:hidden" 
+                                    scrolling="no" 
+                                    frameborder="0" 
+                                    allowtransparency="true" 
+                                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                                    title="Instagram {{ $post->media_type }}">
+                                </iframe>
+                            </div>
+                        @endif
 
                         {{-- Caption & Action Footer --}}
                         <div style="padding:16px 18px;display:flex;flex-direction:column;gap:12px;flex:1;justify-content:space-between;background:#fff">
                             @if($post->caption)
-                                <div style="font-size:13px;color:#453a30;line-height:1.5">
+                                <div style="font-size:13.5px;color:#453a30;line-height:1.55">
                                     {{ $post->caption }}
                                 </div>
                             @endif
 
-                            <div style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #f5ede4">
-                                <a href="{{ $post->url }}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#e1306c;font-weight:700;text-decoration:none">
-                                    <span>Watch on Instagram</span>
-                                    <span>↗</span>
-                                </a>
+                            <div style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #f5ede4;flex-wrap:wrap;gap:10px">
+                                @if(!$post->isVideoUpload())
+                                    <a href="{{ $post->url }}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#e1306c;font-weight:700;text-decoration:none">
+                                        <span>Watch on Instagram</span>
+                                        <span>↗</span>
+                                    </a>
+                                @else
+                                    <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#875200;font-weight:600">
+                                        <span>⚡ Zero-Redirect Playback</span>
+                                    </span>
+                                @endif
 
-                                <a href="{{ $domain->generateWhatsAppUrl('Namaste Shastriji, I watched your Instagram ' . ucfirst($post->media_type) . ' on your website and would like to inquire about this ceremony.') }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#1e7e34;font-weight:600;text-decoration:none">
+                                <a href="{{ $domain->generateWhatsAppUrl('Namaste Shastriji, I watched your sacred ' . ($post->isVideoUpload() ? 'Ceremony Video' : 'Instagram ' . ucfirst($post->media_type)) . ' on your website and would like to inquire about this ceremony.') }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#1e7e34;font-weight:600;text-decoration:none">
                                     <span>💬 Book Similar Vidhi</span>
                                 </a>
                             </div>
@@ -289,6 +349,151 @@
             </div>
         </div>
     </section>
+
+    <style>
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.15); }
+        }
+        .reel-sound-toggle-btn:hover {
+            transform: scale(1.05);
+            background: rgba(20,16,14,0.95) !important;
+        }
+        .bhudev-reel-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <script>
+        (function() {
+            var siteAutoplayActive = {{ $siteAutoplayDefault ? 'true' : 'false' }};
+
+            // Toggle Audio for a specific video card
+            window.toggleReelAudio = function(btn) {
+                var container = btn.closest('.bhudev-video-container');
+                if (!container) return;
+                var video = container.querySelector('video');
+                if (!video) return;
+
+                video.muted = !video.muted;
+                var icon = btn.querySelector('.sound-icon');
+                var label = btn.querySelector('.sound-label');
+
+                if (video.muted) {
+                    if (icon) icon.textContent = '🔇';
+                    if (label) label.textContent = 'Tap for Sound';
+                    btn.style.borderColor = 'rgba(255,255,255,0.3)';
+                } else {
+                    if (icon) icon.textContent = '🔊';
+                    if (label) label.textContent = 'Sound ON';
+                    btn.style.borderColor = '#10b981';
+                    if (video.paused) {
+                        video.play().catch(function() {});
+                    }
+                }
+            };
+
+            // Toggle Site Autoplay Mode
+            window.toggleSiteAutoplay = function() {
+                siteAutoplayActive = !siteAutoplayActive;
+                var btn = document.getElementById('autoplayToggleBtn');
+                var dot = document.getElementById('autoplayStatusDot');
+                var label = document.getElementById('autoplayToggleLabel');
+                var icon = document.getElementById('autoplayToggleIcon');
+                var videos = document.querySelectorAll('.bhudev-reel-video');
+
+                if (siteAutoplayActive) {
+                    if (btn) {
+                        btn.style.background = '#fce8f3';
+                        btn.style.color = '#be185d';
+                        btn.style.borderColor = '#fbcfe8';
+                    }
+                    if (dot) {
+                        dot.style.background = '#10b981';
+                        dot.style.boxShadow = '0 0 8px #10b981';
+                    }
+                    if (icon) icon.textContent = '⚡';
+                    if (label) label.textContent = 'Auto-Play ON';
+
+                    // Update badges
+                    document.querySelectorAll('.reel-autoplay-badge').forEach(function(badge) {
+                        badge.style.display = 'flex';
+                    });
+
+                    // Resume playing visible videos
+                    checkVideosInView();
+                } else {
+                    if (btn) {
+                        btn.style.background = '#f3f4f6';
+                        btn.style.color = '#4b5563';
+                        btn.style.borderColor = '#d1d5db';
+                    }
+                    if (dot) {
+                        dot.style.background = '#9ca3af';
+                        dot.style.boxShadow = 'none';
+                    }
+                    if (icon) icon.textContent = '⏸️';
+                    if (label) label.textContent = 'Auto-Play PAUSED';
+
+                    // Hide autoplay badges and pause all videos
+                    document.querySelectorAll('.reel-autoplay-badge').forEach(function(badge) {
+                        badge.style.display = 'none';
+                    });
+                    videos.forEach(function(v) {
+                        v.pause();
+                    });
+                }
+            };
+
+            // IntersectionObserver for smart smooth Auto-Play on scroll
+            function initVideoObserver() {
+                var videos = document.querySelectorAll('.bhudev-reel-video');
+                if (!videos.length) return;
+
+                if ('IntersectionObserver' in window) {
+                    var observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            var video = entry.target;
+                            if (entry.isIntersecting && siteAutoplayActive) {
+                                var playPromise = video.play();
+                                if (playPromise !== undefined) {
+                                    playPromise.catch(function(err) {
+                                        // Autoplay policy prevented playback, video muted handles this
+                                        video.muted = true;
+                                        video.play().catch(function() {});
+                                    });
+                                }
+                            } else {
+                                video.pause();
+                            }
+                        });
+                    }, { threshold: 0.4 });
+
+                    videos.forEach(function(video) {
+                        observer.observe(video);
+                    });
+                }
+            }
+
+            function checkVideosInView() {
+                var videos = document.querySelectorAll('.bhudev-reel-video');
+                videos.forEach(function(video) {
+                    var rect = video.getBoundingClientRect();
+                    var inView = (rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)) ||
+                                 (rect.top < window.innerHeight && rect.bottom >= 0);
+                    if (inView && siteAutoplayActive) {
+                        video.play().catch(function() {});
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initVideoObserver);
+            } else {
+                initVideoObserver();
+            }
+        })();
+    </script>
 @endif
 
 {{-- DAKSHINA & UPI QR CODE SECTION (ONLY SHOWN ON PERSONAL DOMAIN IF SET) --}}

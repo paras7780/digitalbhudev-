@@ -12,12 +12,14 @@ class BhudevInstagramPost extends Model
     protected $fillable = [
         'bhudev_profile_id',
         'url',
+        'video_path',
         'shortcode',
         'media_type',
         'caption',
         'thumbnail_url',
         'author_name',
         'is_active',
+        'is_autoplay',
         'sort_order',
         'metadata',
     ];
@@ -26,6 +28,7 @@ class BhudevInstagramPost extends Model
     {
         return [
             'is_active'   => 'boolean',
+            'is_autoplay' => 'boolean',
             'sort_order'  => 'integer',
             'metadata'    => 'array',
         ];
@@ -34,6 +37,16 @@ class BhudevInstagramPost extends Model
     public function profile(): BelongsTo
     {
         return $this->belongsTo(BhudevProfile::class, 'bhudev_profile_id');
+    }
+
+    public function isVideoUpload(): bool
+    {
+        return !empty($this->video_path);
+    }
+
+    public function getVideoUrl(): ?string
+    {
+        return $this->video_path ? asset('storage/' . $this->video_path) : null;
     }
 
     public function getEmbedUrl(): string

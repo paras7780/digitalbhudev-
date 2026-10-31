@@ -550,6 +550,60 @@ class BhudevDashboardController extends Controller
     }
 
     /**
+     * Toggle or update the site-wide Auto-Play setting for Reels
+     */
+    public function toggleAutoplay(Request $request)
+    {
+        $profile = $this->guard($request);
+
+        $request->validate([
+            'auto_play' => 'required|boolean',
+        ]);
+
+        $autoPlay = $request->boolean('auto_play');
+        $result = $this->instagramService->updateAutoplaySetting($profile, $autoPlay);
+
+        Audit::record($request, 'bhudev.instagram.autoplay_toggled', $profile, [
+            'auto_play' => $autoPlay,
+        ]);
+
+        return back()->with('status', $result['message']);
+    }
+
+    /**
+     * Upload a direct video file for a Bhudev Reel (MP4, MOV, WebM) with Auto-Play.
+     */
+    public function uploadInstagramVideo(Request $request)
+    {
+        $profile = $this->guard($request);
+
+        $request->validate([
+            'video'       => 'required|file|mimes:mp4,mov,webm,m4v|max:102400',
+            'caption'     => 'nullable|string|max:1000',
+            'is_autoplay' => 'sometimes|boolean',
+            'post_id'     => 'nullable|integer',
+        ]);
+
+        $result = $this->instagramService->uploadReelVideo(
+            $profile,
+            $request->file('video'),
+            $request->input('caption'),
+            $request->boolean('is_autoplay', true),
+            $request->filled('post_id') ? (int) $request->input('post_id') : null
+        );
+
+        if (!$result['valid']) {
+            return back()->withErrors(['video' => $result['error']])->withInput();
+        }
+
+        Audit::record($request, 'bhudev.instagram.video_uploaded', $profile, [
+            'video_path' => $result['post']->video_path,
+        ]);
+
+        return back()->with('status', $result['message']);
+    }
+
+    /**
      * Store and validate an Instagram Post or Reel URL
      */
     public function storeInstagramUrl(Request $request)

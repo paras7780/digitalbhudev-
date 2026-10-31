@@ -489,4 +489,124 @@ class InstagramIntegrationTest extends TestCase
 
         $this->assertDatabaseHas('bhudev_instagram_posts', ['id' => $foreignPost->id]);
     }
+
+    /**
+     * Test 13: Bhudev and Admin can toggle site-wide Reels Auto-Play setting.
+     */
+    public function test_bhudev_and_admin_can_toggle_autoplay(): void
+    {
+        // Initial state
+        $setting = BhudevInstagramSetting::create([
+            'bhudev_profile_id' => $this->bhudevProfile->id,
+            'is_enabled'        => true,
+            'auto_play'         => true,
+            'connection_status' => 'disconnected',
+        ]);
+
+        // Bhudev toggles Auto-Play to OFF
+        $this->actingAs($this->bhudevUser)
+            ->post(route('bhudev.instagram.autoplay'), [
+                'auto_play' => 0,
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('bhudev_instagram_settings', [
+            'bhudev_profile_id' => $this->bhudevProfile->id,
+            'auto_play'         => 0,
+        ]);
+
+        // Admin toggles Auto-Play back to ON
+        $this->actingAs($this->admin)
+            ->post(route('admin.instagram.autoplay', $this->bhudevProfile), [
+                'auto_play' => 1,
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('bhudev_instagram_settings', [
+            'bhudev_profile_id' => $this->bhudevProfile->id,
+            'auto_play'         => 1,
+        ]);
+    }
+
+    /**
+     * Test 14: Bhudev and Admin can upload direct Reel video with Auto-Play.
+     */
+    public function test_bhudev_and_admin_can_upload_reel_video_with_autoplay(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        $videoFile = \Illuminate\Http\UploadedFile::fake()->create('puja_ceremony.mp4', 2048, 'video/mp4');
+
+        $response = $this->actingAs($this->bhudevUser)
+            ->post(route('bhudev.instagram.upload-video'), [
+                'video'       => $videoFile,
+                'caption'     => 'Rudrabhishek Live Puja Video',
+                'is_autoplay' => 1,
+            ]);
+
+        $response->assertRedirect();
+
+        $post = BhudevInstagramPost::where('bhudev_profile_id', $this->bhudevProfile->id)->first();
+        $this->assertNotNull($post);
+        $this->assertTrue($post->isVideoUpload());
+        $this->assertTrue($post->is_autoplay);
+        $this->assertSame('Rudrabhishek Live Puja Video', $post->caption);
+        $this->assertNotNull($post->getVideoUrl());
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($post->video_path);
+
+        // Deleting the post also cleans up the video file
+        $this->actingAs($this->bhudevUser)
+            ->delete(route('bhudev.instagram.urls.destroy', $post));
+
+        \Illuminate\Support\Facades\Storage::disk('public')->assertMissing($post->video_path);
+        $this->assertDatabaseMissing('bhudev_instagram_posts', ['id' => $post->id]);
+    }
+
+    /**
+     * Test 15: Website renders native HTML5 video player with Auto-Play when video is present.
+     */
+    public function test_website_renders_native_video_with_autoplay_and_sound_toggle(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        // Create active personal domain
+        $domain = BhudevDomain::create([
+            'bhudev_profile_id' => $this->bhudevProfile->id,
+            'domain_name'       => 'shastrirameshwar.in',
+            'domain_type'       => 'custom_domain',
+            'status'            => 'active',
+            'ssl_status'        => 'active',
+            'verified_at'       => now(),
+        ]);
+
+        // Enable Instagram and Auto-Play
+        BhudevInstagramSetting::create([
+            'bhudev_profile_id' => $this->bhudevProfile->id,
+            'is_enabled'        => true,
+            'auto_play'         => true,
+            'connection_status' => 'disconnected',
+        ]);
+
+        // Create uploaded video post
+        $post = BhudevInstagramPost::create([
+            'bhudev_profile_id' => $this->bhudevProfile->id,
+            'url'               => 'http://localhost/storage/reels/test.mp4',
+            'video_path'        => 'reels/test.mp4',
+            'shortcode'         => 'video_test123',
+            'media_type'        => 'reel',
+            'caption'           => 'Maha Rudrabhishek Vedic Chant',
+            'is_active'         => true,
+            'is_autoplay'       => true,
+        ]);
+
+        $response = $this->get('http://shastrirameshwar.in/');
+
+        $response->assertOk()
+            ->assertSee('bhudev-reel-video', false)
+            ->assertSee('autoplay', false)
+            ->assertSee('muted', false)
+            ->assertSee('Tap for Sound')
+            ->assertSee('Auto-Play ON')
+            ->assertSee('Maha Rudrabhishek Vedic Chant');
+    }
 }

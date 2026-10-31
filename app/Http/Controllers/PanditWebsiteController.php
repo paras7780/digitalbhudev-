@@ -17,13 +17,14 @@ class PanditWebsiteController extends Controller
         $domain = $domain ?? app('current_tenant_domain');
         abort_unless($domain && $domain->isActive(), 404, 'Pandit website is not active.');
 
-        $pandit = $domain->profile->load(['services', 'publicImages', 'user']);
+        $pandit = $domain->profile->load(['services', 'publicImages', 'user', 'instagramSetting']);
 
         $instagramService = app(InstagramIntegrationService::class);
         $instagramEligible = $instagramService->isEligibleForPublicDisplay($pandit, $domain);
         $instagramPosts = $instagramEligible ? $instagramService->getEligiblePosts($pandit, $domain) : collect();
+        $instagramSetting = $pandit->instagramSetting;
 
-        return view('pandit.home', compact('domain', 'pandit', 'instagramEligible', 'instagramPosts'));
+        return view('pandit.home', compact('domain', 'pandit', 'instagramEligible', 'instagramPosts', 'instagramSetting'));
     }
 
     /**

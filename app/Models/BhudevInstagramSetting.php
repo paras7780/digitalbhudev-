@@ -12,6 +12,7 @@ class BhudevInstagramSetting extends Model
     protected $fillable = [
         'bhudev_profile_id',
         'is_enabled',
+        'auto_play',
         'connection_status',
         'account_username',
         'account_id',
@@ -28,6 +29,7 @@ class BhudevInstagramSetting extends Model
     {
         return [
             'is_enabled'        => 'boolean',
+            'auto_play'         => 'boolean',
             'token_expires_at'  => 'datetime',
             'last_sync_at'      => 'datetime',
             'access_token'      => 'encrypted',

@@ -137,43 +137,132 @@
             @enderror
         </div>
 
-        {{-- Add Post/Reel URL Form --}}
-        <div style="background:#fff;border:1px solid #ebd9c4;border-radius:14px;padding:22px;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
-            <h2 style="font-size:17px;color:var(--admin-dark);margin:0 0 4px">
-                ➕ Add Instagram Post or Reel URL
-            </h2>
-            <p style="font-size:13px;color:var(--admin-muted);margin:0 0 16px">
-                Paste any public Instagram post, Reel, or video URL. The URL will be strictly validated and canonicalized before saving.
-            </p>
-
-            <form method="POST" action="{{ route('admin.instagram.urls.store', $profile) }}">
-                @csrf
-                <div style="margin-bottom:14px">
-                    <label style="display:block;font-size:13px;font-weight:600;color:#453a30;margin-bottom:6px">
-                        Instagram Post or Reel URL *
-                    </label>
-                    <input type="url" name="url" required value="{{ old('url') }}" placeholder="https://www.instagram.com/reel/Cxxxxxx/ or https://www.instagram.com/p/Cxxxxxx/" style="width:100%;padding:10px 14px;border:1px solid #d8c8b8;border-radius:8px;font-size:14px;box-sizing:border-box">
-                    @error('url')
-                        <div style="font-size:12px;color:#dc2626;margin-top:4px">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div style="margin-bottom:18px">
-                    <label style="display:block;font-size:13px;font-weight:600;color:#453a30;margin-bottom:6px">
-                        Ceremony / Vidhi Caption (Optional)
-                    </label>
-                    <input type="text" name="caption" value="{{ old('caption') }}" placeholder="e.g. Rudrabhishek Mahavidhi performed by Shastri Ji in Ahmedabad" style="width:100%;padding:10px 14px;border:1px solid #d8c8b8;border-radius:8px;font-size:14px;box-sizing:border-box">
-                </div>
-
-                <div style="display:flex;align-items:center;justify-content:space-between">
-                    <div style="font-size:12px;color:#786b60">
-                        ✓ Duplicate prevention active • HTTPS only
+        {{-- Site-wide Auto-Play Control Card --}}
+        <div style="background:#fff;border:1px solid #ebd9c4;border-left:4px solid #8b5cf6;border-radius:14px;padding:22px;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:12px">
+                <div>
+                    <h2 style="font-size:17px;color:#5b21b6;margin:0 0 4px">
+                        ⚡ Auto-Play Reels Control
+                    </h2>
+                    <div style="font-size:13px;color:var(--admin-muted)">
+                        Control whether ceremony videos and Reels autoplay automatically as visitors scroll this Pandit's website.
                     </div>
-                    <button type="submit" class="btn-action btn-action-primary" style="padding:9px 20px;font-weight:600">
-                        Validate &amp; Add URL
+                </div>
+                <div>
+                    @if($settings->auto_play ?? true)
+                        <span style="background:#ede9fe;color:#7c3aed;font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px;border:1px solid #ddd6fe">
+                            ● Auto-Play Enabled
+                        </span>
+                    @else
+                        <span style="background:#f3f4f6;color:#6b7280;font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px">
+                            ○ Auto-Play Disabled
+                        </span>
+                    @endif
+                </div>
+            </div>
+
+            <form method="POST" action="{{ route('admin.instagram.autoplay', $profile) }}" style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #f2e9df">
+                @csrf
+                <input type="hidden" name="auto_play" value="{{ ($settings->auto_play ?? true) ? 0 : 1 }}">
+                <div style="font-size:13px;color:#453a30">
+                    Auto-play status: <strong>{{ ($settings->auto_play ?? true) ? 'Active (Muted auto-play with 1-tap unmute)' : 'Disabled (Manual play required)' }}</strong>
+                </div>
+                <button type="submit" class="btn-action" style="background:{{ ($settings->auto_play ?? true) ? '#fee2e2;border-color:#fca5a5;color:#991b1b' : '#7c3aed;border-color:#6d28d9;color:#fff' }};padding:8px 18px;font-weight:600">
+                    {{ ($settings->auto_play ?? true) ? 'Disable Auto-Play' : 'Enable Auto-Play' }}
+                </button>
+            </form>
+        </div>
+
+        {{-- Add Content Card with Tabs (Video Upload vs Instagram URL) --}}
+        <div style="background:#fff;border:1px solid #ebd9c4;border-radius:14px;padding:22px;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+                <h2 style="font-size:17px;color:var(--admin-dark);margin:0">
+                    ➕ Add Ceremony Content
+                </h2>
+                <div style="display:inline-flex;background:#f3f4f6;padding:3px;border-radius:8px;gap:4px">
+                    <button type="button" id="adminTabUpload" onclick="switchAdminTab('upload')" style="background:#fff;color:#1f2937;border:1px solid #e5e7eb;border-radius:6px;padding:5px 12px;font-size:12.5px;font-weight:700;cursor:pointer">
+                        📤 Upload Video File (Auto-Play)
+                    </button>
+                    <button type="button" id="adminTabUrl" onclick="switchAdminTab('url')" style="background:transparent;color:#6b7280;border:none;border-radius:6px;padding:5px 12px;font-size:12.5px;font-weight:600;cursor:pointer">
+                        🔗 Instagram URL Link
                     </button>
                 </div>
-            </form>
+            </div>
+
+            {{-- Tab 1: Video Upload --}}
+            <div id="adminPaneUpload">
+                <div style="background:#fdf2f8;border:1px solid #fbcfe8;border-radius:8px;padding:12px 14px;margin-bottom:16px">
+                    <strong style="color:#9d174d;font-size:13px;display:flex;align-items:center;gap:6px">
+                        <span>⚡ Direct Video Upload with Auto-Play</span>
+                    </strong>
+                    <p style="margin:4px 0 0;font-size:12px;color:#831843;line-height:1.4">
+                        Uploads MP4/MOV/WebM video file directly to the server. Natively auto-plays on the Pandit's personal domain.
+                    </p>
+                </div>
+
+                <form method="POST" action="{{ route('admin.instagram.upload-video', $profile) }}" enctype="multipart/form-data">
+                    @csrf
+                    <div style="margin-bottom:14px">
+                        <label style="display:block;font-size:13px;font-weight:600;color:#453a30;margin-bottom:6px">
+                            Video File (MP4, MOV, WebM, max 100MB) *
+                        </label>
+                        <input type="file" name="video" required accept="video/mp4,video/quicktime,video/webm,video/m4v" style="width:100%;padding:10px 12px;border:1px dashed #d8c8b8;border-radius:8px;font-size:13px;box-sizing:border-box">
+                        @error('video')
+                            <div style="font-size:12px;color:#dc2626;margin-top:4px">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div style="margin-bottom:14px">
+                        <label style="display:block;font-size:13px;font-weight:600;color:#453a30;margin-bottom:6px">
+                            Ceremony / Vidhi Caption (Optional)
+                        </label>
+                        <input type="text" name="caption" value="{{ old('caption') }}" placeholder="e.g. Satyanarayan Katha Katha Live at Devotee Residence" style="width:100%;padding:10px 14px;border:1px solid #d8c8b8;border-radius:8px;font-size:14px;box-sizing:border-box">
+                    </div>
+
+                    <div style="margin-bottom:18px;display:flex;align-items:center;gap:8px">
+                        <input type="checkbox" id="admin_is_autoplay" name="is_autoplay" value="1" checked style="width:18px;height:18px;accent-color:#be185d">
+                        <label for="admin_is_autoplay" style="font-size:13px;font-weight:600;color:#453a30;cursor:pointer">
+                            Enable Auto-Play on website for this reel
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-action btn-action-primary" style="padding:10px 22px;font-weight:600">
+                        🚀 Upload Video &amp; Enable Auto-Play
+                    </button>
+                </form>
+            </div>
+
+            {{-- Tab 2: Instagram URL --}}
+            <div id="adminPaneUrl" style="display:none">
+                <form method="POST" action="{{ route('admin.instagram.urls.store', $profile) }}">
+                    @csrf
+                    <div style="margin-bottom:14px">
+                        <label style="display:block;font-size:13px;font-weight:600;color:#453a30;margin-bottom:6px">
+                            Instagram Post or Reel URL *
+                        </label>
+                        <input type="url" name="url" value="{{ old('url') }}" placeholder="https://www.instagram.com/reel/Cxxxxxx/ or https://www.instagram.com/p/Cxxxxxx/" style="width:100%;padding:10px 14px;border:1px solid #d8c8b8;border-radius:8px;font-size:14px;box-sizing:border-box">
+                        @error('url')
+                            <div style="font-size:12px;color:#dc2626;margin-top:4px">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div style="margin-bottom:18px">
+                        <label style="display:block;font-size:13px;font-weight:600;color:#453a30;margin-bottom:6px">
+                            Ceremony / Vidhi Caption (Optional)
+                        </label>
+                        <input type="text" name="caption" value="{{ old('caption') }}" placeholder="e.g. Rudrabhishek Mahavidhi performed by Shastri Ji in Ahmedabad" style="width:100%;padding:10px 14px;border:1px solid #d8c8b8;border-radius:8px;font-size:14px;box-sizing:border-box">
+                    </div>
+
+                    <div style="display:flex;align-items:center;justify-content:space-between">
+                        <div style="font-size:12px;color:#786b60">
+                            ✓ Duplicate prevention active • HTTPS only
+                        </div>
+                        <button type="submit" class="btn-action btn-action-primary" style="padding:9px 20px;font-weight:600">
+                            Validate &amp; Add URL
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         {{-- Active Instagram Posts List --}}
@@ -196,23 +285,65 @@
             @else
                 <div style="display:flex;flex-direction:column;gap:14px">
                     @foreach($posts as $post)
-                        <div style="border:1px solid #ebd9c4;border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff">
-                            <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:0">
-                                <div style="width:40px;height:40px;border-radius:8px;background:{{ $post->media_type === 'reel' ? '#fce8f3' : '#e0f2fe' }};color:{{ $post->media_type === 'reel' ? '#be185d' : '#0369a1' }};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">
-                                    {{ $post->media_type === 'reel' ? '▶' : '📷' }}
-                                </div>
-                                <div style="min-width:0">
-                                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                                        <span style="background:{{ $post->media_type === 'reel' ? '#fce8f3' : '#e0f2fe' }};color:{{ $post->media_type === 'reel' ? '#be185d' : '#0369a1' }};font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase">
-                                            {{ $post->media_type }}
-                                        </span>
-                                        <a href="{{ $post->url }}" target="_blank" style="font-family:monospace;font-size:13px;color:var(--admin-dark);text-decoration:none;font-weight:600;word-break:break-all">
-                                            {{ $post->url }} ↗
-                                        </a>
+                        <div style="border:1px solid #ebd9c4;border-radius:10px;padding:14px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;background:#fff;flex-wrap:wrap">
+                            <div style="display:flex;align-items:flex-start;gap:14px;flex:1;min-width:0">
+                                @if($post->isVideoUpload())
+                                    <div style="width:72px;height:72px;border-radius:8px;overflow:hidden;background:#000;flex-shrink:0;position:relative">
+                                        <video src="{{ $post->getVideoUrl() }}" style="width:100%;height:100%;object-fit:cover" muted playsinline></video>
+                                        <span style="position:absolute;bottom:2px;right:2px;background:rgba(0,0,0,0.7);color:#fff;font-size:9px;padding:1px 3px;border-radius:2px">▶ MP4</span>
                                     </div>
+                                @else
+                                    <div style="width:40px;height:40px;border-radius:8px;background:{{ $post->media_type === 'reel' ? '#fce8f3' : '#e0f2fe' }};color:{{ $post->media_type === 'reel' ? '#be185d' : '#0369a1' }};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">
+                                        {{ $post->media_type === 'reel' ? '▶' : '📷' }}
+                                    </div>
+                                @endif
+
+                                <div style="min-width:0;flex:1">
+                                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                                        @if($post->isVideoUpload())
+                                            <span style="background:#ecfdf5;color:#059669;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid #a7f3d0">
+                                                🎬 DIRECT VIDEO
+                                            </span>
+                                        @else
+                                            <span style="background:{{ $post->media_type === 'reel' ? '#fce8f3' : '#e0f2fe' }};color:{{ $post->media_type === 'reel' ? '#be185d' : '#0369a1' }};font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase">
+                                                {{ $post->media_type }}
+                                            </span>
+                                        @endif
+
+                                        @if($post->is_autoplay)
+                                            <span style="background:#ede9fe;color:#7c3aed;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px;border:1px solid #ddd6fe">
+                                                ⚡ Auto-Play ON
+                                            </span>
+                                        @endif
+
+                                        @if($post->isVideoUpload())
+                                            <a href="{{ $post->getVideoUrl() }}" target="_blank" style="font-family:monospace;font-size:13px;color:var(--admin-dark);text-decoration:none;font-weight:600;word-break:break-all">
+                                                {{ basename($post->video_path) }} ↗
+                                            </a>
+                                        @else
+                                            <a href="{{ $post->url }}" target="_blank" style="font-family:monospace;font-size:13px;color:var(--admin-dark);text-decoration:none;font-weight:600;word-break:break-all">
+                                                {{ $post->url }} ↗
+                                            </a>
+                                        @endif
+                                    </div>
+
                                     @if($post->caption)
-                                        <div style="font-size:13px;color:#6b5a4d;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                                        <div style="font-size:13px;color:#6b5a4d;margin-top:4px">
                                             {{ $post->caption }}
+                                        </div>
+                                    @endif
+
+                                    @if(!$post->isVideoUpload())
+                                        <div style="margin-top:8px;padding:6px 10px;background:#fefce8;border:1px dashed #fde047;border-radius:6px;font-size:11.5px">
+                                            <span style="font-weight:600;color:#854d0e">Attach raw video file for zero-redirect Auto-Play:</span>
+                                            <form method="POST" action="{{ route('admin.instagram.upload-video', $profile) }}" enctype="multipart/form-data" style="margin-top:4px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                                                @csrf
+                                                <input type="hidden" name="post_id" value="{{ $post->id }}">
+                                                <input type="file" name="video" required accept="video/mp4,video/quicktime,video/webm" style="font-size:11px">
+                                                <button type="submit" class="btn-action" style="font-size:11px;padding:3px 8px">
+                                                    Attach MP4
+                                                </button>
+                                            </form>
                                         </div>
                                     @endif
                                 </div>
@@ -415,4 +546,41 @@
 
     </div>
 </div>
+
+<script>
+    function switchAdminTab(tab) {
+        var paneUpload = document.getElementById('adminPaneUpload');
+        var paneUrl = document.getElementById('adminPaneUrl');
+        var btnUpload = document.getElementById('adminTabUpload');
+        var btnUrl = document.getElementById('adminTabUrl');
+
+        if (tab === 'upload') {
+            paneUpload.style.display = 'block';
+            paneUrl.style.display = 'none';
+
+            btnUpload.style.background = '#fff';
+            btnUpload.style.color = '#1f2937';
+            btnUpload.style.fontWeight = '700';
+            btnUpload.style.border = '1px solid #e5e7eb';
+
+            btnUrl.style.background = 'transparent';
+            btnUrl.style.color = '#6b7280';
+            btnUrl.style.fontWeight = '600';
+            btnUrl.style.border = 'none';
+        } else {
+            paneUpload.style.display = 'none';
+            paneUrl.style.display = 'block';
+
+            btnUrl.style.background = '#fff';
+            btnUrl.style.color = '#1f2937';
+            btnUrl.style.fontWeight = '700';
+            btnUrl.style.border = '1px solid #e5e7eb';
+
+            btnUpload.style.background = 'transparent';
+            btnUpload.style.color = '#6b7280';
+            btnUpload.style.fontWeight = '600';
+            btnUpload.style.border = 'none';
+        }
+    }
+</script>
 @endsection
