@@ -148,6 +148,47 @@ body.admin-body {
   font-weight: 700;
 }
 
+.sidebar-close-btn {
+  display: none;
+  margin-left: auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 15px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.sidebar-close-btn:hover {
+  background: var(--admin-primary);
+  border-color: transparent;
+}
+
+.sidebar-lang-box {
+  display: none;
+  padding: 10px 14px;
+  margin: 10px 12px 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-direction: column;
+  gap: 6px;
+}
+.sidebar-lang-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #fce7f3;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 .sidebar-nav {
   flex: 1;
   overflow-y: auto;
@@ -260,6 +301,37 @@ body.admin-body {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.topbar-mobile-brand {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  min-width: 0;
+}
+.topbar-mobile-brand .brand-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.topbar-mobile-brand .brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.topbar-mobile-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--admin-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .sidebar-toggle-btn {
@@ -879,26 +951,54 @@ body.admin-body {
 /* Responsive Mobile Admin Layout */
 @media (max-width: 900px) {
   .admin-sidebar {
-    width: min(85vw, 290px);
-    max-width: 85vw;
-    transform: translateX(-100%);
-    z-index: 9999;
+    width: min(85vw, 300px) !important;
+    max-width: 85vw !important;
+    transform: translateX(-105%) !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s !important;
+    z-index: 9999 !important;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.3) !important;
   }
   .admin-sidebar.open {
-    transform: translateX(0);
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
   }
   .admin-main {
-    margin-left: 0;
+    margin-left: 0 !important;
   }
   .sidebar-toggle-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    padding: 0;
-    font-size: 18px;
-    flex-shrink: 0;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    padding: 0 !important;
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    flex-shrink: 0 !important;
+    background: #ffffff !important;
+    border: 1.5px solid var(--admin-border) !important;
+    border-radius: 8px !important;
+    color: var(--admin-primary) !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 8px rgba(74, 22, 51, 0.08) !important;
+    line-height: 1 !important;
+  }
+  .sidebar-toggle-btn:active {
+    background: var(--admin-pink-soft) !important;
+    transform: scale(0.96);
+  }
+  .sidebar-close-btn {
+    display: inline-flex !important;
+  }
+  .sidebar-lang-box {
+    display: flex !important;
+  }
+  .topbar-mobile-brand {
+    display: flex !important;
   }
   .sidebar-overlay {
     display: none;
@@ -906,33 +1006,53 @@ body.admin-body {
     inset: 0;
     background: rgba(34, 15, 31, 0.65);
     backdrop-filter: blur(4px);
-    z-index: 9998;
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 9998 !important;
+    opacity: 0;
+    transition: opacity 0.25s ease;
   }
   .sidebar-overlay.open {
-    display: block;
+    display: block !important;
+    opacity: 1 !important;
   }
+  body.sidebar-open {
+    overflow: hidden !important;
+  }
+
   .admin-topbar {
-    padding: 0 16px;
-    height: 60px;
+    padding: 0 14px !important;
+    height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
   }
   .topbar-left {
-    gap: 12px;
-    min-width: 0;
-    flex-shrink: 1;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-width: 0 !important;
+    flex-shrink: 0 !important;
   }
   .admin-breadcrumbs {
-    font-size: 11.5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 220px;
+    display: none !important;
   }
   .topbar-right {
-    gap: 10px;
-    flex-shrink: 0;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-shrink: 1 !important;
+    justify-content: flex-end !important;
+    min-width: 0 !important;
+  }
+  /* Crucial: Hide the wide desktop language pill & live link from the topbar on mobile so the menu button is NEVER squished */
+  .topbar-right .lang-switcher-wrap,
+  .topbar-right .lang-switcher,
+  .topbar-right .topbar-link {
+    display: none !important;
   }
   .admin-content {
-    padding: 18px 16px;
+    padding: 18px 14px;
   }
   .bhudev-two-col,
   div[style*="grid-template-columns:1.2fr"],
@@ -946,35 +1066,27 @@ body.admin-body {
 
 @media (max-width: 640px) {
   .admin-topbar {
-    padding: 0 12px;
-    height: 56px;
+    padding: 0 10px !important;
+    height: 56px !important;
+    gap: 8px !important;
   }
   .topbar-left {
-    gap: 8px;
+    gap: 8px !important;
   }
-  .admin-breadcrumbs {
-    display: none !important; /* Hide on small mobile to give room to user pill & toggle */
-  }
-  .topbar-right {
-    gap: 8px;
-  }
-  .topbar-right .topbar-link {
-    display: none !important; /* Live profile link is readily available inside sidebar menu */
-  }
-  .topbar-right .lang-switcher {
-    display: none !important;
+  .topbar-mobile-title {
+    font-size: 13.5px !important;
   }
   .admin-user-pill {
-    padding: 3px 8px 3px 4px;
-    font-size: 11px;
-    gap: 6px;
+    padding: 3px 8px 3px 4px !important;
+    font-size: 11px !important;
+    gap: 6px !important;
   }
   .admin-user-pill span:not(.admin-avatar):not(.badge) {
     display: none !important; /* Only display avatar circle and status badge on mobile */
   }
   .logout-btn-top {
-    padding: 5px 9px;
-    font-size: 11px;
+    padding: 5px 9px !important;
+    font-size: 11px !important;
   }
   .admin-content {
     padding: 14px 12px;

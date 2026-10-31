@@ -15,6 +15,7 @@
                 <small>Control Center</small>
             </span>
         </a>
+        <button type="button" class="sidebar-close-btn" aria-label="Close navigation">✕</button>
     </div>
 
     <nav class="sidebar-nav">

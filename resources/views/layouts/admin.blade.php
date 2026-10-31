@@ -40,6 +40,38 @@
     <!-- jQuery & Admin JS -->
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/js/admin.js') }}"></script>
+    <script>
+        (function() {
+            var toggleBtn = document.querySelector('.sidebar-toggle-btn');
+            var closeBtn = document.querySelector('.sidebar-close-btn');
+            var sidebar = document.querySelector('.admin-sidebar');
+            var overlay = document.querySelector('.sidebar-overlay');
+            function toggle(open) {
+                if (sidebar) sidebar.classList.toggle('open', open);
+                if (overlay) overlay.classList.toggle('open', open);
+                document.body.classList.toggle('sidebar-open', open);
+            }
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var shouldOpen = sidebar && !sidebar.classList.contains('open');
+                    toggle(shouldOpen);
+                });
+            }
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggle(false);
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggle(false);
+                });
+            }
+        })();
+    </script>
     @stack('scripts')
 </body>
 </html>

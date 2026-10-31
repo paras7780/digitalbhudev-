@@ -3,6 +3,10 @@
         <button type="button" class="sidebar-toggle-btn" aria-label="Toggle Navigation">
             ☰
         </button>
+        <a href="{{ route('admin.dashboard') }}" class="topbar-mobile-brand">
+            <span class="brand-mark"><img src="{{ asset('assets/img/logo-mark.svg') }}" alt="DigitalBhudev"></span>
+            <span class="topbar-mobile-title">DigitalBhudev</span>
+        </a>
         <nav class="admin-breadcrumbs" aria-label="Breadcrumb">
             <a href="{{ route('admin.dashboard') }}">Admin</a>
             @yield('breadcrumbs')

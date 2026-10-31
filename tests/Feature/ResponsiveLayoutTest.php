@@ -71,8 +71,11 @@ class ResponsiveLayoutTest extends TestCase
         $response = $this->actingAs($bhudev)->get(route('bhudev.dashboard'));
         $response->assertStatus(200);
 
-        // Mobile sidebar toggle and overlay
+        // Mobile sidebar toggle, close button, brand, and overlay
         $response->assertSee('class="sidebar-toggle-btn"', false);
+        $response->assertSee('class="sidebar-close-btn"', false);
+        $response->assertSee('class="topbar-mobile-brand"', false);
+        $response->assertSee('class="sidebar-lang-box"', false);
         $response->assertSee('class="sidebar-overlay"', false);
     }
 

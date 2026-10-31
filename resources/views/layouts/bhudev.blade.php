@@ -26,6 +26,13 @@
                         <small>Bhudev Portal</small>
                     </span>
                 </a>
+                <button type="button" class="sidebar-close-btn" aria-label="Close navigation">✕</button>
+            </div>
+
+            {{-- Mobile Drawer Language Selector --}}
+            <div class="sidebar-lang-box">
+                <span class="sidebar-lang-label">{{ __('messages.languages.select') }}:</span>
+                @include('partials.language-switcher')
             </div>
 
             <nav class="sidebar-nav">
@@ -101,6 +108,10 @@
                     <button type="button" class="sidebar-toggle-btn" aria-label="Toggle Navigation">
                         ☰
                     </button>
+                    <a href="{{ route('bhudev.dashboard') }}" class="topbar-mobile-brand">
+                        <span class="brand-mark"><img src="{{ asset('assets/img/logo-mark.svg') }}" alt="DigitalBhudev"></span>
+                        <span class="topbar-mobile-title">DigitalBhudev</span>
+                    </a>
                     <nav class="admin-breadcrumbs" aria-label="Breadcrumb">
                         <a href="{{ route('bhudev.dashboard') }}">Bhudev Portal</a>
                         @yield('breadcrumbs')
@@ -149,6 +160,38 @@
     <!-- Scripts -->
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/js/admin.js') }}"></script>
+    <script>
+        (function() {
+            var toggleBtn = document.querySelector('.sidebar-toggle-btn');
+            var closeBtn = document.querySelector('.sidebar-close-btn');
+            var sidebar = document.querySelector('.admin-sidebar');
+            var overlay = document.querySelector('.sidebar-overlay');
+            function toggle(open) {
+                if (sidebar) sidebar.classList.toggle('open', open);
+                if (overlay) overlay.classList.toggle('open', open);
+                document.body.classList.toggle('sidebar-open', open);
+            }
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var shouldOpen = sidebar && !sidebar.classList.contains('open');
+                    toggle(shouldOpen);
+                });
+            }
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggle(false);
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggle(false);
+                });
+            }
+        })();
+    </script>
     @stack('scripts')
 </body>
 </html>
