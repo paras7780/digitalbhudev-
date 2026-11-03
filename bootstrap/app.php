@@ -11,9 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(prepend: [
+        // Appended so sessions, CSRF and cookies are active before tenant pages render.
+        $middleware->web(append: [
             \App\Http\Middleware\ResolveTenantDomain::class,
-        ], append: [
             \App\Http\Middleware\SetLocale::class,
         ]);
         $middleware->alias([

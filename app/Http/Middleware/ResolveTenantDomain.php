@@ -2,62 +2,70 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Controllers\PanditWebsiteController;
 use App\Models\BhudevDomain;
 use Closure;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResolveTenantDomain
 {
     /**
-     * Handle an incoming request.
-     * Detects if the incoming host or preview parameter corresponds to a Pandit's custom domain.
+     * Detect whether the request host (or an explicit ?preview_domain=) belongs to a Pandit's
+     * custom domain and, if so, share that tenant with the container and the views.
+     *
+     * This middleware only resolves and shares. It never renders a response itself, so it must run
+     * after the session, CSRF and locale middleware (it is appended to the web group) and the
+     * actual pages are rendered by normal routes (see PanditWebsiteController::landing).
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Safe check if database has been migrated
-        if (!Schema::hasTable('bhudev_domains')) {
+        // Start every request clean. The container instance survives between requests in tests and
+        // long-running workers, so a previous tenant must never leak into this request.
+        $this->clearTenant();
+
+        $rawHost = $this->stripWww(strtolower(trim($request->getHost())));
+
+        $previewDomain = $request->query('preview_domain');
+        $lookupDomain = $previewDomain
+            ? $this->stripWww(strtolower(trim((string) $previewDomain)))
+            : $rawHost;
+
+        // The platform's own host never maps to a tenant, so skip the database entirely.
+        $appHost = $this->stripWww(strtolower((string) parse_url((string) config('app.url'), PHP_URL_HOST)));
+        if (!$previewDomain && $lookupDomain === $appHost) {
             return $next($request);
         }
 
-        $rawHost = strtolower(trim($request->getHost()));
-
-        // Strip www. prefix
-        if (str_starts_with($rawHost, 'www.')) {
-            $rawHost = substr($rawHost, 4);
+        try {
+            $domain = BhudevDomain::with(['profile.services', 'profile.publicImages', 'profile.user'])
+                ->where('domain_name', $lookupDomain)
+                ->first();
+        } catch (QueryException $e) {
+            // Database not migrated yet: behave as the main site.
+            return $next($request);
         }
 
-        // Check if an explicit preview domain parameter was passed (useful for local testing)
-        $previewDomain = $request->query('preview_domain');
-        $lookupDomain = $previewDomain ? strtolower(trim($previewDomain)) : $rawHost;
-
-        // Find active domain mapping
-        $domain = BhudevDomain::with(['profile.services', 'profile.publicImages', 'profile.user'])
-            ->where('domain_name', $lookupDomain)
-            ->first();
-
-        // If domain exists and is active (or in preview mode)
         if ($domain && ($domain->isActive() || $previewDomain)) {
             app()->instance('current_tenant_domain', $domain);
             app()->instance('current_pandit', $domain->profile);
             view()->share('tenantDomain', $domain);
             view()->share('tenantPandit', $domain->profile);
-
-            // Intercept root homepage on Pandit's domain
-            if ($request->path() === '/' || $request->path() === '') {
-                $content = app(PanditWebsiteController::class)->show($request, $domain);
-                return response($content);
-            }
-
-            // Intercept inquiry submission on Pandit's domain
-            if ($request->is('pandit-inquiry') || ($request->is('inquiry') && $request->isMethod('POST'))) {
-                $response = app(PanditWebsiteController::class)->handleInquiry($request);
-                return $response instanceof Response ? $response : response($response);
-            }
         }
 
         return $next($request);
+    }
+
+    private function clearTenant(): void
+    {
+        app()->forgetInstance('current_tenant_domain');
+        app()->forgetInstance('current_pandit');
+        view()->share('tenantDomain', null);
+        view()->share('tenantPandit', null);
+    }
+
+    private function stripWww(string $host): string
+    {
+        return str_starts_with($host, 'www.') ? substr($host, 4) : $host;
     }
 }

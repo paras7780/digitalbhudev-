@@ -290,7 +290,9 @@ class AdminController extends Controller
             });
         })->latest()->take(15)->get();
 
-        return view('admin.bhudev-show', compact('profile', 'auditLogs'));
+        $inquiryCount = $profile->inquiries()->count();
+
+        return view('admin.bhudev-show', compact('profile', 'auditLogs', 'inquiryCount'));
     }
 
     /**

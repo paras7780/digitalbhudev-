@@ -3,6 +3,35 @@
 @section('title', ($domain->hero_title ?? $pandit->display_name) . ' | Official Vedic Priest & Astrologer')
 @section('meta_description', $domain->hero_tagline ?? ('Book authentic Vedic rituals, Griha Pravesh, Satyanarayan Puja, and Rudrabhishek with ' . $pandit->display_name))
 
+@if($pandit->photo_path)
+    @section('og_image', asset('storage/' . $pandit->photo_path))
+@endif
+@push('schema')
+@php
+    $siteUrl = \App\Support\Seo::siteUrl();
+    $sameAs = [];
+    if (($instagramEligible ?? false) && ($instagramSetting->account_username ?? null)) {
+        $sameAs[] = 'https://www.instagram.com/' . ltrim($instagramSetting->account_username, '@') . '/';
+    }
+    $businessSchema = array_filter([
+        '@context'    => 'https://schema.org',
+        '@type'       => 'LocalBusiness',
+        '@id'         => $siteUrl . '#business',
+        'name'        => $domain->hero_title ?: $pandit->display_name,
+        'description' => \Illuminate\Support\Str::limit(strip_tags((string) ($domain->about_intro ?: $pandit->bio)), 300),
+        'url'         => $siteUrl,
+        'image'       => $pandit->photo_path ? \App\Support\Seo::absolute(asset('storage/' . $pandit->photo_path)) : null,
+        'telephone'   => $domain->whatsapp_number ? '+' . \App\Support\WhatsApp::normalize($domain->whatsapp_number) : null,
+        'address'     => array_filter(['@type' => 'PostalAddress', 'addressLocality' => $pandit->city, 'addressRegion' => $pandit->state, 'addressCountry' => 'IN']),
+        'areaServed'  => $pandit->service_area ?: ($pandit->city ?: null),
+        'founder'     => ['@type' => 'Person', 'name' => $pandit->display_name, 'jobTitle' => 'Vedic Priest (Bhudev)'],
+        'makesOffer'  => $pandit->services->map(fn ($s) => ['@type' => 'Offer', 'itemOffered' => ['@type' => 'Service', 'name' => $s->name]])->values()->all(),
+        'sameAs'      => $sameAs,
+    ], fn ($v) => $v !== null && $v !== '' && $v !== []);
+@endphp
+<script type="application/ld+json">{!! json_encode($businessSchema, \App\Support\Seo::JSON_FLAGS) !!}</script>
+@endpush
+
 @section('content')
 {{-- HERO SECTION --}}
 <section id="hero" style="background:linear-gradient(135deg, #fff5f9 0%, #ffffff 50%, #eff6ff 100%);padding:60px 0 80px;border-bottom:1px solid #f3e5ee">
@@ -39,8 +68,8 @@
             {{-- CTAs --}}
             <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
                 <a href="{{ $domain->generateWhatsAppUrl('Namaste Shastriji, I visited your personal website and would like to check your availability for an upcoming puja.') }}" target="_blank" class="btn-whatsapp-header" style="font-size:16px;padding:14px 28px">
-                    <span style="font-size:20px">💬</span>
-                    <span>Book on WhatsApp (Instant Reply)</span>
+                    @include('partials.icon-whatsapp')
+                    <span>Book on WhatsApp<span class="wa-long"> (Instant Reply)</span></span>
                 </a>
 
                 <a href="#ceremonies" style="background:#fff;border:1px solid #d5a45c;color:#875200;padding:14px 24px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none">
@@ -79,7 +108,7 @@
 
 {{-- CREDENTIALS STRIP --}}
 <section style="background:#fff;border-bottom:1px solid #ebd9c4;padding:28px 0">
-    <div style="max-width:1200px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:24px;text-align:center">
+    <div class="pandit-stats-grid" style="max-width:1200px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:24px;text-align:center">
         <div>
             <div style="font-size:24px;color:#b94e20;font-weight:800;font-family:'Playfair Display',serif">{{ $pandit->experience_years ? $pandit->experience_years . '+ Years' : '15+ Years' }}</div>
             <div style="font-size:13px;color:#6d5f53;margin-top:4px">Vedic Ritual Experience</div>
@@ -149,42 +178,42 @@
             </p>
         </div>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:28px">
+        <div class="pandit-services-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:28px">
             @forelse($pandit->services as $service)
-                <div style="background:#fffaf6;border:1px solid #eedecf;border-radius:14px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;transition:transform 0.2s, box-shadow 0.2s;box-shadow:0 4px 12px rgba(41,36,31,0.03)">
+                <div class="pandit-service-card" style="background:#fffaf6;border:1px solid #eedecf;border-radius:14px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;transition:transform 0.2s, box-shadow 0.2s;box-shadow:0 4px 12px rgba(41,36,31,0.03)">
                     <div>
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
                             <span style="font-size:26px">🪔</span>
-                            <span style="background:#fff;border:1px solid #e5d4c2;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;color:#875200">
+                            <span class="pandit-service-tag" style="background:#fff;border:1px solid #e5d4c2;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;color:#875200">
                                 VEDIC VIDHI
                             </span>
                         </div>
                         <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:#221a14;margin:0 0 10px">
                             {{ $service->name }}
                         </h3>
-                        <p style="color:#5e5044;font-size:14px;line-height:1.6;margin:0 0 16px">
+                        <p class="pandit-service-desc" style="color:#5e5044;font-size:14px;line-height:1.6;margin:0 0 16px">
                             {{ $service->description ?: 'Conducted with sacred Vedic Sankalpa, authentic mantra recitations, and complete aarti vidhi for the prosperity of your family.' }}
                         </p>
                     </div>
 
                     <div style="padding-top:16px;border-top:1px solid #f0e2d3">
                         <a href="{{ $domain->generateWhatsAppUrl('Namaste Shastriji, I would like to book ' . $service->name . '. Please let me know available Muhurats.') }}" target="_blank" class="btn-whatsapp-header" style="width:100%;justify-content:center;box-sizing:border-box;font-size:14px">
-                            💬 Book {{ $service->name }}
+                            @include('partials.icon-whatsapp') <span class="wa-full">Book {{ $service->name }}</span><span class="wa-short">Book Now</span>
                         </a>
                     </div>
                 </div>
             @empty
                 {{-- Fallback default ceremony cards if services not explicitly attached --}}
                 @foreach(['Satyanarayan Katha & Puja' => 'Traditional Katha with banana leaves mandap, Panchamrit preparation, and sacred Shaligram abhishek.', 'Griha Pravesh & Vastu Shanti' => 'Navagraha Havan, Vastu Purush Sthapana, Toran Pooja, and milk boiling ritual for new homes.', 'Rudrabhishek & Shiva Pooja' => 'Sacred Abhishek of Lord Shiva with Gangajal, milk, panchamrit, and Laghurudra / Mahamrityunjaya chanting.'] as $pName => $pDesc)
-                    <div style="background:#fffaf6;border:1px solid #eedecf;border-radius:14px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 4px 12px rgba(41,36,31,0.03)">
+                    <div class="pandit-service-card" style="background:#fffaf6;border:1px solid #eedecf;border-radius:14px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 4px 12px rgba(41,36,31,0.03)">
                         <div>
                             <div style="font-size:26px;margin-bottom:12px">🪔</div>
                             <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:#221a14;margin:0 0 10px">{{ $pName }}</h3>
-                            <p style="color:#5e5044;font-size:14px;line-height:1.6;margin:0 0 16px">{{ $pDesc }}</p>
+                            <p class="pandit-service-desc" style="color:#5e5044;font-size:14px;line-height:1.6;margin:0 0 16px">{{ $pDesc }}</p>
                         </div>
                         <div style="padding-top:16px;border-top:1px solid #f0e2d3">
                             <a href="{{ $domain->generateWhatsAppUrl('Namaste Shastriji, I would like to book ' . $pName . '.') }}" target="_blank" class="btn-whatsapp-header" style="width:100%;justify-content:center;box-sizing:border-box;font-size:14px">
-                                💬 Book on WhatsApp
+                                @include('partials.icon-whatsapp') <span class="wa-full">Book on WhatsApp</span><span class="wa-short">Book Now</span>
                             </a>
                         </div>
                     </div>
@@ -205,11 +234,11 @@
                 </h2>
             </div>
 
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:20px">
+            <div class="pandit-gallery-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:20px">
                 @foreach($pandit->publicImages as $img)
-                    <div style="border-radius:12px;overflow:hidden;border:1px solid #eedecf;box-shadow:0 4px 14px rgba(41,36,31,0.06);background:#fff">
-                        <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $img->alt_text ?: 'Ceremony Photo' }}" style="width:100%;height:220px;object-fit:cover;display:block">
-                    </div>
+                    <a href="{{ asset('storage/' . $img->path) }}" target="_blank" rel="noopener" class="pandit-gallery-item" style="display:block;border-radius:12px;overflow:hidden;border:1px solid #eedecf;box-shadow:0 4px 14px rgba(41,36,31,0.06);background:#fff">
+                        <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $img->alt_text ?: 'Ceremony Photo' }}" loading="lazy" style="width:100%;height:220px;object-fit:cover;object-position:top;display:block">
+                    </a>
                 @endforeach
             </div>
         </div>
@@ -249,18 +278,18 @@
                 </div>
             </div>
 
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:24px">
+            <div class="pandit-reels-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:24px">
                 @foreach($instagramPosts as $post)
                     <div class="bhudev-reel-card" style="background:#fff;border:1px solid #ebd9c4;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(41,36,31,0.06);display:flex;flex-direction:column;transition:transform 0.2s">
                         {{-- Instagram / Video Header --}}
                         <div style="padding:14px 18px;border-bottom:1px solid #f2e9df;display:flex;align-items:center;justify-content:space-between;background:#fff">
                             <div style="display:flex;align-items:center;gap:10px">
                                 <span style="background:linear-gradient(135deg, #f58529, #dd2a7b, #8134af);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;box-shadow:0 2px 6px rgba(221,42,123,0.3)">
-                                    {{ $post->isVideoUpload() ? '🎬' : '📸' }}
+                                    {{ $post->hasNativeVideo() ? '🎬' : '📸' }}
                                 </span>
                                 <div>
                                     <div style="font-size:13px;font-weight:700;color:#221a14">{{ $domain->hero_title ?? $pandit->display_name }}</div>
-                                    <div style="font-size:11px;color:#875200">{{ $post->isVideoUpload() ? 'Sacred Ceremony Recording' : 'Official Instagram' }}</div>
+                                    <div style="font-size:11px;color:#875200">{{ $post->isVideoUpload() ? 'Sacred Ceremony Recording' : ($post->author_name ? '@' . $post->author_name : 'Official Instagram') }}</div>
                                 </div>
                             </div>
                             @if($post->isVideoUpload())
@@ -274,12 +303,15 @@
                             @endif
                         </div>
 
-                        @if($post->isVideoUpload())
-                            {{-- Native HTML5 Video Player with Autoplay & Sound Toggle --}}
-                            <div class="bhudev-video-container" style="background:#0a0806;min-height:440px;max-height:560px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
-                                <video 
-                                    class="bhudev-reel-video" 
-                                    src="{{ $post->getVideoUrl() }}" 
+                        @if($post->hasNativeVideo())
+                            {{-- Native HTML5 Video Player with Autoplay & Sound Toggle (uploaded file or Instagram-hosted library video) --}}
+                            <div class="bhudev-video-container bhudev-media-box" style="background:#0a0806;min-height:440px;max-height:560px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+                                <video
+                                    class="bhudev-reel-video"
+                                    src="{{ $post->getVideoUrl() }}"
+                                    @if($post->thumbnail_url) poster="{{ $post->thumbnail_url }}" @endif
+                                    data-embed="{{ $post->isFromLibrary() ? $post->getEmbedUrl() : '' }}"
+                                    onerror="bhudevEmbedFallback(this)"
                                     {{ $siteAutoplayDefault && $post->is_autoplay ? 'autoplay' : '' }}
                                     muted 
                                     loop 
@@ -304,6 +336,13 @@
                                     <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399"></span>
                                     <span>Auto-Playing</span>
                                 </div>
+                            </div>
+                        @elseif($post->isFromLibrary() && $post->getImageUrl())
+                            {{-- Library photo / carousel cover, served by Instagram and refreshed on every sync --}}
+                            <div class="bhudev-media-box" style="background:#faf7f2;min-height:320px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+                                <a href="{{ $post->url }}" target="_blank" rel="noopener noreferrer" style="display:block;width:100%">
+                                    <img src="{{ $post->getImageUrl() }}" alt="{{ $post->caption ? \Illuminate\Support\Str::limit($post->caption, 80) : 'Instagram post' }}" loading="lazy" data-embed="{{ $post->getEmbedUrl() }}" onerror="bhudevEmbedFallback(this)" style="width:100%;max-height:560px;object-fit:cover;display:block">
+                                </a>
                             </div>
                         @else
                             {{-- Embedded Official Instagram Reel Card/Frame --}}
@@ -341,7 +380,7 @@
                                 @endif
 
                                 <a href="{{ $domain->generateWhatsAppUrl('Namaste Shastriji, I watched your sacred ' . ($post->isVideoUpload() ? 'Ceremony Video' : 'Instagram ' . ucfirst($post->media_type)) . ' on your website and would like to inquire about this ceremony.') }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#1e7e34;font-weight:600;text-decoration:none">
-                                    <span>💬 Book Similar Vidhi</span>
+                                    @include('partials.icon-whatsapp') <span>Book Similar Vidhi</span>
                                 </a>
                             </div>
                         </div>
@@ -368,6 +407,16 @@
     <script>
         (function() {
             var siteAutoplayActive = {{ $siteAutoplayDefault ? 'true' : 'false' }};
+
+            // Library media is served from Instagram's CDN; if a link has expired, show the official embed instead.
+            window.bhudevEmbedFallback = function(el) {
+                var box = el.closest('.bhudev-media-box');
+                var embed = el.getAttribute('data-embed');
+                if (!box || !embed || box.getAttribute('data-fallback-done')) return;
+                box.setAttribute('data-fallback-done', '1');
+                box.style.minHeight = '440px';
+                box.innerHTML = '<iframe src="' + embed + '" style="width:100%;min-height:440px;border:none;overflow:hidden" scrolling="no" frameborder="0" allowtransparency="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" title="Instagram"></iframe>';
+            };
 
             // Toggle Audio for a specific video card
             window.toggleReelAudio = function(btn) {
@@ -567,14 +616,23 @@
         <div style="background:#2e241c;border:1px solid #4a3c30;border-radius:18px;padding:36px;box-shadow:0 8px 32px rgba(0,0,0,0.3)">
             <form action="{{ route('pandit.inquiry.handle') }}" method="POST">
                 @csrf
+                @if ($errors->any())
+                    <div role="alert" style="background:#4a1f1f;border:1px solid #a33a3a;color:#ffd9d9;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:13px">
+                        <ul style="margin:0;padding-left:18px">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <div class="pandit-form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
                     <div>
                         <label style="display:block;color:#e8ded5;font-size:13px;font-weight:600;margin-bottom:6px">Your Full Name *</label>
-                        <input type="text" name="name" required placeholder="e.g. Rajeshbhai Patel" style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid #544537;background:#201812;color:#fff;font-size:14px;box-sizing:border-box">
+                        <input type="text" name="name" value="{{ old('name') }}" required placeholder="e.g. Rajeshbhai Patel" style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid #544537;background:#201812;color:#fff;font-size:14px;box-sizing:border-box">
                     </div>
                     <div>
                         <label style="display:block;color:#e8ded5;font-size:13px;font-weight:600;margin-bottom:6px">WhatsApp / Mobile Number *</label>
-                        <input type="tel" name="phone" required placeholder="e.g. 9876543210" style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid #544537;background:#201812;color:#fff;font-size:14px;box-sizing:border-box">
+                        <input type="tel" name="phone" value="{{ old('phone') }}" required placeholder="e.g. 9876543210" style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid #544537;background:#201812;color:#fff;font-size:14px;box-sizing:border-box">
                     </div>
                 </div>
 
@@ -604,7 +662,7 @@
 
                 <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
                     <button type="submit" class="btn-whatsapp-header" style="font-size:16px;padding:14px 28px;border:none;cursor:pointer">
-                        <span>💬 Confirm & Connect on WhatsApp</span>
+                        @include('partials.icon-whatsapp') <span>Confirm &amp; Connect on WhatsApp</span>
                     </button>
 
                     <div style="font-size:12px;color:#baa99a">

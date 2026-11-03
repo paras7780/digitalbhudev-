@@ -177,4 +177,20 @@ class SamagriStudioTest extends TestCase
         $response->assertSee('શાસ્ત્રી પારસ દાદા');
         $response->assertSee('નીલેશભાઈ');
     }
+    public function test_studio_is_hidden_from_the_bhudev_panel_when_the_feature_is_off(): void
+    {
+        config(['app.features.samagri_studio' => false]);
+        [$user] = $this->createBhudev();
+
+        // No menu entry, no dashboard shortcut, and the pages themselves are not reachable
+        $this->actingAs($user)->get(route('bhudev.dashboard'))
+            ->assertOk()
+            ->assertDontSee(route('bhudev.samagri-studio'), false);
+
+        $this->actingAs($user)->get(route('bhudev.samagri-studio'))->assertNotFound();
+        $this->actingAs($user)->post(route('bhudev.samagri-studio.save'), ['pooja_slug' => 'ganpati', 'pooja_title' => 'X'])->assertNotFound();
+
+        // The public samagri page no longer advertises the studio either
+        $this->get(route('samagri.index'))->assertOk()->assertDontSee('Open Patrika Studio');
+    }
 }

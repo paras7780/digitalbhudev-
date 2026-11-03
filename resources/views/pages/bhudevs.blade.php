@@ -133,13 +133,11 @@
                                 </a>
 
                                 @php
-                                    $targetWa = ($profile->show_mobile && $profile->user->phone)
-                                        ? preg_replace('/[^0-9]/', '', $profile->user->phone)
-                                        : '919876543210';
-                                    if (strlen($targetWa) === 10) $targetWa = '91' . $targetWa;
                                     $waMsg = "Namaste Panditji ({$profile->display_name}), I saw your profile on DigitalBhudev and would like to inquire about booking a puja in {$profile->city}.";
+                                    $targetWa = ($profile->show_mobile && $profile->user->phone) ? $profile->user->phone : config('app.support_whatsapp');
+                                    $waHref = \App\Support\WhatsApp::url($targetWa, $waMsg) ?? route('contact');
                                 @endphp
-                                <a href="https://api.whatsapp.com/send?phone={{ $targetWa }}&text={{ urlencode($waMsg) }}" target="_blank" class="btn btn-light" style="background:#25d366;color:#fff;border:none;padding:9px 12px;font-size:13px;border-radius:var(--radius-full)" title="Chat on WhatsApp">
+                                <a href="{{ $waHref }}" target="_blank" class="btn btn-light" style="background:#25d366;color:#fff;border:none;padding:9px 12px;font-size:13px;border-radius:var(--radius-full)" title="Chat on WhatsApp">
                                     💬
                                 </a>
                             </div>

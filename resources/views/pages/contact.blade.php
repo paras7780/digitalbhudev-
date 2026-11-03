@@ -105,9 +105,13 @@
                         <p style="color:var(--muted);font-size:13px;line-height:1.6;margin:0 0 16px">
                             Need fast assistance finding a priest or choosing a Muhurat? Chat directly with our coordinator on WhatsApp.
                         </p>
-                        <a href="https://api.whatsapp.com/send?phone=919876543210&text={{ urlencode('Namaste DigitalBhudev, I need assistance with a Vedic ceremony.') }}" target="_blank" class="btn" style="background:#25d366;color:#ffffff;border:none;width:100%;padding:11px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--radius-full)">
+                        @if($supportWa = \App\Support\WhatsApp::supportUrl('Namaste DigitalBhudev, I need assistance with a Vedic ceremony.'))
+                        <a href="{{ $supportWa }}" target="_blank" class="btn" style="background:#25d366;color:#ffffff;border:none;width:100%;padding:11px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--radius-full)">
                             Chat on WhatsApp &rarr;
                         </a>
+                        @else
+                        <p style="color:var(--muted);font-size:13px;margin:0">WhatsApp support is not available yet. Please use the form.</p>
+                        @endif
                     </div>
 
                     {{-- Response Guarantee --}}

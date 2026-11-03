@@ -41,7 +41,7 @@
                 </p>
             </div>
             <div>
-                <a href="https://api.whatsapp.com/send?phone=919876543210&text={{ urlencode('Namaste DigitalBhudev Admin, my website ' . $latestDomainRequest->domain_name . ' is suspended. Reason: ' . ($latestDomainRequest->suspension_reason ?: 'Renewal') . '. Please assist me to reactivate.') }}" target="_blank" class="btn btn-primary" style="background:#25d366;border-color:#25d366">
+                <a href="{{ \App\Support\WhatsApp::supportUrl('Namaste DigitalBhudev Admin, my website ' . $latestDomainRequest->domain_name . ' is suspended. Reason: ' . ($latestDomainRequest->suspension_reason ?: 'Renewal') . '. Please assist me to reactivate.') ?? route('contact') }}" target="_blank" class="btn btn-primary" style="background:#25d366;border-color:#25d366">
                     💬 WhatsApp Admin to Reactivate
                 </a>
             </div>
@@ -358,7 +358,7 @@
             <p style="margin:4px 0 12px;color:#6d4810;font-size:12px;line-height:1.5">
                 Our support team is available on WhatsApp to guide you through domain selection and setup.
             </p>
-            <a href="https://wa.me/919876543210?text=Namaste%2C+I+have+a+question+about+getting+my+own+Pandit+website+domain." target="_blank" style="color:#b94e20;font-size:13px;font-weight:700;text-decoration:none">
+            <a href="{{ \App\Support\WhatsApp::supportUrl('Namaste, I have a question about getting my own Pandit website domain.') ?? route('contact') }}" target="_blank" style="color:#b94e20;font-size:13px;font-weight:700;text-decoration:none">
                 💬 Chat with Support on WhatsApp →
             </a>
         </div>

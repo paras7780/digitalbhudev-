@@ -151,6 +151,26 @@ class AdminInstagramController extends Controller
         return back()->with('status', $result['message']);
     }
 
+    /**
+     * Pull the latest posts and Reels from the connected Instagram account now.
+     */
+    public function syncLibrary(Request $request, BhudevProfile $profile)
+    {
+        $this->guard($request);
+
+        $result = $this->instagramService->syncLibrary($profile);
+
+        Audit::record($request, 'admin.instagram.library_synced', $profile, [
+            'success'  => $result['success'],
+            'imported' => $result['imported'],
+            'removed'  => $result['removed'],
+        ]);
+
+        return $result['success']
+            ? back()->with('status', $result['message'])
+            : back()->with('error', 'Instagram sync failed: ' . $result['error']);
+    }
+
     public function uploadVideo(Request $request, BhudevProfile $profile)
     {
         $this->guard($request);
@@ -299,7 +319,7 @@ class AdminInstagramController extends Controller
         $cleanDomain = preg_replace('#^www\.#i', '', $cleanDomain);
         $cleanDomain = rtrim($cleanDomain, '/');
 
-        $phone = $validated['whatsapp_number'] ?? $profile->user?->phone ?? '919876543210';
+        $phone = $validated['whatsapp_number'] ?? $profile->user?->phone;
 
         // Check if an inquiry domain already exists
         $domain = BhudevDomain::firstOrNew([

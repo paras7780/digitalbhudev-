@@ -69,7 +69,7 @@
 
 {{-- Profiles Table --}}
 <div style="background:#fff;border:1px solid #ebd9c4;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
-    <table class="admin-table" style="width:100%;border-collapse:collapse">
+    <div class="admin-table-wrap"><table class="admin-table" style="width:100%;border-collapse:collapse">
         <thead>
             <tr style="background:#fcf9f5;border-bottom:1px solid #eedecf;text-align:left;font-size:12px;text-transform:uppercase;color:#786b60">
                 <th style="padding:14px 18px">Bhudev Profile</th>
@@ -178,7 +178,7 @@
                 </tr>
             @endforelse
         </tbody>
-    </table>
+    </table></div>
 
     @if($profiles->hasPages())
         <div style="padding:16px 20px;border-top:1px solid #eedecf">

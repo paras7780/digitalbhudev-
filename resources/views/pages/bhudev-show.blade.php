@@ -3,6 +3,40 @@
 @section('title', $profile->seo_title ?: $profile->display_name . ' | DigitalBhudev')
 @section('meta_description', $profile->seo_description ?: \Illuminate\Support\Str::limit(strip_tags($profile->bio ?: 'Connect with ' . $profile->display_name . ' on DigitalBhudev for Vedic pujas, havans, and rituals.'), 155))
 
+@section('og_type', 'profile')
+@if($profile->photo_path)
+    @section('og_image', asset('storage/' . $profile->photo_path))
+@endif
+@push('schema')
+@php
+    $personSchema = array_filter([
+        '@context'    => 'https://schema.org',
+        '@type'       => 'Person',
+        '@id'         => route('bhudevs.show', $profile->slug) . '#person',
+        'name'        => $profile->display_name,
+        'jobTitle'    => 'Vedic Priest (Bhudev)',
+        'description' => \Illuminate\Support\Str::limit(strip_tags((string) $profile->bio), 300),
+        'url'         => route('bhudevs.show', $profile->slug),
+        'image'       => $profile->photo_path ? \App\Support\Seo::absolute(asset('storage/' . $profile->photo_path)) : null,
+        'address'     => array_filter(['@type' => 'PostalAddress', 'addressLocality' => $profile->city, 'addressRegion' => $profile->state, 'addressCountry' => 'IN']),
+        'knowsLanguage' => array_values(array_filter((array) $profile->languages)),
+        'knowsAbout'  => $profile->services->pluck('name')->values()->all(),
+        'worksFor'    => ['@id' => \App\Support\Seo::siteUrl() . '#organization'],
+    ], fn ($v) => $v !== null && $v !== '' && $v !== []);
+    $breadcrumbSchema = [
+        '@context' => 'https://schema.org',
+        '@type'    => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => route('home')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Find a Bhudev', 'item' => route('bhudevs.index')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $profile->display_name, 'item' => route('bhudevs.show', $profile->slug)],
+        ],
+    ];
+@endphp
+<script type="application/ld+json">{!! json_encode($personSchema, \App\Support\Seo::JSON_FLAGS) !!}</script>
+<script type="application/ld+json">{!! json_encode($breadcrumbSchema, \App\Support\Seo::JSON_FLAGS) !!}</script>
+@endpush
+
 @section('content')
 <main>
     <section class="page-hero">
@@ -178,17 +212,14 @@
 
                         {{-- Direct WhatsApp Connect Button --}}
                         @php
-                            $targetPhone = ($profile->show_mobile && $profile->user->phone)
-                                ? preg_replace('/[^0-9]/', '', $profile->user->phone)
-                                : '919876543210';
-                            if (strlen($targetPhone) === 10) {
-                                $targetPhone = '91' . $targetPhone;
-                            }
                             $waMessage = "Namaste Panditji ({$profile->display_name}),\n"
                                 . "I saw your profile on DigitalBhudev and would like to inquire about booking a Vedic ceremony in {$profile->city}.\n"
                                 . "Profile reference: " . route('bhudevs.show', $profile->slug);
+                            // Pandit's own number when shared, otherwise the platform support number, otherwise the contact form.
+                            $targetPhone = ($profile->show_mobile && $profile->user->phone) ? $profile->user->phone : config('app.support_whatsapp');
+                            $waHref = \App\Support\WhatsApp::url($targetPhone, $waMessage) ?? route('contact');
                         @endphp
-                        <a href="https://api.whatsapp.com/send?phone={{ $targetPhone }}&text={{ urlencode($waMessage) }}" target="_blank" class="btn" style="background:#25d366;color:#ffffff;border:none;width:100%;padding:13px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:var(--radius-full);margin-bottom:12px;box-shadow:0 4px 14px rgba(37,211,102,0.3)">
+                        <a href="{{ $waHref }}" target="_blank" class="btn" style="background:#25d366;color:#ffffff;border:none;width:100%;padding:13px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:var(--radius-full);margin-bottom:12px;box-shadow:0 4px 14px rgba(37,211,102,0.3)">
                             <span style="font-size:20px">💬</span> Chat on WhatsApp
                         </a>
 

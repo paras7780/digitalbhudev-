@@ -10,11 +10,26 @@ use Illuminate\Http\Request;
 class PanditWebsiteController extends Controller
 {
     /**
+     * Root URL. On an active Pandit domain (or ?preview_domain=) this is the Pandit's website,
+     * everywhere else it is the main DigitalBhudev homepage.
+     */
+    public function landing(Request $request)
+    {
+        $domain = $this->currentTenant();
+
+        if ($domain && $domain->isActive()) {
+            return $this->show($request, $domain);
+        }
+
+        return view('pages.home');
+    }
+
+    /**
      * Render the Pandit's personal white-labeled website.
      */
     public function show(Request $request, ?BhudevDomain $domain = null)
     {
-        $domain = $domain ?? app('current_tenant_domain');
+        $domain = $domain ?? $this->currentTenant();
         abort_unless($domain && $domain->isActive(), 404, 'Pandit website is not active.');
 
         $pandit = $domain->profile->load(['services', 'publicImages', 'user', 'instagramSetting']);
@@ -33,7 +48,7 @@ class PanditWebsiteController extends Controller
      */
     public function handleInquiry(Request $request)
     {
-        $domain = app('current_tenant_domain');
+        $domain = $this->currentTenant();
         abort_unless($domain && $domain->isActive(), 404);
 
         $pandit = $domain->profile;
@@ -88,5 +103,13 @@ class PanditWebsiteController extends Controller
         }
 
         return redirect()->away($waUrl);
+    }
+
+    /**
+     * Tenant resolved by ResolveTenantDomain for this request, or null on the main site.
+     */
+    private function currentTenant(): ?BhudevDomain
+    {
+        return app()->bound('current_tenant_domain') ? app('current_tenant_domain') : null;
     }
 }

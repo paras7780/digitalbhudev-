@@ -9,6 +9,15 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 /*
+| Keep every connected Instagram library current: new posts and Reels appear on the
+| Bhudev's website within six hours without any manual upload.
+*/
+Schedule::command('instagram:sync')
+    ->everySixHours()
+    ->withoutOverlapping()
+    ->appendOutputTo(storage_path('logs/instagram-sync.log'));
+
+/*
 |--------------------------------------------------------------------------
 | Scheduled Background Cron Tasks
 |--------------------------------------------------------------------------

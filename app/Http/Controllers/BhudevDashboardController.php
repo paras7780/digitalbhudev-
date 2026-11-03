@@ -242,6 +242,11 @@ class BhudevDashboardController extends Controller
             'password'         => 'required|string|min:8|max:64|confirmed',
         ]);
 
+        // An administrator viewing the portal as this Bhudev must not change their password.
+        if (\App\Http\Controllers\ImpersonationController::isActive()) {
+            return back()->with('error', 'Password changes are disabled while viewing the portal as this Bhudev.');
+        }
+
         $request->user()->update([
             'password' => Hash::make($request->input('password')),
         ]);
@@ -365,11 +370,16 @@ class BhudevDashboardController extends Controller
      */
     public function samagriStudio(Request $request)
     {
+        abort_unless(config('app.features.samagri_studio'), 404);
+
         $profile = $this->guard($request)->load('user');
 
         // Load 4 authentic Figma presets
         $presetsPath = public_path('assets/images/samagri/pooja_templates.json');
-        $presets = file_exists($presetsPath) ? json_decode(file_get_contents($presetsPath), true) : [];
+        // The preset file is saved with a UTF-8 BOM, which json_decode() rejects; strip it first.
+        $presets = file_exists($presetsPath)
+            ? (json_decode(ltrim((string) file_get_contents($presetsPath), "\xEF\xBB\xBF"), true) ?: [])
+            : [];
 
         // Load all saved cards for this priest
         $savedCards = $profile->samagriCards()->get();
@@ -413,6 +423,8 @@ class BhudevDashboardController extends Controller
      */
     public function saveSamagriCard(Request $request)
     {
+        abort_unless(config('app.features.samagri_studio'), 404);
+
         $profile = $this->guard($request);
 
         $validated = $request->validate([
@@ -484,6 +496,8 @@ class BhudevDashboardController extends Controller
      */
     public function deleteSamagriCard(Request $request, BhudevSamagriCard $card)
     {
+        abort_unless(config('app.features.samagri_studio'), 404);
+
         $profile = $this->guard($request);
         abort_unless($card->bhudev_profile_id === $profile->id, 403, 'Unauthorized access to card.');
 
@@ -568,6 +582,26 @@ class BhudevDashboardController extends Controller
         ]);
 
         return back()->with('status', $result['message']);
+    }
+
+    /**
+     * Pull the latest posts and Reels from the connected Instagram account now.
+     */
+    public function syncInstagramLibrary(Request $request)
+    {
+        $profile = $this->guard($request);
+
+        $result = $this->instagramService->syncLibrary($profile);
+
+        Audit::record($request, 'bhudev.instagram.library_synced', $profile, [
+            'success'  => $result['success'],
+            'imported' => $result['imported'],
+            'removed'  => $result['removed'],
+        ]);
+
+        return $result['success']
+            ? back()->with('status', $result['message'])
+            : back()->with('error', 'Instagram sync failed: ' . $result['error']);
     }
 
     /**
@@ -721,7 +755,7 @@ class BhudevDashboardController extends Controller
         $cleanDomain = preg_replace('#^www\.#i', '', $cleanDomain);
         $cleanDomain = rtrim($cleanDomain, '/');
 
-        $phone = $validated['whatsapp_number'] ?? $request->user()->phone ?? '919876543210';
+        $phone = $validated['whatsapp_number'] ?? $request->user()->phone;
 
         $domain = BhudevDomain::firstOrNew([
             'bhudev_profile_id' => $profile->id,

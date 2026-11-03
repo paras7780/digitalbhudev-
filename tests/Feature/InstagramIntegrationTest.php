@@ -198,6 +198,7 @@ class InstagramIntegrationTest extends TestCase
                 'username'     => 'shastri_rameshwar_vedic',
                 'account_type' => 'BUSINESS',
             ], 200),
+            'https://graph.instagram.com/*' => Http::response(['error' => ['message' => 'not available in tests']], 400),
         ]);
 
         $this->actingAs($this->admin)
@@ -243,6 +244,7 @@ class InstagramIntegrationTest extends TestCase
                     'code'    => 190,
                 ],
             ], 400),
+            'https://graph.instagram.com/*' => Http::response(['error' => ['message' => 'not available in tests']], 400),
         ]);
 
         $this->actingAs($this->admin)

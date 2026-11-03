@@ -1432,6 +1432,7 @@ h1 em, h2 em {
 body.nav-open { overflow: hidden; }
 
 .mobile-nav-footer { display: none; }
+.mobile-nav-header { display: none; } /* drawer header only renders inside the mobile drawer (see max-width:1100px rules) */
 
 .table-responsive {
   width: 100%;
@@ -1850,5 +1851,91 @@ body.nav-open { overflow: hidden; }
   .main-nav {
     width: 92vw !important;
     padding: 16px 16px 24px !important;
+  }
+}
+
+/* ==========================================================================
+   Responsive hardening (public site)
+   ========================================================================== */
+video,
+iframe,
+canvas,
+table {
+  max-width: 100%;
+}
+.container {
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .main-nav a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .btn,
+  a.btn,
+  button.btn {
+    min-height: 44px;
+  }
+  .top-line-inner a:not(.lang-pill),
+  .site-footer a:not(.btn) {
+    display: inline-block;
+    padding: 6px 0;
+  }
+  .lang-pill {
+    min-height: 32px !important;
+  }
+  h1,
+  h2 {
+    overflow-wrap: anywhere;
+  }
+  main div[style*="padding:36px"],
+  main div[style*="padding: 36px"],
+  main div[style*="padding:32px"],
+  main div[style*="padding: 32px"],
+  main div[style*="padding:28px"],
+  main div[style*="padding: 28px"] {
+    padding: 20px 16px !important;
+  }
+  main section[style*="padding:60px"],
+  main section[style*="padding:70px"],
+  main section[style*="padding:80px"] {
+    padding-top: 44px !important;
+    padding-bottom: 48px !important;
+  }
+}
+
+/* Laptop widths (1101-1320px): the full desktop header must fit on one line */
+@media (min-width: 1101px) and (max-width: 1320px) {
+  .nav-wrap {
+    gap: 8px;
+  }
+  .site-logo {
+    height: 40px;
+  }
+  .main-nav {
+    gap: 2px;
+    margin: 0 4px;
+    min-width: 0;
+  }
+  .main-nav a {
+    font-size: 12px;
+    padding: 6px 6px;
+  }
+  .nav-actions {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .login-link {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+  .nav-actions .btn-primary.btn-sm {
+    padding: 8px 12px;
+    font-size: 11.5px;
   }
 }

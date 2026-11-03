@@ -244,6 +244,218 @@
         color: #a01010;
     }
 
+    /* ---- Safe zone ----------------------------------------------------------------
+       The artwork's outer ~100px on each side and the top/bottom ~120px are banana leaves,
+       garlands and peacock lamps; red text placed there disappears. Every text block is kept
+       inside the clean cream arch: priests under the title, items in the middle band, Yajman
+       just above Ganesha. These rules override the original corner coordinates above. */
+    .card-priest-left,
+    .card-priest-right {
+        top: 242px;
+        width: 190px;
+        line-height: 1.3;
+    }
+    .card-priest-left {
+        left: 112px;
+        text-align: left;
+    }
+    .card-priest-right {
+        right: 112px;
+        text-align: right;
+    }
+    .card-priest-name {
+        font-size: 14px;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        max-height: 2.6em;
+        overflow: hidden;
+    }
+    .card-priest-phone {
+        font-size: 13px;
+        white-space: nowrap;
+    }
+    .card-title-banner {
+        left: 120px;
+        right: 120px;
+    }
+    .card-columns-container {
+        top: 302px;
+        left: 108px;
+        right: 108px;
+        bottom: 205px;
+        gap: 18px;
+    }
+    .card-bottom-yajman {
+        bottom: 158px;
+        left: 135px;
+        right: 135px;
+        text-align: center;
+    }
+    /* ---- Reference layout (matches assets/images/samagri/full_card_reference.png) ----------
+       Clean frame as background; Ganesha, peacock lamps and the zodiac watermark are layered as
+       images; names sit beside Ganesha; title with a green divider; bold red two-column list. */
+    .patrika-card-stage {
+        background-image: url("{{ asset('assets/images/samagri/card_background.png') }}");
+        color: #c81414;
+    }
+    .card-art {
+        position: absolute;
+        pointer-events: none;
+        user-select: none;
+        height: auto;
+    }
+    .card-art-ganesha {
+        top: 6px;
+        left: 50%;
+        width: 118px;
+        transform: translateX(-50%);
+    }
+    .card-art-peacock-left {
+        top: 122px;
+        left: 44px;
+        width: 108px;
+    }
+    .card-art-peacock-right {
+        top: 122px;
+        right: 44px;
+        width: 108px;
+    }
+    .card-art-zodiac {
+        top: 292px;
+        left: 50%;
+        width: 440px;
+        transform: translateX(-50%);
+        opacity: 0.6;
+    }
+    .card-priest-left,
+    .card-priest-right {
+        top: 84px;
+        width: 128px;
+        text-align: center;
+        line-height: 1.3;
+        max-height: none;
+    }
+    .card-priest-left {
+        left: 106px;
+    }
+    .card-priest-right {
+        right: 106px;
+    }
+    .card-priest-name {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #c81414;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        max-height: 2.6em;
+        overflow: hidden;
+    }
+    .card-priest-phone {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #c81414;
+        white-space: nowrap;
+    }
+    .card-top-mantra {
+        top: 141px;
+        font-size: 13px;
+        letter-spacing: 0.4px;
+        color: #c81414;
+    }
+    .card-top-firm {
+        top: 157px;
+        font-size: 20px;
+        font-weight: 800;
+        color: #c81414;
+        text-shadow: none;
+    }
+    .card-title-banner {
+        top: 199px;
+        left: 90px;
+        right: 90px;
+        padding: 0;
+        background: none;
+        border: 0;
+    }
+    .card-title-text {
+        font-size: 27px;
+        font-weight: 800;
+        color: #c81414;
+        letter-spacing: 0;
+        line-height: 1.3;
+    }
+    .card-title-divider {
+        position: absolute;
+        top: 240px;
+        left: 150px;
+        right: 150px;
+        height: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #2f6b2f;
+    }
+    .card-title-divider::before,
+    .card-title-divider::after {
+        content: '';
+        flex: 1;
+        height: 1.5px;
+        background: #2f6b2f;
+    }
+    .card-title-divider span {
+        font-size: 11px;
+        letter-spacing: 3px;
+        line-height: 1;
+    }
+    .card-columns-container {
+        top: 268px;
+        left: 116px;
+        right: 116px;
+        bottom: 72px;
+        gap: 26px;
+    }
+    .samagri-item-list {
+        font-size: 15px;
+        line-height: 2.05;
+        font-weight: 700;
+        color: #c81414;
+    }
+    .samagri-item-list.compact {
+        font-size: 13px;
+        line-height: 1.75;
+    }
+    .samagri-item-list.large {
+        font-size: 16.5px;
+        line-height: 2.1;
+    }
+    .samagri-item-list li {
+        gap: 8px;
+    }
+    .samagri-item-list li::before {
+        color: #c81414;
+        font-size: 15px;
+    }
+    .samagri-item-list li.sub-item {
+        padding-left: 34px;
+    }
+    .samagri-item-list li.continuation {
+        padding-left: 14px;
+    }
+    .samagri-item-list li.sub-item::before,
+    .samagri-item-list li.continuation::before {
+        display: none;
+    }
+    .samagri-item-list li.long {
+        font-size: 0.85em; /* long entries such as "તજ- લવિંગ- એલચી (૧૦૦ ગ્રામ)" stay on one line, as on the printed card */
+    }
+    .card-bottom-yajman {
+        bottom: 58px;
+        left: 120px;
+        right: 120px;
+        text-align: center;
+        font-size: 13.5px;
+        color: #c81414;
+    }
     @media print {
         body * {
             visibility: hidden !important;
@@ -288,6 +500,11 @@
 
     {{-- Exact Figma Card --}}
     <div id="patrika-card-stage" class="patrika-card-stage">
+            {{-- Artwork layers: Ganesha on the arch, peacock lamps, zodiac watermark --}}
+            <img src="{{ asset('assets/images/samagri/bottom_ornament.png') }}" alt="" class="card-art card-art-ganesha">
+            <img src="{{ asset('assets/images/samagri/peacock_left.png') }}" alt="" class="card-art card-art-peacock-left">
+            <img src="{{ asset('assets/images/samagri/peacock_right.png') }}" alt="" class="card-art card-art-peacock-right">
+            <img src="{{ asset('assets/images/samagri/ganesha.png') }}" alt="" class="card-art card-art-zodiac">
         {{-- Top Left Priest Info --}}
         <div class="card-priest-left">
             <div class="card-priest-name">{{ $card->left_priest_name }}</div>
@@ -316,20 +533,23 @@
         <div class="card-title-banner">
             <h1 class="card-title-text">{{ $card->pooja_title }}</h1>
         </div>
+            <div class="card-title-divider" aria-hidden="true"><span>✦</span></div>
 
         {{-- Columns Grid --}}
         <div class="card-columns-container">
             <div class="card-column">
                 <ul class="samagri-item-list">
-                    @foreach(array_filter(array_map('trim', explode("\n", (string) $card->column1_items))) as $item)
-                        <li>{{ $item }}</li>
+                    @foreach(array_filter(explode("\n", (string) $card->column1_items), fn ($l) => trim($l) !== '') as $raw)
+                        @php $item = trim($raw); $lineClass = (str_starts_with($item, '-') || str_starts_with($item, '–')) ? 'sub-item' : (preg_match('/^\s/u', $raw) ? 'continuation' : ''); @endphp
+                        <li class="{{ trim($lineClass . (mb_strlen($item) > 18 ? ' long' : '')) }}">{{ $item }}</li>
                     @endforeach
                 </ul>
             </div>
             <div class="card-column">
                 <ul class="samagri-item-list">
-                    @foreach(array_filter(array_map('trim', explode("\n", (string) $card->column2_items))) as $item)
-                        <li>{{ $item }}</li>
+                    @foreach(array_filter(explode("\n", (string) $card->column2_items), fn ($l) => trim($l) !== '') as $raw)
+                        @php $item = trim($raw); $lineClass = (str_starts_with($item, '-') || str_starts_with($item, '–')) ? 'sub-item' : (preg_match('/^\s/u', $raw) ? 'continuation' : ''); @endphp
+                        <li class="{{ trim($lineClass . (mb_strlen($item) > 18 ? ' long' : '')) }}">{{ $item }}</li>
                     @endforeach
                 </ul>
             </div>

@@ -249,13 +249,15 @@
                     </div>
                 </a>
 
-                <a href="{{ route('bhudev.samagri-studio') }}" class="sidebar-link" style="color:var(--admin-ink);background:#fff1f2;border:1px solid #fecdd3">
-                    <span class="nav-icon" style="color:#be123c">📜</span>
-                    <div>
-                        <strong style="display:block;font-size:13px">Samagri Studio</strong>
-                        <small style="color:var(--admin-muted)">Generate WhatsApp Pooja Patrika Cards</small>
-                    </div>
-                </a>
+                @if(config('app.features.samagri_studio'))
+                    <a href="{{ route('bhudev.samagri-studio') }}" class="sidebar-link" style="color:var(--admin-ink);background:#fff1f2;border:1px solid #fecdd3">
+                        <span class="nav-icon" style="color:#be123c">📜</span>
+                        <div>
+                            <strong style="display:block;font-size:13px">Samagri Studio</strong>
+                            <small style="color:var(--admin-muted)">Generate WhatsApp Pooja Patrika Cards</small>
+                        </div>
+                    </a>
+                @endif
 
                 <a href="{{ route('bhudev.profile.edit') }}" class="sidebar-link" style="color:var(--admin-ink);background:#fbf7ef;border:1px solid var(--admin-border)">
                     <span class="nav-icon" style="color:var(--admin-saffron)">✎</span>

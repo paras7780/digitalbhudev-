@@ -514,11 +514,19 @@
     function updateSuspendWhatsAppLink() {
         if (!currentSuspendItem) return;
         const reason = encodeURIComponent(document.getElementById('suspend_reason_text').value || 'Annual renewal pending');
-        const rawPhone = currentSuspendItem.whatsapp_number || (currentSuspendItem.profile && currentSuspendItem.profile.user ? currentSuspendItem.profile.user.phone : '919876543210');
-        const phone = rawPhone ? rawPhone.replace(/\D/g, '') : '919876543210';
+        const rawPhone = currentSuspendItem.whatsapp_number || (currentSuspendItem.profile && currentSuspendItem.profile.user ? currentSuspendItem.profile.user.phone : '');
+        const phone = rawPhone ? String(rawPhone).replace(/\D/g, '') : '';
+        const link = document.getElementById('suspendWhatsAppLink');
+        if (!phone) {
+            // No number on file for this Pandit: do not generate a WhatsApp link to nobody.
+            link.href = '#';
+            link.title = 'No WhatsApp number on file for this Bhudev';
+            return;
+        }
+        link.title = '';
         const name = currentSuspendItem.hero_title || (currentSuspendItem.profile ? currentSuspendItem.profile.display_name : 'Shastri Ji');
         const msg = encodeURIComponent("Namaste " + name + ", this is an important notice regarding your personal website (" + currentSuspendItem.domain_name + ").\n\n⚠️ Status: Temporarily Suspended\n📌 Reason: " + decodeURIComponent(reason) + "\n\nPlease contact us to complete your renewal and restore your live website.\n\nDigitalBhudev Support Team");
-        document.getElementById('suspendWhatsAppLink').href = 'https://wa.me/' + (phone.length === 10 ? '91' + phone : phone) + '?text=' + msg;
+        link.href = 'https://wa.me/' + (phone.length === 10 ? '91' + phone : phone) + '?text=' + msg;
     }
 
     function openCreateDomainModal() {

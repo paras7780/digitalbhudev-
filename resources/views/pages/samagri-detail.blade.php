@@ -3,6 +3,21 @@
 @section('title', $selected['name'] . ' Samagri Checklist | DigitalBhudev')
 @section('meta_description', 'Complete Vedic samagri list for ' . $selected['name'] . '. Check items off on your mobile, print, or share on WhatsApp.')
 
+@push('schema')
+@php
+    $breadcrumbSchema = [
+        '@context' => 'https://schema.org',
+        '@type'    => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => route('home')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Pooja Samagri', 'item' => route('samagri.index')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $selected['name'] . ' Samagri Checklist', 'item' => route('samagri.show', $slug)],
+        ],
+    ];
+@endphp
+<script type="application/ld+json">{!! json_encode($breadcrumbSchema, \App\Support\Seo::JSON_FLAGS) !!}</script>
+@endpush
+
 @section('content')
 <main>
     <section class="page-hero">
@@ -142,7 +157,7 @@
                         </form>
 
                         <div style="margin-top:14px;text-align:center">
-                            <a href="https://api.whatsapp.com/send?phone=919876543210&text={{ urlencode('Namaste DigitalBhudev, I need a Bhudev for ' . $selected['name'] . '.') }}" target="_blank" style="font-size:12px;color:#1e7e34;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:4px">
+                            <a href="{{ \App\Support\WhatsApp::supportUrl('Namaste DigitalBhudev, I need a Bhudev for ' . $selected['name'] . '.') ?? route('contact') }}" target="_blank" style="font-size:12px;color:#1e7e34;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:4px">
                                 <span>💬</span> Or chat on WhatsApp for urgent booking
                             </a>
                         </div>

@@ -1,4 +1,55 @@
 /**
+ * Mobile sidebar drawer for the Admin panel and the Bhudev portal.
+ * Plain JavaScript, delegated on the document, so it works regardless of
+ * script order, jQuery availability, or the topbar being re-rendered.
+ */
+(function () {
+  "use strict";
+
+  function getSidebar() {
+    return document.querySelector(".admin-sidebar");
+  }
+
+  function setSidebar(open) {
+    var sidebar = getSidebar();
+    if (!sidebar) return;
+    var overlay = document.querySelector(".sidebar-overlay");
+    sidebar.classList.toggle("open", open);
+    if (overlay) overlay.classList.toggle("open", open);
+    document.body.classList.toggle("sidebar-open", open);
+    var toggle = document.querySelector(".sidebar-toggle-btn");
+    if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  document.addEventListener("click", function (event) {
+    var target = event.target;
+    if (!(target instanceof Element)) return;
+
+    if (target.closest(".sidebar-toggle-btn")) {
+      event.preventDefault();
+      var sidebar = getSidebar();
+      setSidebar(!(sidebar && sidebar.classList.contains("open")));
+      return;
+    }
+
+    if (target.closest(".sidebar-close-btn") || target.classList.contains("sidebar-overlay")) {
+      event.preventDefault();
+      setSidebar(false);
+      return;
+    }
+
+    if (target.closest(".admin-sidebar a") && window.innerWidth <= 900) {
+      setSidebar(false);
+    }
+  });
+
+  // Leaving the phone/tablet breakpoint never leaves the drawer stuck open.
+  window.addEventListener("resize", function () {
+    if (window.innerWidth > 900) setSidebar(false);
+  });
+})();
+
+/**
  * DigitalBhudev Admin Panel JavaScript
  * Uses jQuery for interaction, confirmation dialogs, and mobile sidebar navigation.
  */

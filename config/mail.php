@@ -115,4 +115,16 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Administrator Recipient
+    |--------------------------------------------------------------------------
+    |
+    | Address that receives new contact / booking inquiry alerts. When empty,
+    | alerts are skipped and a warning is logged instead of mailing a default.
+    |
+    */
+
+    'admin_recipient' => env('ADMIN_EMAIL'),
+
 ];

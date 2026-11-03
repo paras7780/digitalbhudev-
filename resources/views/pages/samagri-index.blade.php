@@ -68,7 +68,8 @@
                 @endforeach
             </div>
 
-            {{-- Bhudev Patrika Studio Callout --}}
+            {{-- Bhudev Patrika Studio Callout (only while the studio feature is switched on) --}}
+            @if(config('app.features.samagri_studio'))
             <div style="background:var(--card-bg);border:1px solid var(--primary-border);border-left:5px solid var(--primary);border-radius:var(--radius-lg);padding:24px 28px;margin-bottom:36px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;box-shadow:var(--shadow)">
                 <div style="display:flex;align-items:center;gap:16px">
                     <span style="font-size:36px">📜</span>
@@ -88,6 +89,7 @@
                     </a>
                 </div>
             </div>
+            @endif
 
             {{-- CTA Box --}}
             <div style="background:linear-gradient(135deg, #321128 0%, #4a1633 50%, #220f1f 100%);border:1px solid rgba(251,207,232,0.2);border-radius:var(--radius-lg);padding:40px;color:#fff;text-align:center;box-shadow:var(--shadow)">

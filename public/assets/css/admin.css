@@ -1146,3 +1146,268 @@ body.admin-body {
     gap: 12px !important;
   }
 }
+
+/* ==========================================================================
+   Responsive hardening (shared by the Admin panel and the Bhudev portal)
+   Single source of truth for topbar / content behaviour on small screens.
+   ========================================================================== */
+.admin-main,
+.admin-content,
+.admin-card,
+.admin-card-body {
+  min-width: 0;
+}
+.admin-content img,
+.admin-content video,
+.admin-content iframe,
+.admin-content canvas {
+  max-width: 100%;
+}
+.admin-content input[type="file"] {
+  max-width: 100%;
+}
+.admin-table-wrap,
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+.media-tab-switch button {
+  white-space: nowrap;
+}
+
+/* Up to small laptops: the sidebar takes 260px, so two-column page layouts must stack earlier */
+@media (max-width: 1200px) {
+  .admin-content .bhudev-two-col,
+  .admin-content div[style*="grid-template-columns:1."],
+  .admin-content div[style*="grid-template-columns: 1."] {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  .admin-content .bhudev-two-col > *,
+  .admin-content div[style*="grid-template-columns"] > * {
+    min-width: 0;
+  }
+}
+
+/* Tablet landscape / small laptops: sidebar still visible, topbar must stay on one line */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .admin-topbar {
+    padding: 0 16px;
+    gap: 12px;
+  }
+  .topbar-left {
+    gap: 10px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .admin-breadcrumbs {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+  }
+  .topbar-right {
+    gap: 8px;
+    flex: 0 0 auto;
+  }
+  .admin-user-pill {
+    gap: 6px;
+    padding: 4px 8px 4px 4px;
+  }
+  .admin-user-pill > span:not(.admin-avatar):not(.badge):not([style*="background"]) {
+    display: none;
+  }
+  .lang-pill-group .lang-pill {
+    padding: 4px 7px !important;
+    font-size: 11px !important;
+  }
+  .admin-content {
+    padding: 22px 18px;
+  }
+}
+
+/* Phones and portrait tablets: the sidebar is a drawer, the topbar fits in one row */
+@media (max-width: 900px) {
+  .admin-topbar {
+    padding: 0 10px !important;
+    height: 58px !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden;
+  }
+  .topbar-left {
+    gap: 8px !important;
+    flex: 0 1 auto !important;
+    min-width: 44px !important;
+  }
+  .sidebar-toggle-btn {
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    font-size: 24px !important;
+    line-height: 1 !important;
+    z-index: 10;
+  }
+  .topbar-mobile-brand {
+    gap: 6px !important;
+  }
+  .topbar-mobile-title {
+    display: block !important;
+    font-size: 14px !important;
+    max-width: 110px !important;
+  }
+  .topbar-right {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    gap: 6px !important;
+    justify-content: flex-end !important;
+  }
+  .admin-user-pill {
+    padding: 4px 8px 4px 4px !important;
+    gap: 6px !important;
+    font-size: 11px !important;
+    min-width: 0;
+  }
+  .admin-user-pill > span:not(.admin-avatar):not(.badge):not([style*="background"]) {
+    display: none !important;
+  }
+  .logout-btn-top {
+    padding: 6px 10px !important;
+    font-size: 11.5px !important;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar-mobile-title {
+    max-width: 84px !important;
+  }
+  .admin-user-pill > span:not(.admin-avatar) {
+    display: none !important;
+  }
+  .admin-user-pill {
+    padding: 3px !important;
+    gap: 0 !important;
+  }
+}
+
+/* Phones: stack inline grids, let inline flex rows wrap, make form controls full width */
+@media (max-width: 640px) {
+  .admin-content {
+    padding: 14px 12px;
+  }
+  .admin-card-body {
+    padding: 14px;
+  }
+  .admin-content div[style*="display:flex"]:not([style*="flex-direction:column"]):not([style*="flex-direction: column"]):not([style*="flex-wrap"]),
+  .admin-content form[style*="display:flex"]:not([style*="flex-direction:column"]):not([style*="flex-wrap"]) {
+    flex-wrap: wrap !important;
+  }
+  .admin-content div[style*="grid-template-columns"]:not([style*="auto-fit"]):not([style*="auto-fill"]),
+  .admin-content form[style*="grid-template-columns"]:not([style*="auto-fit"]):not([style*="auto-fill"]) {
+    grid-template-columns: 1fr !important;
+  }
+  .admin-content [style*="grid-column:span"],
+  .admin-content [style*="grid-column: span"] {
+    grid-column: span 1 !important;
+  }
+  .admin-content input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
+  .admin-content select,
+  .admin-content textarea {
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .admin-content input[style*="width:"]:not([type="checkbox"]):not([type="radio"]),
+  .admin-content select[style*="width:"] {
+    width: 100% !important;
+  }
+  .admin-content input[type="file"] {
+    width: 100%;
+    font-size: 13px;
+  }
+  .admin-table th,
+  .admin-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .admin-table th[style*="width"],
+  .admin-table td[style*="width"] {
+    width: auto !important;
+    min-width: 0 !important;
+  }
+  .admin-content .btn,
+  .admin-content a.btn,
+  .admin-content button[type="submit"] {
+    min-height: 40px;
+  }
+  .admin-content .btn-sm,
+  .admin-content button.btn-sm {
+    min-height: 36px;
+  }
+  .media-tab-switch {
+    display: flex !important;
+    width: 100%;
+  }
+  .media-tab-switch button {
+    flex: 1 1 0;
+    white-space: normal;
+    line-height: 1.25;
+    padding: 8px 6px !important;
+  }
+  .admin-content [style*="max-width:600px"],
+  .admin-content [style*="max-width:540px"] {
+    max-width: calc(100vw - 24px) !important;
+  }
+}
+
+/* Admin list filter bar on phones: pills and search fields wrap instead of overflowing */
+@media (max-width: 640px) {
+  .admin-filter-bar {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+  .status-pills {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .filter-search-wrap {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .filter-search-wrap .admin-search-input,
+  .filter-search-wrap .admin-select-input {
+    flex: 1 1 140px;
+    min-width: 0 !important;
+    width: auto;
+  }
+  .filter-search-wrap .btn-action {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}
+
+/* Long URLs, file names and e-mail addresses must wrap inside cards on phones */
+@media (max-width: 640px) {
+  .admin-content a,
+  .admin-content code,
+  .admin-content strong,
+  .admin-content td {
+    overflow-wrap: anywhere;
+  }
+  .admin-content a[style*="monospace"],
+  .admin-content [style*="font-family:monospace"] {
+    word-break: break-all;
+  }
+}
+
+/* Drawer toggle: reliable taps on touch screens */
+.sidebar-toggle-btn,
+.sidebar-close-btn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}

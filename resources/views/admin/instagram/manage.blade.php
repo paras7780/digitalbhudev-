@@ -100,10 +100,14 @@
                     <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #e2d2c1;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
                         <span style="font-size:12px;font-weight:600;color:#875200">Choose an option:</span>
 
-                        {{-- Option A: WhatsApp contact --}}
+                        {{-- Option A: WhatsApp contact (hidden until SUPPORT_WHATSAPP is configured) --}}
+                        @if($eligibility['whatsapp_url'])
                         <a href="{{ $eligibility['whatsapp_url'] }}" target="_blank" class="btn-whatsapp-header" style="font-size:12px;padding:6px 14px;text-decoration:none">
                             💬 Option A: Contact Us on WhatsApp
                         </a>
+                        @else
+                        <span style="font-size:12px;color:#875200">Option A: Contact Us on WhatsApp (set SUPPORT_WHATSAPP in .env to enable)</span>
+                        @endif
 
                         {{-- Option B: Inline trigger --}}
                         <a href="#websiteRequestBox" style="font-size:12px;color:#b94e20;font-weight:600;text-decoration:underline">
@@ -271,9 +275,17 @@
                 <h2 style="font-size:17px;color:var(--admin-dark);margin:0">
                     🎬 Saved Posts &amp; Reels ({{ $posts->count() }})
                 </h2>
-                <span style="font-size:12px;color:var(--admin-muted)">
-                    Sorted by publication sequence
-                </span>
+                @if($settings->connection_status === 'connected')
+                    <form method="POST" action="{{ route('admin.instagram.sync', $profile) }}" style="margin:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                        @csrf
+                        <span style="font-size:12px;color:var(--admin-muted)">Library synced {{ $settings->last_sync_at?->diffForHumans() ?? 'never' }}</span>
+                        <button type="submit" class="btn-action" style="padding:6px 12px;font-size:12px">🔄 Sync Instagram now</button>
+                    </form>
+                @else
+                    <span style="font-size:12px;color:var(--admin-muted)">
+                        Sorted by publication sequence
+                    </span>
+                @endif
             </div>
 
             @if($posts->isEmpty())
@@ -292,6 +304,11 @@
                                         <video src="{{ $post->getVideoUrl() }}" style="width:100%;height:100%;object-fit:cover" muted playsinline></video>
                                         <span style="position:absolute;bottom:2px;right:2px;background:rgba(0,0,0,0.7);color:#fff;font-size:9px;padding:1px 3px;border-radius:2px">▶ MP4</span>
                                     </div>
+                                @elseif($post->isFromLibrary() && ($post->thumbnail_url || $post->getImageUrl()))
+                                    <div style="width:72px;height:72px;border-radius:8px;overflow:hidden;background:#f3e5ee;flex-shrink:0;position:relative">
+                                        <img src="{{ $post->thumbnail_url ?: $post->getImageUrl() }}" alt="" loading="lazy" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;display:block">
+                                        <span style="position:absolute;bottom:2px;right:2px;background:rgba(0,0,0,0.7);color:#fff;font-size:9px;padding:1px 3px;border-radius:2px">{{ $post->media_type === 'reel' ? '▶' : '📷' }}</span>
+                                    </div>
                                 @else
                                     <div style="width:40px;height:40px;border-radius:8px;background:{{ $post->media_type === 'reel' ? '#fce8f3' : '#e0f2fe' }};color:{{ $post->media_type === 'reel' ? '#be185d' : '#0369a1' }};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">
                                         {{ $post->media_type === 'reel' ? '▶' : '📷' }}
@@ -307,6 +324,12 @@
                                         @else
                                             <span style="background:{{ $post->media_type === 'reel' ? '#fce8f3' : '#e0f2fe' }};color:{{ $post->media_type === 'reel' ? '#be185d' : '#0369a1' }};font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase">
                                                 {{ $post->media_type }}
+                                            </span>
+                                        @endif
+
+                                        @if($post->isFromLibrary())
+                                            <span style="background:#fff7ed;color:#c2410c;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid #fed7aa">
+                                                📸 Synced from Instagram
                                             </span>
                                         @endif
 
@@ -333,7 +356,7 @@
                                         </div>
                                     @endif
 
-                                    @if(!$post->isVideoUpload())
+                                    @if(!$post->hasNativeVideo())
                                         <div style="margin-top:8px;padding:6px 10px;background:#fefce8;border:1px dashed #fde047;border-radius:6px;font-size:11.5px">
                                             <span style="font-weight:600;color:#854d0e">Attach raw video file for zero-redirect Auto-Play:</span>
                                             <form method="POST" action="{{ route('admin.instagram.upload-video', $profile) }}" enctype="multipart/form-data" style="margin-top:4px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
@@ -387,7 +410,7 @@
                         <label style="display:block;font-size:13px;font-weight:600;color:#453a30;margin-bottom:4px">
                             Contact WhatsApp Number
                         </label>
-                        <input type="tel" name="whatsapp_number" value="{{ old('whatsapp_number', $profile->user?->phone ?? '919876543210') }}" style="width:100%;padding:9px 12px;border:1px solid #d8c8b8;border-radius:6px;font-size:13px;box-sizing:border-box">
+                        <input type="tel" name="whatsapp_number" value="{{ old('whatsapp_number', $profile->user?->phone) }}" placeholder="e.g. 9876543210" style="width:100%;padding:9px 12px;border:1px solid #d8c8b8;border-radius:6px;font-size:13px;box-sizing:border-box">
                     </div>
 
                     <div style="margin-bottom:16px">
@@ -481,16 +504,27 @@
                         Connected as @<span>{{ $settings->account_username }}</span>
                     </div>
                     <div style="font-size:11px;color:#166534;margin-top:3px">
-                        Account ID: {{ $settings->account_id }} • Last verified: {{ $settings->last_sync_at?->diffForHumans() ?? 'Recently' }}
+                        Account ID: {{ $settings->account_id }} • Library synced: {{ $settings->last_sync_at?->diffForHumans() ?? 'Recently' }} • Token valid until {{ $settings->token_expires_at?->format('d M Y') ?? 'unknown' }}
+                    </div>
+                    <div style="font-size:11px;color:#166534;margin-top:3px">
+                        Posts and Reels are pulled automatically every 6 hours and shown only on the Bhudev's active website.
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('admin.instagram.disconnect', $profile) }}">
-                    @csrf
-                    <button type="submit" class="btn-action" style="background:#fff;border-color:#fca5a5;color:#dc2626;padding:8px 16px;font-size:12px;font-weight:600">
-                        Disconnect Instagram Account
-                    </button>
-                </form>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                    <form method="POST" action="{{ route('admin.instagram.sync', $profile) }}">
+                        @csrf
+                        <button type="submit" class="btn-action btn-action-primary" style="padding:8px 16px;font-size:12px;font-weight:600">
+                            🔄 Sync Library Now
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('admin.instagram.disconnect', $profile) }}">
+                        @csrf
+                        <button type="submit" class="btn-action" style="background:#fff;border-color:#fca5a5;color:#dc2626;padding:8px 16px;font-size:12px;font-weight:600">
+                            Disconnect Instagram Account
+                        </button>
+                    </form>
+                </div>
             @else
                 @if($settings->last_error)
                     <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#991b1b">

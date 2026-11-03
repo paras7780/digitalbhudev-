@@ -123,4 +123,34 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Platform Support WhatsApp
+    |--------------------------------------------------------------------------
+    |
+    | Number used for every public "Chat with DigitalBhudev" button and as the
+    | fallback when a Pandit has no WhatsApp number of their own. Leave empty to
+    | hide those buttons (or send visitors to the contact form) instead of
+    | messaging a wrong number. Digits only, with country code, e.g. 9198XXXXXXXX.
+    |
+    */
+
+    'support_whatsapp' => env('SUPPORT_WHATSAPP'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Feature Flags
+    |--------------------------------------------------------------------------
+    |
+    | samagri_studio: the Pooja Samagri Patrika editor in the Bhudev portal.
+    | Off by default: the menu entry, dashboard shortcut and routes are hidden,
+    | while already shared patrika links keep working. Set FEATURE_SAMAGRI_STUDIO=true
+    | in .env to switch it back on.
+    |
+    */
+
+    'features' => [
+        'samagri_studio' => (bool) env('FEATURE_SAMAGRI_STUDIO', false),
+    ],
+
 ];

@@ -96,11 +96,14 @@ class ContactController extends Controller
      */
     private function notifyAdmin(Inquiry $inquiry): void
     {
-        try {
-            $adminEmail = config('mail.admin_recipient')
-                ?: config('mail.from.address')
-                ?: 'rajyaguruparas667@gmail.com';
+        $adminEmail = config('mail.admin_recipient');
 
+        if (empty($adminEmail)) {
+            Log::warning('Inquiry alert email skipped: ADMIN_EMAIL is not configured.', ['inquiry_id' => $inquiry->id]);
+            return;
+        }
+
+        try {
             Mail::to($adminEmail)->send(new NewInquiryAlertMail($inquiry));
         } catch (\Throwable $e) {
             Log::warning('Could not dispatch inquiry email alert: ' . $e->getMessage());

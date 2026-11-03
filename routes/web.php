@@ -5,14 +5,18 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BhudevDashboardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContentController;
+use App\Http\Controllers\ImpersonationController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\PanditWebsiteController;
+use App\Http\Controllers\SeoController;
 use App\Http\Controllers\PublicBhudevController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'pages.home')->name('home');
+Route::get('/', [PanditWebsiteController::class, 'landing'])->name('home');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
 Route::get('/language/{locale}', [LocalizationController::class, 'switchLocale'])->name('locale.switch');
 Route::get('/lang/{locale}', [LocalizationController::class, 'switchLocale']);
 Route::get('/bhudevs',[PublicBhudevController::class,'index'])->name('bhudevs.index');
@@ -43,6 +47,7 @@ Route::middleware('guest')->group(function(){
  Route::post('/reset-password',[AuthController::class,'reset'])->middleware('throttle:3,1')->name('password.update');
 });
 Route::post('/logout',[AuthController::class,'logout'])->middleware('auth')->name('logout');
+Route::post('/impersonation/leave',[ImpersonationController::class,'stop'])->middleware('auth')->name('impersonation.leave');
 Route::middleware('auth')->group(function(){
  Route::get('/email/verify',fn()=>view('auth.verify-email'))->name('verification.notice');
  Route::post('/email/verification-notification',function(Request $request){
@@ -85,6 +90,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','verified','role:admi
  Route::patch('/bhudevs/{profile}/reactivate',[AdminController::class,'reactivateBhudev'])->name('bhudevs.reactivate');
  Route::patch('/bhudevs/{profile}/toggle-visibility',[AdminController::class,'toggleVisibility'])->name('bhudevs.toggle-visibility');
  Route::patch('/bhudevs/{profile}/status',[AdminController::class,'setStatus'])->name('bhudevs.status');
+ Route::post('/bhudevs/{profile}/login-as',[ImpersonationController::class,'start'])->name('bhudevs.login-as');
  Route::post('/revisions/{revision}/review',[AdminController::class,'reviewRevision'])->name('revisions.review');
  Route::get('/rashifal',[AdminController::class,'rashifals'])->name('rashifals');
  Route::post('/rashifal',[AdminController::class,'saveRashifal'])->name('rashifals.save');
@@ -112,6 +118,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','verified','role:admi
  Route::post('/bhudevs/{profile}/instagram/request-website', [AdminInstagramController::class, 'requestWebsite'])->name('instagram.request-website');
  Route::post('/bhudevs/{profile}/instagram/upload-video', [AdminInstagramController::class, 'uploadVideo'])->name('instagram.upload-video');
  Route::post('/bhudevs/{profile}/instagram/autoplay', [AdminInstagramController::class, 'toggleAutoplay'])->name('instagram.autoplay');
+ Route::post('/bhudevs/{profile}/instagram/sync', [AdminInstagramController::class, 'syncLibrary'])->name('instagram.sync');
 });
 Route::prefix('bhudev')->name('bhudev.')->middleware(['auth','verified','role:bhudev'])->group(function(){
  Route::get('/',[BhudevDashboardController::class,'dashboard'])->name('dashboard');
@@ -121,6 +128,7 @@ Route::prefix('bhudev')->name('bhudev.')->middleware(['auth','verified','role:bh
  Route::get('/instagram',[BhudevDashboardController::class,'instagram'])->name('instagram');
  Route::post('/instagram/toggle',[BhudevDashboardController::class,'toggleInstagram'])->name('instagram.toggle');
  Route::post('/instagram/autoplay',[BhudevDashboardController::class,'toggleAutoplay'])->name('instagram.autoplay');
+ Route::post('/instagram/sync',[BhudevDashboardController::class,'syncInstagramLibrary'])->name('instagram.sync');
  Route::post('/instagram/upload-video',[BhudevDashboardController::class,'uploadInstagramVideo'])->name('instagram.upload-video');
  Route::post('/instagram/urls',[BhudevDashboardController::class,'storeInstagramUrl'])->name('instagram.urls.store');
  Route::delete('/instagram/urls/{post}',[BhudevDashboardController::class,'destroyInstagramUrl'])->name('instagram.urls.destroy');

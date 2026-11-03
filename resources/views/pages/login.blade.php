@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Log in to DigitalBhudev | Portal Access')
+@section('meta_robots', 'noindex, nofollow')
 
 @section('content')
 <main>

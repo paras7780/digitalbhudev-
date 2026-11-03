@@ -6,6 +6,7 @@
     <meta name="description" content="@yield('meta_description', 'Discover traditional services, connect with Bhudevs, and explore pooja and Panchang information with DigitalBhudev.')">
     <title>@yield('title', 'DigitalBhudev — Vishwas No Setu')</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    @include('partials.seo', ['seoSite' => 'app'])
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ @filemtime(public_path('assets/css/style.css')) ?: 1 }}">
     <style>
         /* Mobile Header Critical Rules */

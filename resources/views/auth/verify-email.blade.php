@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Verify Your Email | DigitalBhudev')
+@section('meta_robots', 'noindex, nofollow')
 
 @section('content')
 <main>

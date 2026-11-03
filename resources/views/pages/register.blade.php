@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Join DigitalBhudev | Bhudev Registration')
+@section('meta_robots', 'noindex, nofollow')
 @section('meta_description', 'Register as a Vedic Brahmin priest on DigitalBhudev. Showcase your services, receive direct bookings, and connect with devotees.')
 
 @section('content')

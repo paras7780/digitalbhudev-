@@ -26,6 +26,7 @@
             default            => (str_starts_with($rawColor, '#') ? $rawColor : '#be185d'),
         };
     @endphp
+    @include('partials.seo', ['seoSite' => 'pandit', 'seoSiteName' => $pandit->display_name, 'seoThemeColor' => $themeColorHex])
 
     <style>
         :root {
@@ -379,6 +380,241 @@
                 min-height: 44px !important;
             }
         }
+
+        /* Phone / tablet layout hardening */
+        @media (max-width: 1100px) {
+            .pandit-hero-grid > * {
+                min-width: 0;
+            }
+            main section > div[style*="grid-template-columns"] > * {
+                min-width: 0;
+            }
+            .pandit-menu li {
+                padding: 0;
+            }
+            .pandit-menu a {
+                padding: 13px 0;
+                min-height: 44px;
+                box-sizing: border-box;
+            }
+            .pandit-menu .btn-whatsapp-header {
+                min-height: 46px;
+            }
+            .pandit-footer-container a:not(.btn-whatsapp-header) {
+                display: inline-block;
+                padding: 6px 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            main section {
+                padding-top: 44px !important;
+                padding-bottom: 48px !important;
+            }
+            main section h1 {
+                font-size: clamp(28px, 8.5vw, 36px) !important;
+            }
+            main section h2 {
+                font-size: clamp(22px, 6.8vw, 28px) !important;
+            }
+            .btn-whatsapp-header {
+                white-space: normal;
+                text-align: center;
+                line-height: 1.3;
+                max-width: 100%;
+            }
+            .pandit-hero-grid .btn-whatsapp-header,
+            #contact form .btn-whatsapp-header {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            main div[style*="padding:36px"],
+            main div[style*="padding:32px"],
+            main div[style*="padding:28px"] {
+                padding: 20px 16px !important;
+            }
+            .pandit-brand-subtitle {
+                font-size: 10px;
+                letter-spacing: 0.5px;
+            }
+            .bhudev-video-container {
+                min-height: 320px !important;
+            }
+            main img,
+            main video,
+            main iframe {
+                max-width: 100%;
+            }
+        }
+
+        /* ---- Footer (dark band matching the booking section) ---- */
+        .pandit-footer {
+            background: #17120e;
+            color: #baaea2;
+            padding: 56px 0 28px;
+            border-top: 3px solid var(--pandit-gold);
+        }
+        .pandit-footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        .pandit-footer a:not(.btn-whatsapp-header):hover {
+            color: #ffffff !important;
+        }
+        @media (max-width: 900px) {
+            .pandit-footer {
+                padding: 40px 0 22px;
+            }
+            .pandit-footer-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 28px 20px;
+            }
+            .pandit-footer-container > div:first-child {
+                grid-column: 1 / -1;
+            }
+        }
+        @media (max-width: 600px) {
+            .pandit-footer-container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                text-align: center;
+            }
+            .pandit-footer-container p {
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+        }
+
+        .wa-icon {
+            width: 1.15em;
+            height: 1.15em;
+            flex-shrink: 0;
+            fill: currentColor;
+            display: inline-block;
+            vertical-align: -0.15em;
+        }
+        .wa-short {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .pandit-service-card .wa-full {
+                display: none;
+            }
+            .pandit-service-card .wa-short {
+                display: inline;
+            }
+            .pandit-service-card .btn-whatsapp-header {
+                white-space: nowrap;
+            }
+        }
+        @media (max-width: 600px) {
+            .wa-long {
+                display: none;
+            }
+        }
+        /* ---- Section layouts: stats strip, ceremonies, gallery, reels ---- */
+        div.pandit-stats-grid {
+            grid-template-columns: repeat(4, 1fr) !important;
+        }
+        div.pandit-services-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+            gap: 20px !important;
+        }
+        .pandit-service-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(41, 36, 31, 0.08) !important;
+        }
+        div.pandit-gallery-grid {
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+            gap: 16px !important;
+        }
+        .pandit-gallery-item {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .pandit-gallery-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(41, 36, 31, 0.12) !important;
+        }
+        .pandit-gallery-item img {
+            aspect-ratio: 4 / 5;
+            height: auto !important;
+        }
+        div.pandit-reels-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+        }
+
+        @media (max-width: 1100px) {
+            div.pandit-services-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            div.pandit-gallery-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+            div.pandit-reels-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+            }
+        }
+
+        @media (max-width: 900px) {
+            div.pandit-stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 18px 12px !important;
+            }
+            .pandit-stats-grid > div > div:first-child {
+                font-size: 20px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Ceremonies: compact two-up tiles instead of ten full-height cards */
+            div.pandit-services-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+            }
+            .pandit-service-card {
+                padding: 16px 14px !important;
+                border-radius: 12px !important;
+            }
+            .pandit-service-card h3 {
+                font-size: 16px !important;
+                line-height: 1.3;
+                margin-bottom: 8px !important;
+            }
+            .pandit-service-card > div:first-child > div:first-child {
+                margin-bottom: 6px !important;
+            }
+            .pandit-service-card > div:first-child > div:first-child > span:first-child {
+                font-size: 22px !important;
+            }
+            .pandit-service-tag,
+            .pandit-service-desc {
+                display: none !important;
+            }
+            .pandit-service-card > div:last-child {
+                padding-top: 10px !important;
+            }
+            .pandit-service-card .btn-whatsapp-header {
+                font-size: 12.5px !important;
+                padding: 9px 8px !important;
+                line-height: 1.25;
+            }
+            /* Gallery: two square-ish tiles per row */
+            div.pandit-gallery-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+            }
+            .pandit-gallery-item img {
+                aspect-ratio: 1 / 1;
+            }
+            div.pandit-reels-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
     </style>
     @stack('head')
 </head>
@@ -416,7 +652,7 @@
                 <li>@include('partials.language-switcher')</li>
                 <li>
                     <a href="{{ $domain->generateWhatsAppUrl('Namaste Shastriji, I would like to inquire about Vedic ceremonies.') }}" target="_blank" class="btn-whatsapp-header">
-                        💬 Connect on WhatsApp
+                        @include('partials.icon-whatsapp') <span>Connect on WhatsApp</span>
                     </a>
                 </li>
             </ul>
@@ -461,7 +697,7 @@
                     Location: {{ $pandit->city ? $pandit->city . ', ' . ($pandit->state ?? 'Gujarat') : 'Gujarat, India' }}
                 </p>
                 <a href="{{ $domain->generateWhatsAppUrl('Namaste Shastriji, I would like to check your availability for an upcoming ceremony.') }}" target="_blank" class="btn-whatsapp-header" style="padding:8px 16px;font-size:13px">
-                    💬 WhatsApp Consultation
+                    @include('partials.icon-whatsapp') <span>WhatsApp Consultation</span>
                 </a>
             </div>
         </div>

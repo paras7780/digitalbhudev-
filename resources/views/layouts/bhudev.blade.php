@@ -11,92 +11,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ @filemtime(public_path('assets/css/style.css')) ?: 1 }}">
     <link rel="stylesheet" href="{{ asset('assets/css/admin.css') }}?v={{ @filemtime(public_path('assets/css/admin.css')) ?: 1 }}">
 
-    <style>
-        /* Mobile Topbar & Sidebar Critical Rules (Guaranteed priority across all mobile devices) */
-        @media (max-width: 900px) {
-            .topbar-desktop-lang,
-            .topbar-right .lang-switcher-wrap,
-            .topbar-right .topbar-link {
-                display: none !important;
-            }
-            .admin-topbar {
-                padding: 0 10px !important;
-                height: 58px !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-                gap: 8px !important;
-                width: 100% !important;
-                box-sizing: border-box !important;
-            }
-            .topbar-left {
-                display: flex !important;
-                align-items: center !important;
-                gap: 8px !important;
-                flex-shrink: 0 !important;
-                min-width: 44px !important;
-            }
-            .sidebar-toggle-btn {
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                width: 42px !important;
-                min-width: 42px !important;
-                height: 42px !important;
-                padding: 0 !important;
-                font-size: 24px !important;
-                font-weight: 700 !important;
-                line-height: 1 !important;
-                background: #ffffff !important;
-                border: 1.5px solid var(--admin-border, #fbcfe8) !important;
-                border-radius: 8px !important;
-                color: var(--admin-primary, #be185d) !important;
-                cursor: pointer !important;
-                box-shadow: 0 2px 8px rgba(74, 22, 51, 0.1) !important;
-                flex-shrink: 0 !important;
-                z-index: 10 !important;
-            }
-            .topbar-mobile-brand {
-                display: flex !important;
-                align-items: center !important;
-                gap: 6px !important;
-                text-decoration: none !important;
-                min-width: 0 !important;
-            }
-            .topbar-mobile-title {
-                display: block !important;
-                font-size: 14px !important;
-                font-weight: 800 !important;
-                color: var(--admin-heading, #4a1633) !important;
-                white-space: nowrap !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
-                max-width: 110px !important;
-            }
-            .admin-breadcrumbs {
-                display: none !important;
-            }
-            .topbar-right {
-                display: flex !important;
-                align-items: center !important;
-                gap: 6px !important;
-                flex-shrink: 0 !important;
-                justify-content: flex-end !important;
-            }
-            .admin-user-pill {
-                padding: 4px 8px !important;
-                font-size: 11px !important;
-                gap: 6px !important;
-            }
-            .admin-user-pill span:not(.admin-avatar):not(.badge) {
-                display: none !important;
-            }
-            .logout-btn-top {
-                padding: 6px 10px !important;
-                font-size: 11.5px !important;
-            }
-        }
-    </style>
 
     @stack('head')
 </head>
@@ -144,11 +58,13 @@
                         <span class="badge-counter" style="background:#be185d;color:#fff">ON</span>
                     @endif
                 </a>
-                <a href="{{ route('bhudev.samagri-studio') }}" class="sidebar-link {{ request()->routeIs('bhudev.samagri-studio*') ? 'active' : '' }}">
-                    <span class="nav-icon">📜</span>
-                    <span>{{ __('messages.nav.samagri_studio') }}</span>
-                    <span class="badge-counter" style="background:#b81414;color:#fff;font-weight:700">NEW</span>
-                </a>
+                @if(config('app.features.samagri_studio'))
+                    <a href="{{ route('bhudev.samagri-studio') }}" class="sidebar-link {{ request()->routeIs('bhudev.samagri-studio*') ? 'active' : '' }}">
+                        <span class="nav-icon">📜</span>
+                        <span>{{ __('messages.nav.samagri_studio') }}</span>
+                        <span class="badge-counter" style="background:#b81414;color:#fff;font-weight:700">NEW</span>
+                    </a>
+                @endif
 
                 <div class="nav-section-title">Profile & Ceremonies</div>
                 <a href="{{ route('bhudev.profile.edit') }}" class="sidebar-link {{ request()->routeIs('bhudev.profile.edit') ? 'active' : '' }}">
@@ -231,15 +147,31 @@
                         @endif
                     </div>
 
-                    <form method="POST" action="{{ route('logout') }}" style="margin:0">
-                        @csrf
-                        <button type="submit" class="logout-btn-top">{{ __('messages.nav.logout') }}</button>
-                    </form>
+                    @if(session()->has('impersonator_id'))
+                        <form method="POST" action="{{ route('impersonation.leave') }}" style="margin:0">
+                            @csrf
+                            <button type="submit" class="logout-btn-top" style="background:#4a1633;color:#fff;border-color:#4a1633">↩ Return to Admin</button>
+                        </form>
+                    @else
+                        <form method="POST" action="{{ route('logout') }}" style="margin:0">
+                            @csrf
+                            <button type="submit" class="logout-btn-top">{{ __('messages.nav.logout') }}</button>
+                        </form>
+                    @endif
                 </div>
             </header>
 
             <!-- Main Content -->
             <main class="admin-content">
+                @if(session()->has('impersonator_id'))
+                    <div style="background:#4a1633;color:#fff;border-radius:8px;padding:10px 16px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px">
+                        <span>👁 <strong>Admin view:</strong> you are viewing this portal as {{ auth()->user()->name }}. Anything you change here is changed on their behalf.</span>
+                        <form method="POST" action="{{ route('impersonation.leave') }}" style="margin:0">
+                            @csrf
+                            <button type="submit" style="background:#fff;color:#4a1633;border:none;border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer">↩ Return to Admin</button>
+                        </form>
+                    </div>
+                @endif
                 @include('partials.admin-alerts')
                 @yield('content')
             </main>
@@ -247,72 +179,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/js/admin.js') }}"></script>
-    <script>
-        (function() {
-            function setupAdminSidebar() {
-                var toggle = document.getElementById('adminSidebarToggleBtn') || document.querySelector('.sidebar-toggle-btn');
-                var close = document.querySelector('.sidebar-close-btn');
-                var overlay = document.querySelector('.sidebar-overlay');
-                var sidebar = document.querySelector('.admin-sidebar');
-
-                function toggleSidebar(open) {
-                    if (!sidebar) return;
-                    if (open) {
-                        sidebar.classList.add('open');
-                        if (overlay) overlay.classList.add('open');
-                        document.body.classList.add('sidebar-open');
-                    } else {
-                        sidebar.classList.remove('open');
-                        if (overlay) overlay.classList.remove('open');
-                        document.body.classList.remove('sidebar-open');
-                    }
-                }
-
-                if (toggle) {
-                    toggle.onclick = function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        var shouldOpen = sidebar && !sidebar.classList.contains('open');
-                        toggleSidebar(shouldOpen);
-                    };
-                }
-
-                if (close) {
-                    close.onclick = function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleSidebar(false);
-                    };
-                }
-
-                if (overlay) {
-                    overlay.onclick = function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleSidebar(false);
-                    };
-                }
-
-                if (sidebar) {
-                    sidebar.querySelectorAll('a').forEach(function(a) {
-                        a.addEventListener('click', function() {
-                            if (window.innerWidth <= 900) {
-                                toggleSidebar(false);
-                            }
-                        });
-                    });
-                }
-            }
-
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', setupAdminSidebar);
-            } else {
-                setupAdminSidebar();
-            }
-        })();
-    </script>
+    <script src="{{ asset('assets/js/jquery.min.js') }}?v={{ @filemtime(public_path('assets/js/jquery.min.js')) ?: 1 }}"></script>
+    <script src="{{ asset('assets/js/admin.js') }}?v={{ @filemtime(public_path('assets/js/admin.js')) ?: 1 }}"></script>
     @stack('scripts')
 </body>
 </html>

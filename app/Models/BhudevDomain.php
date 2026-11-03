@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\WhatsApp;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -71,10 +72,12 @@ class BhudevDomain extends Model
 
     public function generateWhatsAppUrl(string $message): string
     {
-        $number = $this->getEffectiveWhatsAppNumber() ?? '919876543210';
-        // Prefix with 91 if 10 digits
-        if (strlen($number) === 10) {
-            $number = '91' . $number;
+        $number = WhatsApp::normalize($this->getEffectiveWhatsAppNumber())
+            ?? WhatsApp::supportNumber();
+
+        // No Pandit number and no platform support number configured: use the on-page booking form.
+        if (!$number) {
+            return '#contact';
         }
 
         return 'https://wa.me/' . $number . '?text=' . urlencode($message);

@@ -59,6 +59,17 @@
         <a href="{{ route('admin.instagram.show', $profile) }}" class="btn-action" style="background:#fce8f3;border-color:#f9a8d4;color:#be185d;padding:9px 14px;text-decoration:none;font-weight:600">
             📸 Instagram Settings
         </a>
+        @if($profile->user && $profile->user->isBhudev())
+            <form method="POST" action="{{ route('admin.bhudevs.login-as', $profile) }}" style="display:inline;margin:0" onsubmit="return confirm('Open the Bhudev portal as this user? You can return to the admin panel at any time.');">
+                @csrf
+                <button type="submit" class="btn-action" style="padding:9px 14px;background:#4a1633;border-color:#4a1633;color:#fff;font-weight:600" title="See the portal, bookings and inquiries exactly as this Bhudev sees them">
+                    👁 Login as Bhudev
+                </button>
+            </form>
+        @endif
+        <span class="btn-action" style="padding:9px 14px;background:#fff;cursor:default" title="Inquiries and pooja bookings received by this Bhudev">
+            📩 {{ $inquiryCount }} {{ \Illuminate\Support\Str::plural('inquiry', $inquiryCount) }}
+        </span>
 
         @if($profile->status !== 'approved')
             <form method="POST" action="{{ route('admin.bhudevs.approve', $profile) }}" style="display:inline">

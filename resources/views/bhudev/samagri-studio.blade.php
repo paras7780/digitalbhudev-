@@ -190,11 +190,14 @@
             padding: 9px 8px;
             font-size: 12px;
         }
-        .patrika-card-stage {
-            transform: scale(calc((100vw - 36px) / 595));
-            transform-origin: top center;
-            margin-bottom: calc(-842px * (1 - ((100vw - 36px) / 595)));
-        }
+    }
+
+    /* The patrika is a fixed 595 x 842 canvas; fitPatrikaStage() sets --patrika-scale so it
+       always fits the available width (phones, tablets and the narrow desktop column alike). */
+    .patrika-card-stage {
+        transform: scale(var(--patrika-scale, 1));
+        transform-origin: top center;
+        margin-bottom: calc(-842px * (1 - var(--patrika-scale, 1)));
     }
 
     /* Figma Layout Coordinates */
@@ -341,6 +344,218 @@
         text-overflow: ellipsis;
     }
 
+    /* ---- Safe zone ----------------------------------------------------------------
+       The artwork's outer ~100px on each side and the top/bottom ~120px are banana leaves,
+       garlands and peacock lamps; red text placed there disappears. Every text block is kept
+       inside the clean cream arch: priests under the title, items in the middle band, Yajman
+       just above Ganesha. These rules override the original corner coordinates above. */
+    .card-priest-left,
+    .card-priest-right {
+        top: 242px;
+        width: 190px;
+        line-height: 1.3;
+    }
+    .card-priest-left {
+        left: 112px;
+        text-align: left;
+    }
+    .card-priest-right {
+        right: 112px;
+        text-align: right;
+    }
+    .card-priest-name {
+        font-size: 14px;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        max-height: 2.6em;
+        overflow: hidden;
+    }
+    .card-priest-phone {
+        font-size: 13px;
+        white-space: nowrap;
+    }
+    .card-title-banner {
+        left: 120px;
+        right: 120px;
+    }
+    .card-columns-container {
+        top: 302px;
+        left: 108px;
+        right: 108px;
+        bottom: 205px;
+        gap: 18px;
+    }
+    .card-bottom-yajman {
+        bottom: 158px;
+        left: 135px;
+        right: 135px;
+        text-align: center;
+    }
+    /* ---- Reference layout (matches assets/images/samagri/full_card_reference.png) ----------
+       Clean frame as background; Ganesha, peacock lamps and the zodiac watermark are layered as
+       images; names sit beside Ganesha; title with a green divider; bold red two-column list. */
+    .patrika-card-stage {
+        background-image: url("{{ asset('assets/images/samagri/card_background.png') }}");
+        color: #c81414;
+    }
+    .card-art {
+        position: absolute;
+        pointer-events: none;
+        user-select: none;
+        height: auto;
+    }
+    .card-art-ganesha {
+        top: 6px;
+        left: 50%;
+        width: 118px;
+        transform: translateX(-50%);
+    }
+    .card-art-peacock-left {
+        top: 122px;
+        left: 44px;
+        width: 108px;
+    }
+    .card-art-peacock-right {
+        top: 122px;
+        right: 44px;
+        width: 108px;
+    }
+    .card-art-zodiac {
+        top: 292px;
+        left: 50%;
+        width: 440px;
+        transform: translateX(-50%);
+        opacity: 0.6;
+    }
+    .card-priest-left,
+    .card-priest-right {
+        top: 84px;
+        width: 128px;
+        text-align: center;
+        line-height: 1.3;
+        max-height: none;
+    }
+    .card-priest-left {
+        left: 106px;
+    }
+    .card-priest-right {
+        right: 106px;
+    }
+    .card-priest-name {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #c81414;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        max-height: 2.6em;
+        overflow: hidden;
+    }
+    .card-priest-phone {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #c81414;
+        white-space: nowrap;
+    }
+    .card-top-mantra {
+        top: 141px;
+        font-size: 13px;
+        letter-spacing: 0.4px;
+        color: #c81414;
+    }
+    .card-top-firm {
+        top: 157px;
+        font-size: 20px;
+        font-weight: 800;
+        color: #c81414;
+        text-shadow: none;
+    }
+    .card-title-banner {
+        top: 199px;
+        left: 90px;
+        right: 90px;
+        padding: 0;
+        background: none;
+        border: 0;
+    }
+    .card-title-text {
+        font-size: 27px;
+        font-weight: 800;
+        color: #c81414;
+        letter-spacing: 0;
+        line-height: 1.3;
+    }
+    .card-title-divider {
+        position: absolute;
+        top: 240px;
+        left: 150px;
+        right: 150px;
+        height: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #2f6b2f;
+    }
+    .card-title-divider::before,
+    .card-title-divider::after {
+        content: '';
+        flex: 1;
+        height: 1.5px;
+        background: #2f6b2f;
+    }
+    .card-title-divider span {
+        font-size: 11px;
+        letter-spacing: 3px;
+        line-height: 1;
+    }
+    .card-columns-container {
+        top: 268px;
+        left: 116px;
+        right: 116px;
+        bottom: 72px;
+        gap: 26px;
+    }
+    .samagri-item-list {
+        font-size: 15px;
+        line-height: 2.05;
+        font-weight: 700;
+        color: #c81414;
+    }
+    .samagri-item-list.compact {
+        font-size: 13px;
+        line-height: 1.75;
+    }
+    .samagri-item-list.large {
+        font-size: 16.5px;
+        line-height: 2.1;
+    }
+    .samagri-item-list li {
+        gap: 8px;
+    }
+    .samagri-item-list li::before {
+        color: #c81414;
+        font-size: 15px;
+    }
+    .samagri-item-list li.sub-item {
+        padding-left: 34px;
+    }
+    .samagri-item-list li.continuation {
+        padding-left: 14px;
+    }
+    .samagri-item-list li.sub-item::before,
+    .samagri-item-list li.continuation::before {
+        display: none;
+    }
+    .samagri-item-list li.long {
+        font-size: 0.85em; /* long entries such as "તજ- લવિંગ- એલચી (૧૦૦ ગ્રામ)" stay on one line, as on the printed card */
+    }
+    .card-bottom-yajman {
+        bottom: 58px;
+        left: 120px;
+        right: 120px;
+        text-align: center;
+        font-size: 13.5px;
+        color: #c81414;
+    }
     /* Print Styles */
     @media print {
         body * {
@@ -597,6 +812,11 @@
 
         {{-- The Exact Figma A4 Patrika Card Stage --}}
         <div id="patrika-card-stage" class="patrika-card-stage">
+            {{-- Artwork layers: Ganesha on the arch, peacock lamps, zodiac watermark --}}
+            <img src="{{ asset('assets/images/samagri/bottom_ornament.png') }}" alt="" class="card-art card-art-ganesha">
+            <img src="{{ asset('assets/images/samagri/peacock_left.png') }}" alt="" class="card-art card-art-peacock-left">
+            <img src="{{ asset('assets/images/samagri/peacock_right.png') }}" alt="" class="card-art card-art-peacock-right">
+            <img src="{{ asset('assets/images/samagri/ganesha.png') }}" alt="" class="card-art card-art-zodiac">
             {{-- Top Left Priest Info --}}
             <div class="card-priest-left">
                 <div id="preview-left-priest" class="card-priest-name">{{ $activeCard?->left_priest_name ?? $defaultLeftName }}</div>
@@ -627,6 +847,7 @@
                     {{ $activeCard?->pooja_title ?? ($initialPreset['title_gu'] ?? 'ગણપતિ પૂજા માટે ની યાદી') }}
                 </h2>
             </div>
+            <div class="card-title-divider" aria-hidden="true"><span>✦</span></div>
 
             {{-- Columns Grid --}}
             <div class="card-columns-container">
@@ -704,6 +925,23 @@
         updateLivePreview();
     }
 
+    // A line that starts with "-" is a sub-item (e.g. "- લાલ - ૧"); an indented line without a dash
+    // continues the previous item (e.g. "અને તોરણ"). Both print without a bullet, like the reference.
+    function appendSamagriLine(listEl, rawLine) {
+        const li = document.createElement('li');
+        const text = rawLine.trim();
+        if (text.startsWith('-') || text.startsWith('–')) {
+            li.className = 'sub-item';
+        } else if (/^\s/.test(rawLine)) {
+            li.className = 'continuation';
+        }
+        if (text.length > 18) {
+            li.classList.add('long');
+        }
+        li.textContent = text;
+        listEl.appendChild(li);
+    }
+
     function updateLivePreview() {
         // Mantra & Firm
         const mantra = document.getElementById('input_mantra_line').value || '|| શ્રી ગણેશાય નમઃ ||';
@@ -729,27 +967,19 @@
 
         // Column 1
         const col1Text = document.getElementById('input_column1_items').value;
-        const col1Lines = col1Text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        const col1Lines = col1Text.split('\n').filter(l => l.trim().length > 0);
         document.getElementById('col1-count').textContent = col1Lines.length + ' items';
         const col1El = document.getElementById('preview-col1');
         col1El.innerHTML = '';
-        col1Lines.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            col1El.appendChild(li);
-        });
+        col1Lines.forEach(raw => appendSamagriLine(col1El, raw));
 
         // Column 2
         const col2Text = document.getElementById('input_column2_items').value;
-        const col2Lines = col2Text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        const col2Lines = col2Text.split('\n').filter(l => l.trim().length > 0);
         document.getElementById('col2-count').textContent = col2Lines.length + ' items';
         const col2El = document.getElementById('preview-col2');
         col2El.innerHTML = '';
-        col2Lines.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            col2El.appendChild(li);
-        });
+        col2Lines.forEach(raw => appendSamagriLine(col2El, raw));
 
         // Yajman
         const yajman = document.getElementById('input_yajman_name').value.trim();
@@ -775,6 +1005,11 @@
         btn.innerHTML = '⏳ {{ __("messages.samagri_studio.generating_image") }}';
         btn.disabled = true;
 
+        // Export at the card's native size, not the on-screen responsive scale
+        const savedScale = stage.style.getPropertyValue('--patrika-scale');
+        stage.style.setProperty('--patrika-scale', '1');
+        const restoreScale = () => stage.style.setProperty('--patrika-scale', savedScale);
+
         // Use scale 2 for crystal-clear 1190 x 1684 px high resolution export
         html2canvas(stage, {
             scale: 2,
@@ -783,6 +1018,7 @@
             backgroundColor: '#fcf9f2',
             logging: false
         }).then(canvas => {
+            restoreScale();
             const link = document.createElement('a');
             const slug = document.getElementById('input_pooja_slug').value || 'pooja-samagri';
             link.download = `${slug}-patrika.png`;
@@ -791,12 +1027,26 @@
             btn.innerHTML = originalText;
             btn.disabled = false;
         }).catch(err => {
+            restoreScale();
             console.error('Error generating canvas:', err);
             alert('Failed to generate image. Please try again.');
             btn.innerHTML = originalText;
             btn.disabled = false;
         });
     }
+
+    // Keep the fixed-size patrika (595 x 842) fully visible by scaling it to the available width.
+    function fitPatrikaStage() {
+        const stage = document.getElementById('patrika-card-stage');
+        const wrap = stage ? stage.parentElement : null;
+        if (!stage || !wrap) return;
+        const available = wrap.clientWidth - 12;
+        const scale = available > 0 ? Math.min(1, available / 595) : 1;
+        stage.style.setProperty('--patrika-scale', scale.toFixed(4));
+    }
+    window.addEventListener('resize', fitPatrikaStage);
+    document.addEventListener('DOMContentLoaded', fitPatrikaStage);
+    fitPatrikaStage();
 
     // Share formatted message via WhatsApp
     function shareOnWhatsApp() {

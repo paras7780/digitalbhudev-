@@ -6,6 +6,8 @@ use App\Models\BhudevDomain;
 use App\Models\BhudevInstagramPost;
 use App\Models\BhudevInstagramSetting;
 use App\Models\BhudevProfile;
+use App\Support\WhatsApp;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
@@ -24,11 +26,6 @@ class InstagramIntegrationService
      * Prefilled WhatsApp message for domain/website inquiries.
      */
     public const WHATSAPP_INQUIRY_TEXT = "Hello, I am interested in getting my own website/domain so that my Instagram posts and Reels can be displayed on my Bhudev website. Please share the details.";
-
-    /**
-     * Default support phone number.
-     */
-    public const DEFAULT_SUPPORT_PHONE = '919876543210';
 
     /**
      * Validate and normalize an Instagram URL.
@@ -95,8 +92,8 @@ class InstagramIntegrationService
         // Normalize media type
         $mediaType = in_array($typeSegment, ['reel', 'reels'], true) ? 'reel' : 'post';
 
-        // Canonical URL
-        $canonicalUrl = "https://www.instagram.com/{$mediaType}/{$shortcode}/";
+        // Canonical URL: Instagram uses /reel/{code}/ for reels and /p/{code}/ for posts
+        $canonicalUrl = 'https://www.instagram.com/' . ($mediaType === 'reel' ? 'reel' : 'p') . "/{$shortcode}/";
 
         return [
             'valid'         => true,
@@ -326,6 +323,7 @@ class InstagramIntegrationService
 
         if ($validation['success']) {
             $settings->access_token      = trim($accessToken);
+            $settings->token_expires_at  = now()->addDays(60);
             $settings->connection_status = 'connected';
             $settings->account_id        = $validation['account_id'];
             $settings->account_username  = $validation['username'];
@@ -333,10 +331,22 @@ class InstagramIntegrationService
             $settings->last_error        = null;
             $settings->save();
 
+            // A short-lived token can be upgraded to a 60-day token when the app secret is known.
+            if (!empty($settings->app_secret)) {
+                $this->exchangeForLongLivedToken($settings);
+            }
+
+            // Pull the account's posts and Reels right away so nothing has to be uploaded twice.
+            $sync = $this->syncLibrary($profile);
+            $message = 'Instagram account @' . $validation['username'] . ' connected and verified successfully!';
+            $message .= $sync['success']
+                ? " {$sync['imported']} post(s)/Reel(s) imported from your Instagram library."
+                : ' Library sync will retry automatically (' . $sync['error'] . ').';
+
             return [
                 'success'  => true,
                 'settings' => $settings,
-                'message'  => 'Instagram account @' . $validation['username'] . ' connected and verified successfully!',
+                'message'  => $message,
             ];
         }
 
@@ -351,7 +361,8 @@ class InstagramIntegrationService
     }
 
     /**
-     * Disconnect Instagram API for a Bhudev.
+     * Disconnect Instagram API for a Bhudev. Library items that came from the account are
+     * removed too; manually added URLs and uploaded videos stay.
      */
     public function disconnect(BhudevProfile $profile): void
     {
@@ -359,10 +370,214 @@ class InstagramIntegrationService
         if ($settings) {
             $settings->connection_status = 'disconnected';
             $settings->access_token      = null;
+            $settings->token_expires_at  = null;
             $settings->account_username  = null;
             $settings->account_id        = null;
             $settings->last_error        = null;
             $settings->save();
+        }
+
+        BhudevInstagramPost::where('bhudev_profile_id', $profile->id)
+            ->where('source', 'api')
+            ->whereNull('video_path')
+            ->delete();
+    }
+
+    /**
+     * Maximum pages (50 items each) pulled from the Instagram media endpoint per sync.
+     */
+    public const MAX_SYNC_PAGES = 5;
+
+    /**
+     * Pull the connected account's media library (posts + Reels) into the Bhudev's content list,
+     * so nothing has to be uploaded twice. Safe to run repeatedly: items are matched by their
+     * Instagram media id (or shortcode), items deleted on Instagram are pruned, manual entries
+     * and uploaded videos are never touched.
+     */
+    public function syncLibrary(BhudevProfile $profile): array
+    {
+        $settings = BhudevInstagramSetting::where('bhudev_profile_id', $profile->id)->first();
+
+        if (!$settings || !$settings->isConnected() || empty($settings->access_token)) {
+            return ['success' => false, 'error' => 'Instagram account is not connected.', 'imported' => 0, 'removed' => 0];
+        }
+
+        $this->refreshTokenIfNeeded($settings);
+
+        $items = [];
+        $url   = 'https://graph.instagram.com/me/media';
+        $query = [
+            'fields'       => 'id,caption,media_type,media_url,permalink,thumbnail_url,timestamp',
+            'limit'        => 50,
+            'access_token' => $settings->access_token,
+        ];
+
+        try {
+            for ($page = 0; $page < self::MAX_SYNC_PAGES && $url; $page++) {
+                $response = Http::timeout(10)->get($url, $query);
+
+                if (!$response->successful()) {
+                    $message = $response->json('error.message') ?? ('Instagram API responded with HTTP ' . $response->status() . '.');
+                    $settings->last_error = $message;
+                    if (in_array((int) $response->json('error.code'), [190, 102], true)) {
+                        // Token invalid or expired: the account must be reconnected.
+                        $settings->connection_status = 'error';
+                    }
+                    $settings->save();
+
+                    return ['success' => false, 'error' => $message, 'imported' => 0, 'removed' => 0];
+                }
+
+                $payload = $response->json() ?: [];
+                foreach ((array) ($payload['data'] ?? []) as $item) {
+                    if (!empty($item['id']) && !empty($item['permalink'])) {
+                        $items[] = $item;
+                    }
+                }
+
+                $url   = $payload['paging']['next'] ?? null; // already carries the cursor and token
+                $query = [];
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Instagram library sync failed: ' . $e->getMessage(), ['profile_id' => $profile->id]);
+            $settings->last_error = 'Could not reach Instagram. Please try again later.';
+            $settings->save();
+
+            return ['success' => false, 'error' => $settings->last_error, 'imported' => 0, 'removed' => 0];
+        }
+
+        $seenIds  = [];
+        $imported = 0;
+
+        foreach ($items as $item) {
+            $parsed = $this->validateAndNormalizeUrl((string) $item['permalink']);
+            if (!$parsed['valid']) {
+                continue;
+            }
+
+            $mediaId  = (string) $item['id'];
+            $rawType  = strtoupper((string) ($item['media_type'] ?? 'IMAGE'));
+            $mediaUrl = $item['media_url'] ?? null;
+            $thumb    = $item['thumbnail_url'] ?? ($rawType === 'VIDEO' ? null : $mediaUrl);
+            $postedAt = !empty($item['timestamp']) ? Carbon::parse($item['timestamp']) : null;
+            $seenIds[] = $mediaId;
+
+            $post = BhudevInstagramPost::where('bhudev_profile_id', $profile->id)
+                ->where(function ($q) use ($mediaId, $parsed) {
+                    $q->where('ig_media_id', $mediaId)->orWhere('shortcode', $parsed['shortcode']);
+                })
+                ->first();
+
+            if (!$post) {
+                $post = new BhudevInstagramPost([
+                    'bhudev_profile_id' => $profile->id,
+                    'is_active'         => true,
+                    'is_autoplay'       => true,
+                ]);
+            }
+
+            $post->fill([
+                'source'        => 'api',
+                'ig_media_id'   => $mediaId,
+                'url'           => $parsed['canonical_url'],
+                'shortcode'     => $parsed['shortcode'],
+                'media_type'    => $parsed['media_type'],
+                'caption'       => Str::limit(trim((string) ($item['caption'] ?? '')), 1000, '') ?: $post->caption,
+                'thumbnail_url' => $thumb,
+                'media_url'     => $mediaUrl,
+                'author_name'   => $settings->account_username,
+                'posted_at'     => $postedAt,
+                'synced_at'     => now(),
+                // Newest first in every list (sort_order ascending); manual items keep their positive order
+                'sort_order'    => $postedAt ? -1 * (int) $postedAt->timestamp : 0,
+                'metadata'      => array_merge((array) $post->metadata, ['media_type' => $rawType]),
+            ]);
+            $post->save();
+            $imported++;
+        }
+
+        // Items removed on Instagram disappear here too (uploaded videos attached to them stay).
+        $pruneQuery = BhudevInstagramPost::where('bhudev_profile_id', $profile->id)
+            ->where('source', 'api')
+            ->whereNull('video_path');
+        if ($seenIds) {
+            $pruneQuery->whereNotIn('ig_media_id', $seenIds);
+        }
+        $removed = $pruneQuery->delete();
+
+        $settings->last_sync_at = now();
+        $settings->last_error   = null;
+        $settings->save();
+
+        return [
+            'success'  => true,
+            'imported' => $imported,
+            'removed'  => $removed,
+            'message'  => "Instagram library synced: {$imported} post(s)/Reel(s) imported" . ($removed ? ", {$removed} removed" : '') . '.',
+        ];
+    }
+
+    /**
+     * Sync every connected account. Used by the scheduled `instagram:sync` command.
+     */
+    public function syncAllConnected(): array
+    {
+        $results = ['synced' => 0, 'failed' => 0];
+
+        BhudevInstagramSetting::with('profile')->where('connection_status', 'connected')->get()->each(function ($setting) use (&$results) {
+            if (!$setting->profile) {
+                return;
+            }
+            $this->syncLibrary($setting->profile)['success'] ? $results['synced']++ : $results['failed']++;
+        });
+
+        return $results;
+    }
+
+    /**
+     * Upgrade a short-lived user token to a 60-day token (needs the Meta app secret).
+     */
+    protected function exchangeForLongLivedToken(BhudevInstagramSetting $settings): void
+    {
+        try {
+            $response = Http::timeout(8)->get('https://graph.instagram.com/access_token', [
+                'grant_type'    => 'ig_exchange_token',
+                'client_secret' => $settings->app_secret,
+                'access_token'  => $settings->access_token,
+            ]);
+
+            if ($response->successful() && $response->json('access_token')) {
+                $settings->access_token     = $response->json('access_token');
+                $settings->token_expires_at = now()->addSeconds((int) ($response->json('expires_in') ?: 5184000));
+                $settings->save();
+            }
+        } catch (\Throwable $e) {
+            Log::info('Instagram long-lived token exchange skipped: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Long-lived tokens last 60 days; refresh when fewer than 10 days remain so syncing never stops.
+     */
+    protected function refreshTokenIfNeeded(BhudevInstagramSetting $settings): void
+    {
+        if ($settings->token_expires_at && $settings->token_expires_at->gt(now()->addDays(10))) {
+            return;
+        }
+
+        try {
+            $response = Http::timeout(8)->get('https://graph.instagram.com/refresh_access_token', [
+                'grant_type'   => 'ig_refresh_token',
+                'access_token' => $settings->access_token,
+            ]);
+
+            if ($response->successful() && $response->json('access_token')) {
+                $settings->access_token     = $response->json('access_token');
+                $settings->token_expires_at = now()->addSeconds((int) ($response->json('expires_in') ?: 5184000));
+                $settings->save();
+            }
+        } catch (\Throwable $e) {
+            Log::info('Instagram token refresh skipped: ' . $e->getMessage());
         }
     }
 
@@ -461,13 +676,9 @@ class InstagramIntegrationService
         $domainName = $domain?->domain_name ?? $latestDomain?->domain_name;
         $status = $domain ? 'active' : ($latestDomain?->status ?? 'no_domain');
 
-        $supportPhone = config('app.support_whatsapp', self::DEFAULT_SUPPORT_PHONE);
-        $cleanPhone = preg_replace('/[^0-9]/', '', $supportPhone);
-        if (strlen($cleanPhone) === 10) {
-            $cleanPhone = '91' . $cleanPhone;
-        }
-
-        $whatsAppUrl = 'https://wa.me/' . $cleanPhone . '?text=' . urlencode(self::WHATSAPP_INQUIRY_TEXT);
+        // Null when SUPPORT_WHATSAPP is not configured; views hide the WhatsApp option in that case.
+        $supportPhone = WhatsApp::supportNumber();
+        $whatsAppUrl = WhatsApp::supportUrl(self::WHATSAPP_INQUIRY_TEXT);
 
         return [
             'has_active_website'  => $hasActiveWebsite,

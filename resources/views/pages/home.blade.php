@@ -14,7 +14,7 @@
 <p class="hero-lead">Find trusted, verified Brahmin Bhudevs for home pujas, sacred ceremonies, and astrology guidance across Gujarat.</p>
 <div class="hero-actions">
     <a class="btn btn-primary" href="{{ route('bhudevs.index') }}">Find a Bhudev <span>&rarr;</span></a>
-    <a class="btn btn-light" href="https://api.whatsapp.com/send?phone=919876543210&text={{ urlencode('Namaste DigitalBhudev, I would like to book a Bhudev for a Vedic ceremony.') }}" target="_blank" style="background:#eaf7ee;color:#1e7e34;border-color:#bce5c7;display:inline-flex;align-items:center;gap:6px">
+    <a class="btn btn-light" href="{{ \App\Support\WhatsApp::supportUrl('Namaste DigitalBhudev, I would like to book a Bhudev for a Vedic ceremony.') ?? route('contact') }}" target="_blank" style="background:#eaf7ee;color:#1e7e34;border-color:#bce5c7;display:inline-flex;align-items:center;gap:6px">
         <span>💬</span> Book via WhatsApp
     </a>
 </div>
@@ -113,7 +113,7 @@
                     <button type="submit" class="btn btn-primary" style="flex:1;padding:12px 20px;font-size:14px;font-weight:700">
                         Request Bhudev Match &rarr;
                     </button>
-                    <a href="https://api.whatsapp.com/send?phone=919876543210&text={{ urlencode('Namaste DigitalBhudev, I would like to inquire about booking a Bhudev.') }}" target="_blank" class="btn btn-light" style="background:#eaf7ee;color:#1e7e34;border-color:#bce5c7;padding:12px 18px;font-size:13px" title="Chat on WhatsApp">
+                    <a href="{{ \App\Support\WhatsApp::supportUrl('Namaste DigitalBhudev, I would like to inquire about booking a Bhudev.') ?? route('contact') }}" target="_blank" class="btn btn-light" style="background:#eaf7ee;color:#1e7e34;border-color:#bce5c7;padding:12px 18px;font-size:13px" title="Chat on WhatsApp">
                         💬 WhatsApp
                     </a>
                 </div>
@@ -188,7 +188,7 @@
                     <a class="btn btn-primary" href="{{ route('register') }}" style="padding:14px 28px;font-size:15px">
                         🚀 {{ __('messages.home.saas_banner_cta') }} &rarr;
                     </a>
-                    <a href="https://api.whatsapp.com/send?phone=919876543210&text={{ urlencode('Namaste DigitalBhudev, I am a Brahmin priest and I would like to inquire about getting my personal website and domain.') }}" target="_blank" class="btn btn-light" style="background:#25d366;color:#fff;border-color:#25d366;padding:14px 22px;font-size:15px;display:inline-flex;align-items:center;gap:6px" title="{{ __('messages.actions.chat_whatsapp') }}">
+                    <a href="{{ \App\Support\WhatsApp::supportUrl('Namaste DigitalBhudev, I am a Brahmin priest and I would like to inquire about getting my personal website and domain.') ?? route('contact') }}" target="_blank" class="btn btn-light" style="background:#25d366;color:#fff;border-color:#25d366;padding:14px 22px;font-size:15px;display:inline-flex;align-items:center;gap:6px" title="{{ __('messages.actions.chat_whatsapp') }}">
                         <span>💬</span> {{ __('messages.actions.chat_whatsapp') }}
                     </a>
                 </div>

@@ -107,13 +107,16 @@
             <h4 style="margin:0 0 10px;font-size:14px;color:var(--admin-heading)">Ready to get your own branded Pandit website?</h4>
             <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
                 @php
-                    $waText = rawurlencode(\App\Services\InstagramIntegrationService::WHATSAPP_INQUIRY_TEXT);
-                    $waPhone = \App\Services\InstagramIntegrationService::DEFAULT_SUPPORT_PHONE;
+                    $supportWaUrl = \App\Support\WhatsApp::supportUrl(\App\Services\InstagramIntegrationService::WHATSAPP_INQUIRY_TEXT);
                 @endphp
-                <a href="https://wa.me/{{ $waPhone }}?text={{ $waText }}" target="_blank" class="btn btn-sm" style="background:#25D366;color:#fff;display:inline-flex;align-items:center;gap:6px">
+                @if($supportWaUrl)
+                <a href="{{ $supportWaUrl }}" target="_blank" class="btn btn-sm" style="background:#25D366;color:#fff;display:inline-flex;align-items:center;gap:6px">
                     <span>💬 Contact via WhatsApp</span>
                 </a>
                 <span style="font-size:13px;color:var(--admin-muted)">or request your domain directly:</span>
+                @else
+                <span style="font-size:13px;color:var(--admin-muted)">Request your domain directly:</span>
+                @endif
             </div>
             <form method="POST" action="{{ route('bhudev.instagram.request-website') }}" style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
                 @csrf
@@ -134,7 +137,7 @@
                 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
                     <h3 style="margin:0;font-size:16px;color:var(--admin-heading)">➕ Add Ceremony Video / Reel</h3>
                     {{-- Tab Buttons --}}
-                    <div style="display:inline-flex;background:var(--admin-border);padding:3px;border-radius:8px;gap:4px">
+                    <div class="media-tab-switch" style="display:inline-flex;background:var(--admin-border);padding:3px;border-radius:8px;gap:4px">
                         <button type="button" id="tabBtnUpload" onclick="switchMediaTab('upload')" style="background:#fff;color:var(--admin-heading);border:none;border-radius:6px;padding:5px 12px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
                             📤 Direct Video Upload (Auto-Play)
                         </button>
@@ -220,10 +223,17 @@
 
         {{-- Connected Reels / Posts List --}}
         <div class="admin-card">
-            <div class="admin-card-header" style="display:flex;justify-content:space-between;align-items:center">
+            <div class="admin-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
                 <h3 style="margin:0;font-size:16px;color:var(--admin-heading)">
                     Connected Ceremony Content ({{ $posts->count() }})
                 </h3>
+                @if($settings->connection_status === 'connected')
+                    <form method="POST" action="{{ route('bhudev.instagram.sync') }}" style="margin:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                        @csrf
+                        <span style="font-size:11.5px;color:var(--admin-muted)">📸 &#64;{{ $settings->account_username }} · synced {{ $settings->last_sync_at?->diffForHumans() ?? 'never' }}</span>
+                        <button type="submit" class="btn btn-light btn-sm">🔄 Sync Instagram now</button>
+                    </form>
+                @endif
             </div>
             <div class="admin-card-body" style="padding:0">
                 @if($posts->isEmpty())
@@ -243,6 +253,11 @@
                                             <video src="{{ $post->getVideoUrl() }}" style="width:100%;height:100%;object-fit:cover" muted playsinline></video>
                                             <span style="position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.7);color:#fff;font-size:10px;padding:1px 4px;border-radius:3px">▶ MP4</span>
                                         </div>
+                                    @elseif($post->isFromLibrary() && ($post->thumbnail_url || $post->getImageUrl()))
+                                        <div style="width:72px;height:72px;border-radius:8px;overflow:hidden;background:#f3e5ee;flex-shrink:0;position:relative">
+                                            <img src="{{ $post->thumbnail_url ?: $post->getImageUrl() }}" alt="" loading="lazy" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;display:block">
+                                            <span style="position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.7);color:#fff;font-size:10px;padding:1px 4px;border-radius:3px">{{ $post->media_type === 'reel' ? '▶' : '📷' }}</span>
+                                        </div>
                                     @else
                                         <div style="width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg, #fce7f3, #fbcfe8);color:var(--primary);display:grid;place-items:center;font-size:22px;flex-shrink:0">
                                             {{ $post->media_type === 'reel' ? '🎬' : '📷' }}
@@ -258,6 +273,12 @@
                                             @else
                                                 <span class="badge" style="background:#fdf2f8;color:#be185d;border:1px solid #fbcfe8;font-size:10.5px;text-transform:uppercase">
                                                     {{ $post->media_type }}
+                                                </span>
+                                            @endif
+
+                                            @if($post->isFromLibrary())
+                                                <span class="badge" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;font-size:10.5px;font-weight:700">
+                                                    📸 From your Instagram
                                                 </span>
                                             @endif
 
@@ -284,8 +305,8 @@
                                             @endif
                                         </div>
 
-                                        {{-- If post is an Instagram URL without video_path, provide instant video file attachment --}}
-                                        @if(!$post->isVideoUpload())
+                                        {{-- If post is an Instagram URL without a playable video, provide instant video file attachment --}}
+                                        @if(!$post->hasNativeVideo())
                                             <div style="margin-top:10px;padding:8px 12px;background:#fefce8;border:1px dashed #fde047;border-radius:6px;font-size:12px">
                                                 <span style="font-weight:600;color:#854d0e">💡 Want zero-redirect Auto-Play for this reel?</span>
                                                 <form method="POST" action="{{ route('bhudev.instagram.upload-video') }}" enctype="multipart/form-data" style="margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -339,7 +360,7 @@
             <div class="admin-card-header">
                 <h3 style="margin:0;font-size:15px;color:var(--admin-heading)">🔗 Meta Instagram API (Optional)</h3>
                 <p style="margin:4px 0 0;font-size:12px;color:var(--admin-muted)">
-                    If you have a Meta Developer access token, you can connect your account directly.
+                    Connect your Instagram account once and every post and Reel you publish is imported here automatically. No need to upload anything twice.
                 </p>
             </div>
             <div class="admin-card-body" style="padding:18px 20px">
@@ -349,6 +370,7 @@
                             <div>
                                 <span style="font-size:11px;font-weight:700;color:#16a34a;text-transform:uppercase">Connected Account</span>
                                 <strong style="display:block;font-size:14px;color:#166534">&#64;{{ $settings->account_username ?: 'instagram_user' }}</strong>
+                                <span style="display:block;font-size:11.5px;color:#166534;margin-top:2px">Your library syncs automatically every 6 hours · last sync {{ $settings->last_sync_at?->diffForHumans() ?? 'pending' }}</span>
                             </div>
                             <form method="POST" action="{{ route('bhudev.instagram.disconnect') }}" style="margin:0">
                                 @csrf

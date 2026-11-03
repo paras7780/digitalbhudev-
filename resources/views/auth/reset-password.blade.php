@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Set New Password | DigitalBhudev')
+@section('meta_robots', 'noindex, nofollow')
 
 @section('content')
 <main>
