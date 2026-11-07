@@ -69,6 +69,10 @@ class SeoController extends Controller
                 ['loc' => route('rashifal.index'), 'changefreq' => 'daily',   'priority' => '0.7'],
                 ['loc' => route('about'),          'changefreq' => 'yearly',  'priority' => '0.4'],
                 ['loc' => route('contact'),        'changefreq' => 'yearly',  'priority' => '0.4'],
+                ['loc' => route('privacy'),        'changefreq' => 'monthly', 'priority' => '0.5'],
+                ['loc' => route('terms'),          'changefreq' => 'monthly', 'priority' => '0.5'],
+                ['loc' => route('refund.policy'),  'changefreq' => 'monthly', 'priority' => '0.5'],
+                ['loc' => route('disclaimer'),     'changefreq' => 'monthly', 'priority' => '0.5'],
             ];
 
             foreach (array_keys(PoojaSamagriService::all()) as $slug) {

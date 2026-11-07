@@ -21,7 +21,7 @@
     if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
   }
 
-  document.addEventListener("click", function (event) {
+  function handleToggleEvent(event) {
     var target = event.target;
     if (!(target instanceof Element)) return;
 
@@ -41,7 +41,14 @@
     if (target.closest(".admin-sidebar a") && window.innerWidth <= 900) {
       setSidebar(false);
     }
-  });
+  }
+
+  document.addEventListener("click", handleToggleEvent);
+  document.addEventListener("touchend", function (e) {
+    if (e.target.closest && (e.target.closest(".sidebar-toggle-btn") || e.target.closest(".sidebar-close-btn") || e.target.classList.contains("sidebar-overlay"))) {
+      handleToggleEvent(e);
+    }
+  }, { passive: false });
 
   // Leaving the phone/tablet breakpoint never leaves the drawer stuck open.
   window.addEventListener("resize", function () {

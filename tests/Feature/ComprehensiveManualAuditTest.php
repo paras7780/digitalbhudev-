@@ -119,6 +119,8 @@ class ComprehensiveManualAuditTest extends TestCase
             '/contact',
             '/privacy',
             '/terms',
+            '/cancellation-refund',
+            '/disclaimer',
             '/login',
             '/register',
             '/forgot-password',

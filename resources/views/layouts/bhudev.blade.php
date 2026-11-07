@@ -99,7 +99,14 @@
                 <a href="{{ route('home') }}" target="_blank">
                     <span>🌐 DigitalBhudev Home</span>
                 </a>
-                <span style="font-size:11px;color:#8f7d6e">Bhudev Portal</span>
+                <div style="display:flex;gap:8px;font-size:11px;margin-top:6px">
+                    <a href="{{ route('privacy') }}" target="_blank" style="color:#d8b4cb;text-decoration:none">Privacy</a>
+                    <span style="color:#632655">•</span>
+                    <a href="{{ route('terms') }}" target="_blank" style="color:#d8b4cb;text-decoration:none">Terms</a>
+                    <span style="color:#632655">•</span>
+                    <a href="{{ route('disclaimer') }}" target="_blank" style="color:#d8b4cb;text-decoration:none">Disclaimer</a>
+                </div>
+                <span style="font-size:10.5px;color:#8f7d6e;margin-top:4px">Bhudev Portal</span>
             </div>
         </aside>
 

@@ -21,28 +21,34 @@
     }
 
     if (toggle) {
-      toggle.onclick = function (e) {
+      var handleToggle = function (e) {
         e.preventDefault();
         e.stopPropagation();
         var isOpen = nav && nav.classList.contains("open");
         setOpen(!isOpen);
       };
+      toggle.addEventListener("click", handleToggle);
+      toggle.addEventListener("touchend", handleToggle, { passive: false });
     }
 
     if (closeBtn) {
-      closeBtn.onclick = function (e) {
+      var handleClose = function (e) {
         e.preventDefault();
         e.stopPropagation();
         setOpen(false);
       };
+      closeBtn.addEventListener("click", handleClose);
+      closeBtn.addEventListener("touchend", handleClose, { passive: false });
     }
 
     if (backdrop) {
-      backdrop.onclick = function (e) {
+      var handleBackdrop = function (e) {
         e.preventDefault();
         e.stopPropagation();
         setOpen(false);
       };
+      backdrop.addEventListener("click", handleBackdrop);
+      backdrop.addEventListener("touchend", handleBackdrop, { passive: false });
     }
 
     if (nav) {

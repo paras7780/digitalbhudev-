@@ -82,10 +82,34 @@ class SeoTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/xml; charset=UTF-8')
             ->assertSee('<loc>' . route('bhudevs.index') . '</loc>', false)
+            ->assertSee('<loc>' . route('privacy') . '</loc>', false)
+            ->assertSee('<loc>' . route('terms') . '</loc>', false)
+            ->assertSee('<loc>' . route('refund.policy') . '</loc>', false)
+            ->assertSee('<loc>' . route('disclaimer') . '</loc>', false)
             ->assertSee('<loc>' . route('samagri.show', 'griha-pravesh') . '</loc>', false)
             ->assertSee('<loc>' . route('bhudevs.show', $visible->slug) . '</loc>', false)
             ->assertDontSee($pending->slug)
             ->assertDontSee($hidden->slug);
+    }
+
+    public function test_policy_pages_carry_canonical_meta_tags_and_schema(): void
+    {
+        $policyRoutes = [
+            route('privacy')       => 'Privacy Policy',
+            route('terms')         => 'Terms of Use',
+            route('refund.policy') => 'Cancellation &amp; Refund Policy',
+            route('disclaimer')    => 'Puja &amp; Astrological Disclaimer',
+        ];
+
+        foreach ($policyRoutes as $url => $headingSnippet) {
+            $this->get($url)
+                ->assertOk()
+                ->assertSee('<link rel="canonical" href="' . $url . '">', false)
+                ->assertSee('<meta name="robots" content="index, follow">', false)
+                ->assertSee('"@type":"BreadcrumbList"', false)
+                ->assertSee('"@type":"WebPage"', false)
+                ->assertSee($headingSnippet, false);
+        }
     }
 
     public function test_robots_blocks_private_areas_and_points_to_sitemap(): void

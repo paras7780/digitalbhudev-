@@ -25,19 +25,33 @@
             <h4>{{ __('messages.footer.company') }}</h4>
             <a href="{{ route('about') }}">{{ __('messages.footer.about_us') }}</a>
             <a href="{{ route('contact') }}">{{ __('messages.footer.contact') }}</a>
+            <a href="{{ route('register') }}">{{ __('messages.footer.bhudev_registration') }}</a>
+            <a href="{{ route('login') }}">{{ __('messages.footer.login') }}</a>
         </div>
 
         <div class="footer-col">
-            <h4>{{ __('messages.footer.helpful_links') }}</h4>
-            <a href="{{ route('login') }}">{{ __('messages.footer.login') }}</a>
-            <a href="{{ route('register') }}">{{ __('messages.footer.bhudev_registration') }}</a>
+            <h4>{{ __('messages.footer.legal_policies') ?? 'Legal & Policies' }}</h4>
             <a href="{{ route('privacy') }}">{{ __('messages.footer.privacy_policy') }}</a>
             <a href="{{ route('terms') }}">{{ __('messages.footer.terms_of_use') }}</a>
+            <a href="{{ route('refund.policy') }}">{{ __('messages.footer.cancellation_refund') }}</a>
+            <a href="{{ route('disclaimer') }}">{{ __('messages.footer.disclaimer') }}</a>
         </div>
     </div>
 
-    <div class="container footer-bottom">
-        <span>&copy; {{ date('Y') }} {{ __('messages.app_name') }}. {{ __('messages.footer.copyright') }}</span>
-        <span>{{ __('messages.footer.made_with_respect') }} <b>✦</b></span>
+    <div class="container footer-bottom" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;border-top:1px solid rgba(255,255,255,0.1);padding-top:20px">
+        <div style="font-size:12px;color:#d8c2d5">
+            &copy; {{ date('Y') }} {{ __('messages.app_name') }}. {{ __('messages.footer.copyright') }}
+            <span style="margin:0 8px;opacity:0.4">|</span>
+            <a href="{{ route('privacy') }}" style="color:#e2cddf;text-decoration:none">{{ __('messages.footer.privacy_policy') }}</a>
+            <span style="margin:0 6px;opacity:0.4">•</span>
+            <a href="{{ route('terms') }}" style="color:#e2cddf;text-decoration:none">{{ __('messages.footer.terms_of_use') }}</a>
+            <span style="margin:0 6px;opacity:0.4">•</span>
+            <a href="{{ route('refund.policy') }}" style="color:#e2cddf;text-decoration:none">{{ __('messages.footer.cancellation_refund') }}</a>
+            <span style="margin:0 6px;opacity:0.4">•</span>
+            <a href="{{ route('disclaimer') }}" style="color:#e2cddf;text-decoration:none">{{ __('messages.footer.disclaimer') }}</a>
+        </div>
+        <div style="font-size:12px;color:#d8c2d5">
+            {{ __('messages.footer.made_with_respect') }} <b style="color:var(--primary)">✦</b>
+        </div>
     </div>
 </footer>

@@ -624,7 +624,11 @@
         <div class="pandit-nav-container">
             <a href="#hero" class="pandit-brand">
                 @if($pandit->photo_path)
-                    <img src="{{ asset('storage/' . $pandit->photo_path) }}" alt="{{ $domain->hero_title ?? $pandit->display_name }}" class="pandit-brand-photo">
+                    <img src="{{ asset('storage/' . $pandit->photo_path) }}" 
+                         alt="{{ $domain->hero_title ?? $pandit->display_name }}" 
+                         class="pandit-brand-photo"
+                         onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                    <div class="pandit-brand-om" style="display:none">ॐ</div>
                 @else
                     <div class="pandit-brand-om">ॐ</div>
                 @endif
@@ -702,8 +706,17 @@
             </div>
         </div>
 
-        <div style="max-width:1200px;margin:30px auto 0;padding:20px 24px 0;border-top:1px solid #362c23;text-align:center;font-size:12px;color:#8f7d6e">
-            © {{ date('Y') }} {{ $domain->hero_title ?? $pandit->display_name }}. All Vedic ceremonies conducted with traditional Maryada & Shastra Vidhi.
+        <div style="max-width:1200px;margin:30px auto 0;padding:20px 24px 0;border-top:1px solid #362c23;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:#8f7d6e">
+            <div>
+                © {{ date('Y') }} {{ $domain->hero_title ?? $pandit->display_name }}. All Vedic ceremonies conducted with traditional Maryada &amp; Shastra Vidhi.
+            </div>
+            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+                <a href="{{ route('privacy') }}" target="_blank" style="color:#a89688;text-decoration:none">Privacy Policy</a>
+                <span>•</span>
+                <a href="{{ route('terms') }}" target="_blank" style="color:#a89688;text-decoration:none">Terms of Use</a>
+                <span>•</span>
+                <a href="{{ route('disclaimer') }}" target="_blank" style="color:#a89688;text-decoration:none">Vidhi &amp; Astrology Disclaimer</a>
+            </div>
         </div>
     </footer>
 
@@ -721,12 +734,16 @@
             }
 
             if (toggle && menu) {
-                toggle.onclick = function(e) {
+                var handleToggle = function(e) {
                     e.preventDefault();
                     e.stopPropagation();
                     var open = !menu.classList.contains('open');
                     setMenu(open);
                 };
+                toggle.addEventListener('click', handleToggle);
+                toggle.addEventListener('touchend', function(e) {
+                    handleToggle(e);
+                }, { passive: false });
             }
             if (backdrop) {
                 backdrop.onclick = function(e) {

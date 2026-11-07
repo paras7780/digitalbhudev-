@@ -34,6 +34,9 @@ Route::post('/contact',[ContactController::class,'store'])->middleware('throttle
 Route::post('/booking',[ContactController::class,'booking'])->middleware('throttle:5,1')->name('booking.store');
 Route::view('/privacy','pages.privacy')->name('privacy');
 Route::view('/terms','pages.terms')->name('terms');
+Route::view('/cancellation-refund','pages.refund-policy')->name('refund.policy');
+Route::view('/refund-policy','pages.refund-policy');
+Route::view('/disclaimer','pages.disclaimer')->name('disclaimer');
 Route::post('/pandit-inquiry',[PanditWebsiteController::class,'handleInquiry'])->name('pandit.inquiry.handle');
 
 Route::middleware('guest')->group(function(){

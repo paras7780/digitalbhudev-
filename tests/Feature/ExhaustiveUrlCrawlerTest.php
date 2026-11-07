@@ -54,6 +54,8 @@ class ExhaustiveUrlCrawlerTest extends TestCase
             '/contact',
             '/privacy',
             '/terms',
+            '/cancellation-refund',
+            '/disclaimer',
             '/services',
             '/panchang',
             '/rashifal',

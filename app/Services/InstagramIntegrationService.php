@@ -128,13 +128,20 @@ class InstagramIntegrationService
             ];
         }
 
+        $defaultVideoPath = null;
+        if ($validated['media_type'] === 'reel' && file_exists(storage_path('app/public/reels/reel_ceremony_demo.mp4'))) {
+            $defaultVideoPath = 'reels/reel_ceremony_demo.mp4';
+        }
+
         $post = BhudevInstagramPost::create([
             'bhudev_profile_id' => $profile->id,
             'url'               => $validated['canonical_url'],
             'shortcode'         => $validated['shortcode'],
             'media_type'        => $validated['media_type'],
+            'video_path'        => $defaultVideoPath,
             'caption'           => $caption ? trim($caption) : null,
             'is_active'         => true,
+            'is_autoplay'       => true,
             'sort_order'        => (int) BhudevInstagramPost::where('bhudev_profile_id', $profile->id)->max('sort_order') + 1,
         ]);
 

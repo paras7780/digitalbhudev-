@@ -1265,6 +1265,13 @@ body.admin-body {
     gap: 6px !important;
     justify-content: flex-end !important;
   }
+  .topbar-desktop-lang,
+  .topbar-right .topbar-desktop-lang,
+  .topbar-right .lang-switcher-wrap,
+  .topbar-right .lang-pill-group,
+  .topbar-right .topbar-link {
+    display: none !important;
+  }
   .admin-user-pill {
     padding: 4px 8px 4px 4px !important;
     gap: 6px !important;

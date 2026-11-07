@@ -60,6 +60,8 @@ class WebsitePagesTest extends TestCase
         $this->get('/contact')->assertOk()->assertSee('Contact');
         $this->get('/privacy')->assertOk()->assertSee('Privacy');
         $this->get('/terms')->assertOk()->assertSee('Terms');
+        $this->get('/cancellation-refund')->assertOk()->assertSee('Cancellation');
+        $this->get('/disclaimer')->assertOk()->assertSee('Disclaimer');
         $this->get('/login')->assertOk()->assertSee('Log in');
         $this->get('/register')->assertOk()->assertSee('Bhudev');
     }
